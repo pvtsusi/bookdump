@@ -1,0 +1,16 @@
+{
+  "name": "bookdump",
+  "version": "1.0.0",
+  "description": "List of books to dump",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Petteri Susi <susi@iki.fi>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "redis": "^2.8.0"
+  }
+}

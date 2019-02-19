@@ -1,0 +1,31 @@
+const express = require('express');
+const redis = require('redis').createClient();
+const app = express();
+
+app.use(express.json());
+
+const PORT = 5000;
+const REDIS_DB = 1;
+const BOOKS_HASH = 'books';
+
+const db = (cmd, ...args) => redis.select(REDIS_DB, (err) => {
+  if (err) {
+    throw err;
+  }
+  cmd.apply(redis, args)
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+app.get('/books', (req, res) => {
+  db(redis.hvals, BOOKS_HASH, (error, books) =>
+    res.send({ error, books }));
+});
+
+app.post('/book', (req, res) => {
+  const book = req.body;
+  db(redis.hset, BOOKS_HASH, book.isbn, JSON.stringify(book), (error) =>
+    res.send({ error, msg: 'ok'}));
+});
