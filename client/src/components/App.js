@@ -5,8 +5,24 @@ import { Route, Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import Books from './Books';
 
+import * as Actions from '../actions';
+import openSocket from 'socket.io-client';
+
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.socket = openSocket('http://localhost:5000');
+    this.socket.on(Actions.KICKBACK, data => {
+      store.dispatch(Actions.kickback(data));
+    });
+  }
+
+  componentDidMount() {
+    // Accessible because we 'connected'
+    this.props.doPoke({ socket: this.socket });
+  }
+
   render() {
     return (
       <ConnectedRouter history={this.props.history} >
@@ -22,4 +38,4 @@ App.propTypes = {
   history: PropTypes.object
 };
 
-export default connect(() => ({}), () => ({}))(App);
+export default connect(state => state, { doPoke: Actions.doPoke })(App);
