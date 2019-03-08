@@ -1,7 +1,4 @@
-import superagentPromise from 'superagent-promise';
-import _superagent from 'superagent';
-
-const superagent = superagentPromise(_superagent, global.Promise);
+import superagent from 'superagent';
 
 const API_ROOT = 'http://localhost:5000';
 

@@ -1,20 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import agent from '../agent'
 import Book from './Book';
+import { getBooks } from '../reducers/books';
+import { bindActionCreators } from "redux";
 
-const mapStateToProps = state => ({
-  books: state.books.books
+const mapStateToProps = ({ books }) => ({
+  books: books.books
 });
 
-const mapDispatchToProps = dispatch => ({
-  onLoad: (payload) =>
-    dispatch({ type: 'BOOKS_VIEW_LOADED', payload })
-});
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      getBooks
+    }, dispatch
+  );
 
 class Books extends React.Component {
   componentWillMount () {
-    this.props.onLoad(agent.Books.all());
+    this.props.getBooks();
   }
 
   render () {
