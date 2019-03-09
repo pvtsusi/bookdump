@@ -4,6 +4,7 @@ const cors = require('@koa/cors');
 const onerror = require('koa-onerror');
 const router = require('koa-router')();
 const json = require('koa-json');
+const bodyParser = require('koa-bodyparser');
 const redis = require('redis').createClient();
 
 const PORT = 5000;
@@ -14,6 +15,7 @@ const app = new Koa();
 onerror(app);
 app.use(json({}));
 app.use(cors());
+app.use(bodyParser({detectJSON: () => true}));
 
 const socketService = socket => {
 
@@ -33,12 +35,14 @@ const socketService = socket => {
   }
 
   async function create (ctx) {
-    socket.broadcast.emit('kickback', 'book!');
+    const book = ctx.request.body;
+    db(storeBook, book);
+    socket.broadcast.emit('kickback', book);
     ctx.redirect('/');
   }
 
-  function db (dbFunction) {
-    return selectDb().then(dbFunction);
+  function db (dbFunction, arg) {
+    return selectDb().then(() => dbFunction(arg));
   }
 
   function selectDb () {
@@ -60,6 +64,16 @@ const socketService = socket => {
         }
         resolve(books.map(JSON.parse));
       });
+    });
+  }
+
+  function storeBook (book) {
+    return new Promise((resolve, reject) => {
+      redis.hset(BOOKS_HASH, book.isbn, JSON.stringify(book), (error) => {
+        if (error) {
+          return reject({message: error});
+        }
+      })
     });
   }
 };
