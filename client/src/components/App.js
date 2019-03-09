@@ -16,6 +16,7 @@ class App extends React.Component {
     super(props);
     this.socket = openSocket('http://localhost:5000');
     this.socket.on(Actions.KICKBACK, data => {
+      console.log(data);
       kickback(data);
     });
   }
