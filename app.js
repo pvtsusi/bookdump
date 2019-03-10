@@ -6,6 +6,7 @@ const router = require('koa-router')();
 const json = require('koa-json');
 const bodyParser = require('koa-bodyparser');
 const redis = require('redis').createClient();
+const rp = require('request-promise-native');
 
 const PORT = 5000;
 const REDIS_DB = 1;
@@ -103,6 +104,35 @@ function storeBook (book) {
       }
       resolve()
     })
+  });
+}
+
+function findFinna (isbn) {
+  const opts = {
+    uri: 'https://api.finna.fi/api/v1/search',
+    qs: {
+      lookfor: `cleanIsbn:${isbn}`,
+      type: 'AllFields',
+      field: ['languages', 'nonPresenterAuthors', 'title'],
+      sort: 'relevance,id asc',
+      page: 1,
+      limit: 20,
+      prettyPrint: 'true',
+      lng: 'en'
+    },
+    headers: {
+      Accept: 'application/json'
+    },
+    json: true
+  };
+  return rp(opts).then(results => {
+    return results.records.map(record => ({
+      language: record.languages && record.languages.length ? record.languages[0] : null,
+      author: (record.nonPresenterAuthors &&
+        record.nonPresenterAuthors.find(author => author.role.startsWith('kirjoittaja')) ||
+        {name: null}).name,
+      title: record.title
+    }));
   });
 }
 
