@@ -9,7 +9,7 @@ const redis = require('redis').createClient();
 
 const PORT = 5000;
 const REDIS_DB = 1;
-const BOOKS_HASH = 'books';
+const BOOK_PREFIX = 'isbn:';
 
 const app = new Koa();
 onerror(app);
@@ -17,66 +17,95 @@ app.use(json({}));
 app.use(cors());
 app.use(bodyParser({detectJSON: () => true}));
 
-const socketService = socket => {
+let createBroadcast;
 
+const socketService = socket => {
   const _poke = async data => {
     socket.emit('kickback', 'yow!');
   };
   console.log('Socket connection started!');
   socket.on('poke', _poke);
+  createBroadcast = (book) => socket.broadcast.emit('kickback', book);
+};
 
-  router.get('/books', list)
-    .post('/book', create);
+router.get('/books', list)
+  .get('/book/:isbn', view)
+  .post('/book', create);
 
-  app.use(router.routes());
+app.use(router.routes());
 
-  async function list (ctx) {
-    ctx.body = await db(retrieveBooks);
+async function list (ctx) {
+  ctx.body = await db(retrieveBooks);
+}
+
+async function view (ctx) {
+  ctx.body = await db(retrieveBook, ctx.params.isbn);
+}
+
+async function create (ctx) {
+  const book = ctx.request.body;
+  db(storeBook, book);
+  if (createBroadcast) {
+    createBroadcast(book);
   }
+  ctx.status = 201;
+  ctx.set('Location', `/book/${book.isbn}`);
+  ctx.body = book
+}
 
-  async function create (ctx) {
-    const book = ctx.request.body;
-    db(storeBook, book);
-    socket.broadcast.emit('kickback', book);
-    ctx.redirect('/');
-  }
+function db (dbFunction, arg) {
+  return selectDb().then(() => dbFunction(arg));
+}
 
-  function db (dbFunction, arg) {
-    return selectDb().then(() => dbFunction(arg));
-  }
-
-  function selectDb () {
-    return new Promise((resolve, reject) => {
-      redis.select(REDIS_DB, (error) => {
-        if (error) {
-          return reject({message: error});
-        }
-        resolve();
-      });
+function selectDb () {
+  return new Promise((resolve, reject) => {
+    redis.select(REDIS_DB, (error) => {
+      if (error) {
+        return reject({message: error});
+      }
+      resolve();
     });
-  }
+  });
+}
 
-  function retrieveBooks () {
-    return new Promise((resolve, reject) => {
-      redis.hvals(BOOKS_HASH, (error, books) => {
+function retrieveBooks () {
+  return new Promise((resolve, reject) => {
+    redis.keys(`${BOOK_PREFIX}*`, (error, keys) => {
+      if (error) {
+        return reject({message: error});
+      }
+      redis.mget(keys, (error, books) => {
         if (error) {
-          return reject({message: error});
+          return reject({message: error})
         }
         resolve(books.map(JSON.parse));
       });
     });
-  }
+  });
+}
 
-  function storeBook (book) {
-    return new Promise((resolve, reject) => {
-      redis.hset(BOOKS_HASH, book.isbn, JSON.stringify(book), (error) => {
-        if (error) {
-          return reject({message: error});
-        }
-      })
+function retrieveBook (isbn) {
+  return new Promise((resolve, reject) => {
+    redis.get(`${BOOK_PREFIX}${isbn}`, (error, book) => {
+      if (error) {
+        return reject({message: error, status: 404})
+      }
+      resolve(JSON.parse(book))
     });
-  }
-};
+  });
+}
+
+function storeBook (book) {
+  return new Promise((resolve, reject) => {
+    redis.set(`${BOOK_PREFIX}${book.isbn}`, JSON.stringify(book), (error) => {
+      if (error) {
+        return reject({message: error});
+      }
+      resolve()
+    })
+  });
+}
+
 
 const server = http.createServer(app.callback());
 const io = require('socket.io')(server);
