@@ -8,7 +8,7 @@ const bodyParser = require('koa-bodyparser');
 const redis = require('redis').createClient();
 const rp = require('request-promise-native');
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
 const BOOK_PREFIX = 'isbn:';
 
