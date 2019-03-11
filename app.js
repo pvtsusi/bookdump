@@ -5,8 +5,10 @@ const onerror = require('koa-onerror');
 const router = require('koa-router')();
 const json = require('koa-json');
 const bodyParser = require('koa-bodyparser');
-const redis = require('redis').createClient();
 const rp = require('request-promise-native');
+
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
+const redis = require('redis').createClient(redisUrl);
 
 const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
