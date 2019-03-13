@@ -7,7 +7,7 @@ const json = require('koa-json');
 const bodyParser = require('koa-bodyparser');
 const rp = require('request-promise-native');
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
 
 const PORT = process.env.PORT || 5000;
@@ -33,7 +33,8 @@ const socketService = socket => {
 
 router.get('/books', list)
   .get('/book/:isbn', view)
-  .post('/book', create);
+  .post('/book', create)
+  .get('/search/:isbn', search);
 
 app.use(router.routes());
 
@@ -43,6 +44,10 @@ async function list (ctx) {
 
 async function view (ctx) {
   ctx.body = await db(retrieveBook, ctx.params.isbn);
+}
+
+async function search (ctx) {
+  ctx.body = await searchFromAll(ctx.params.isbn);
 }
 
 async function create (ctx) {
@@ -109,6 +114,12 @@ function storeBook (book) {
   });
 }
 
+async function searchFromAll (isbn) {
+  return await Promise.all([findFinna(isbn)]).then((allFound) => {
+    return allFound[0];
+  });
+}
+
 function findFinna (isbn) {
   const opts = {
     uri: 'https://api.finna.fi/api/v1/search',
@@ -128,13 +139,20 @@ function findFinna (isbn) {
     json: true
   };
   return rp(opts).then(results => {
+    if (!results.records) {
+      return [];
+    }
     return results.records.map(record => ({
       language: record.languages && record.languages.length ? record.languages[0] : null,
       author: (record.nonPresenterAuthors &&
-        record.nonPresenterAuthors.find(author => author.role.startsWith('kirjoittaja')) ||
+        record.nonPresenterAuthors.find(author =>
+          (author.role && author.role.startsWith('kirjoittaja') || !author.role)) ||
         {name: null}).name,
       title: record.title
     }));
+  }).catch((error) => {
+    console.log(`Failed retrieval from Finna: ${error}`);
+    return [];
   });
 }
 
