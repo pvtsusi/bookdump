@@ -52,7 +52,7 @@ async function search (ctx) {
 
 async function create (ctx) {
   const book = ctx.request.body;
-  db(storeBook, book);
+  await db(storeBook, book);
   if (createBroadcast) {
     createBroadcast(book);
   }
