@@ -114,9 +114,17 @@ function storeBook (book) {
   });
 }
 
+function normalizeAuthor (book) {
+  const match = book.author.match(/^([^,]+), *(.+)$/);
+  if (match) {
+    book.author = `${match[2]} ${match[1]}`;
+  }
+  return book;
+}
+
 async function searchFromAll (isbn) {
-  return await Promise.all([findFinna(isbn)]).then((allFound) => {
-    return allFound[0];
+  return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
+    return allFound.flat().filter(book => book.title && book.author).map(normalizeAuthor);
   });
 }
 
@@ -153,6 +161,31 @@ function findFinna (isbn) {
   }).catch((error) => {
     console.log(`Failed retrieval from Finna: ${error}`);
     return [];
+  });
+}
+
+function findOpenLibrary (isbn) {
+  const opts = {
+    uri: 'https://openlibrary.org/api/books',
+    qs: {
+      bibkeys: `ISBN:${isbn}`,
+      format: 'json',
+      jscmd: 'details'
+    },
+    headers: {
+      Accept: 'application/json'
+    },
+    json: true
+  };
+  return rp(opts).then(results => {
+    if (!Object.values(results).length) {
+      return [];
+    }
+    return Object.values(results).map(record => record.details).map(record => ({
+      language: record.languages && record.languages.length ? record.languages[0].key.substr(11) : null,
+      author: record.authors && record.authors.length ? record.authors[0].name : null,
+      title: record.title
+    }));
   });
 }
 
