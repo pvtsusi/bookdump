@@ -14,7 +14,7 @@ import { kickback } from '../actions';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.socket = openSocket('http://localhost:5000');
+    this.socket = openSocket('/');
     this.socket.on(Actions.KICKBACK, data => {
       console.log(data);
       kickback(data);

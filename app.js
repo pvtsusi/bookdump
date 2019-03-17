@@ -31,10 +31,10 @@ const socketService = socket => {
   createBroadcast = (book) => socket.broadcast.emit('kickback', book);
 };
 
-router.get('/books', list)
-  .get('/book/:isbn', view)
-  .post('/book', create)
-  .get('/search/:isbn', search);
+router.get('/api/books', list)
+  .get('/api/book/:isbn', view)
+  .post('/api/book', create)
+  .get('/api/search/:isbn', search);
 
 app.use(router.routes());
 

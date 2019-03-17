@@ -5,6 +5,7 @@
   "dependencies": {
     "connected-react-router": "^6.3.1",
     "history": "^4.7.2",
+    "http-proxy-middleware": "^0.19.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
