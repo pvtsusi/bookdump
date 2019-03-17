@@ -5,7 +5,9 @@ const onerror = require('koa-onerror');
 const router = require('koa-router')();
 const json = require('koa-json');
 const bodyParser = require('koa-bodyparser');
+const staticFiles = require('koa-static');
 const rp = require('request-promise-native');
+const send = require('koa-send');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -19,6 +21,7 @@ onerror(app);
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser({detectJSON: () => true}));
+app.use(staticFiles(`${__dirname}/client/build`));
 
 let createBroadcast;
 
@@ -34,7 +37,10 @@ const socketService = socket => {
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
   .post('/api/book', create)
-  .get('/api/search/:isbn', search);
+  .get('/api/search/:isbn', search)
+  .all('*', async (ctx) => {
+    await send(ctx, 'client/build/index.html');
+});
 
 app.use(router.routes());
 
