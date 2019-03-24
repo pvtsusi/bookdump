@@ -15,6 +15,7 @@ import 'typeface-vollkorn';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import TopBar from './TopBar';
 
 
 const styles = theme => ({
@@ -22,7 +23,7 @@ const styles = theme => ({
     flexGrow: 1
   },
   grid: {
-    marginTop: 20,
+    marginTop: 70,
     maxWidth: 800,
     [theme.breakpoints.up('sm')]: {
       width: 'calc(100% - 40px)'
@@ -68,6 +69,7 @@ class App extends React.Component {
         <CssBaseline />
         <MuiThemeProvider theme={theme}>
           <div className={this.classes.root}>
+            <TopBar/>
             <Grid container justify="center">
               <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
                 <Grid item xs={12}>
