@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import configureStore, { history } from './configureStore';
 
-import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 const store = configureStore();
