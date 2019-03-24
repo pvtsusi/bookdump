@@ -2,7 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Book from './Book';
 import { getBooks } from '../reducers/books';
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from 'redux';
+
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Progress from './Progress';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+
+const styles = theme => ({
+  notification: {
+    textAlign: 'center',
+    fontWeight: 600,
+  }
+});
 
 const mapStateToProps = ({ books }) => ({
   books: books.books
@@ -16,6 +29,11 @@ const mapDispatchToProps = dispatch =>
   );
 
 class Books extends React.Component {
+  constructor(props) {
+    super(props);
+    this.classes = props.classes;
+  }
+
   componentWillMount () {
     this.props.getBooks();
   }
@@ -23,18 +41,20 @@ class Books extends React.Component {
   render () {
     if (!this.props.books) {
       return (
-        <div>Loading...</div>
+        <Progress className={this.classes.notification}/>
       );
     }
 
     if (this.props.books.length === 0) {
       return (
-        <div>No books</div>
+        <Typography className={this.classes.notification}>
+          No books
+        </Typography>
       );
     }
 
     return (
-      <div>
+      <List>
         {
           this.props.books.map(book => {
             return (
@@ -42,9 +62,13 @@ class Books extends React.Component {
             );
           })
         }
-      </div>
+      </List>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Books);
+Books.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Books));

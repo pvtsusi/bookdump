@@ -11,16 +11,40 @@ import openSocket from 'socket.io-client';
 import { kickback } from '../actions';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import 'typeface-roboto';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import 'typeface-vollkorn';
+import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 
-const styles = {
+
+const styles = theme => ({
   root: {
-    width: '100%',
-    maxWidth: 500,
+    flexGrow: 1
   },
-};
+  grid: {
+    marginTop: 20,
+    maxWidth: 600,
+    [theme.breakpoints.down('md')]: {
+      width: 'calc(100% - 40px)'
+    }
+  },
+  paper: {
+    padding: theme.spacing.unit * 2
+  }
+});
+
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+    fontFamily: [
+      'vollkorn',
+      'Times',
+      'Times New Roman',
+      'Georgia',
+      'serif'
+    ].join(',')
+  }
+});
 
 class App extends React.Component {
   constructor(props) {
@@ -30,6 +54,7 @@ class App extends React.Component {
       console.log(data);
       kickback(data);
     });
+    this.classes = props.classes;
   }
 
   componentDidMount() {
@@ -41,20 +66,31 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Typography variant="body1">
-          <ConnectedRouter history={this.props.history} >
-            <Switch>
-              <Route exact path="/" component={Books} />
-            </Switch>
-          </ConnectedRouter>
-        </Typography>
+        <MuiThemeProvider theme={theme}>
+          <div className={this.classes.root}>
+            <Grid container justify="center">
+              <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
+                <Grid item xs={12}>
+                  <Paper className={this.classes.paper}>
+                    <ConnectedRouter history={this.props.history} >
+                      <Switch>
+                        <Route exact path="/" component={Books} />
+                      </Switch>
+                    </ConnectedRouter>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Grid>
+          </div>
+        </MuiThemeProvider>
       </React.Fragment>
     );
   }
 }
 
 App.propTypes = {
-  history: PropTypes.object
+  history: PropTypes.object,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(state => state, { doPoke: Actions.doPoke })(App));

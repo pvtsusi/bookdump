@@ -1,10 +1,6 @@
 import agent from '../agent';
 
-const initialState = {
-  books: []
-};
-
-export default (state = initialState, action) => {
+export default (state = {}, action) => {
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
       return { ...state, books: action.payload };
