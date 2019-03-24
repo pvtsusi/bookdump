@@ -23,8 +23,8 @@ const styles = theme => ({
   },
   grid: {
     marginTop: 20,
-    maxWidth: 600,
-    [theme.breakpoints.down('md')]: {
+    maxWidth: 800,
+    [theme.breakpoints.up('sm')]: {
       width: 'calc(100% - 40px)'
     }
   },
