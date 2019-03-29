@@ -72,7 +72,7 @@ class App extends React.Component {
             <TopBar/>
             <Grid container justify="center">
               <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={10}>
                   <Paper className={this.classes.paper}>
                     <ConnectedRouter history={this.props.history} >
                       <Switch>

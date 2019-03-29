@@ -10,9 +10,11 @@
   "author": "Petteri Susi <susi@iki.fi>",
   "dependencies": {
     "@koa/cors": "^2.2.3",
+    "aws-sdk": "^2.431.0",
     "debug": "^2.6.3",
     "dotenv": "^6.2.0",
     "koa": "^2.7.0",
+    "koa-async-busboy": "^1.0.1",
     "koa-bodyparser": "^4.2.1",
     "koa-convert": "^1.2.0",
     "koa-json": "^2.0.2",

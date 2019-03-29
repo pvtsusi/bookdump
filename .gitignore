@@ -27,3 +27,6 @@ yarn-error.log*
 bookdump.iml
 bookdump.ipr
 bookdump.iws
+
+# Local environment variable overrides
+.env

@@ -8,6 +8,9 @@ const bodyParser = require('koa-bodyparser');
 const staticFiles = require('koa-static');
 const rp = require('request-promise-native');
 const send = require('koa-send');
+const AWS = require('aws-sdk');
+const fs = require('fs');
+const AsyncBusboy = require('koa-async-busboy');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -16,11 +19,32 @@ const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
 const BOOK_PREFIX = 'isbn:';
 
+const envOverride = `${__dirname}/.env`;
+if (fs.existsSync(envOverride)) {
+  const rows = fs.readFileSync(envOverride).toString().split('\n');
+  rows.forEach(row => {
+    const [key, val] = row.split('=', 2);
+    if (key && val && key.trim() && val.trim()) {
+      process.env[key] = val;
+    }
+  });
+}
+
+if (!process.env.AWS_ACCESS_KEY_ID) {
+  console.error('AWS_ACCESS_KEY_ID environment variable is not set');
+  process.exit(1);
+}
+if (!process.env.AWS_SECRET_ACCESS_KEY) {
+  console.error('AWS_SECRET_ACCESS_KEY environment variable is not set');
+  process.exit(1);
+}
+
+
 const app = new Koa();
 onerror(app);
 app.use(json({}));
 app.use(cors());
-app.use(bodyParser({detectJSON: () => true}));
+// app.use(bodyParser({detectJSON: () => true}));
 app.use(staticFiles(`${__dirname}/client/build`));
 
 let createBroadcast;
@@ -57,15 +81,45 @@ async function search (ctx) {
 }
 
 async function create (ctx) {
-  const book = ctx.request.body;
-  await db(storeBook, book);
-  if (createBroadcast) {
-    createBroadcast(book);
+  const busboy = new AsyncBusboy({
+    headers: ctx.req.headers
+  });
+  let fileName, book;
+  const promises = [];
+  await busboy
+    .onFile((fieldName, fileStream, filename, _, mimeType) => {
+      if (fieldName === 'cover') {
+        fileName = `${Math.round(Math.random() * 10000000)}_${filename}`;
+        promises.push(upload(fileStream, fileName, mimeType));
+      }
+    })
+    .onField((fieldName, val) => {
+      if (fieldName === 'metadata') {
+        book = JSON.parse(val);
+      }
+    })
+    .pipe(ctx.req);
+  if (book) {
+    if (fileName) {
+      book.cover = `https://s3.eu-north-1.amazonaws.com/bookdump/${fileName}`
+    }
+    promises.push(db(storeBook, book));
+    await Promise.all(promises);
+    ctx.status = 201;
+    ctx.set('Location', `/book/${book.isbn}`);
+    ctx.body = book
+  } else {
+    ctx.status = 400;
+    ctx.body = {message: 'No book metadata'};
   }
-  ctx.status = 201;
-  ctx.set('Location', `/book/${book.isbn}`);
-  ctx.body = book
 }
+
+function upload (stream, name, mimeType) {
+  const params = {Bucket: 'bookdump', ACL: 'public-read'};
+  const s3 = new AWS.S3({params, region: 'eu-north-1'});
+  return s3.upload({Body: stream, Key: name, ContentType: mimeType}).promise();
+}
+
 
 function db (dbFunction, arg) {
   return selectDb().then(() => dbFunction(arg));
