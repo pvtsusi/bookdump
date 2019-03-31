@@ -4,7 +4,6 @@ const cors = require('@koa/cors');
 const onerror = require('koa-onerror');
 const router = require('koa-router')();
 const json = require('koa-json');
-const bodyParser = require('koa-bodyparser');
 const staticFiles = require('koa-static');
 const rp = require('request-promise-native');
 const send = require('koa-send');
