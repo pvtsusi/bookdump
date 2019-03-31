@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Book from './Book';
-import { getBooks } from '../reducers/books';
+import { getBooks, selectBook } from '../reducers/books';
 import { bindActionCreators } from 'redux';
 
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Progress from './Progress';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
+import BookDialog from './BookDialog';
 
 const styles = theme => ({
   notification: {
@@ -18,13 +19,15 @@ const styles = theme => ({
 });
 
 const mapStateToProps = ({ books }) => ({
-  books: books.books
+  books: books.books,
+  selected: books.selected
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      getBooks
+      getBooks,
+      selectBook
     }, dispatch
   );
 
@@ -54,15 +57,18 @@ class Books extends React.Component {
     }
 
     return (
-      <List>
-        {
-          this.props.books.map(book => {
-            return (
-              <Book book={book} key={book.isbn} />
-            );
-          })
-        }
-      </List>
+      <React.Fragment>
+        <List>
+          {
+            this.props.books.map(book => {
+              return (
+                <Book book={book} key={book.isbn} onSelect={() => this.props.selectBook(book)} />
+              );
+            })
+          }
+        </List>
+        <BookDialog book={this.props.selected} />
+      </React.Fragment>
     );
   }
 }
