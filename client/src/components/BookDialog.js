@@ -17,6 +17,8 @@ import {bindActionCreators} from "redux";
 import {deselectBook} from "../reducers/books";
 import CardContent from "@material-ui/core/es/CardContent/CardContent";
 
+const EDGE = 270;
+
 const styles = theme => ({
   dialog: {
     padding: '0!important'
@@ -26,8 +28,8 @@ const styles = theme => ({
   },
   cover: {
     objectFit: 'contain',
-    height: 270,
-    width: 270
+    height: EDGE,
+    width: EDGE
   },
   metadata: {
     display: 'flex',
@@ -53,13 +55,18 @@ const mapDispatchToProps = dispatch =>
 
 const Cover = props =>  {
   if (props.book && props.book.cover) {
+
+    const { cover, title, width, height } = props.book;
+
+    const longerEdge = Math.max(width, height);
+    const shorterEdge = Math.min(width, height);
+    const scale = EDGE / longerEdge;
+    const shorterScaled = scale * shorterEdge;
+    const diff = parseInt((EDGE - shorterScaled) / 2) + 1;
+    const style = width < height ? {marginLeft: -diff} : {marginTop: -diff};
+
     return (
-      <CardMedia
-        component="img"
-        className={props.classes.cover}
-        image={props.book.cover}
-        title={props.book.title}
-      />
+      <CardMedia component="img" className={props.classes.cover} image={cover} title={title} style={style}/>
     );
   }
   return null;

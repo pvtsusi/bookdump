@@ -27,10 +27,6 @@ function Button(props) {
       </MaterialUiButton>
     </MuiThemeProvider>
   );
-};
-
-Button.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+}
 
 export default Button;
