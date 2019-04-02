@@ -1,3 +1,6 @@
+import { sessionService } from 'redux-react-session';
+import agent from './agent';
+
 export const POKE = 'poke';
 export const KICKBACK = 'kickback';
 
@@ -20,4 +23,12 @@ export const doPoke = options => async dispatch => {
 
   // Error handling...
   socket.emit(POKE, options);
+};
+
+export const login = (loginName, loginPass, history) => async dispatch => {
+  const response = await agent.Session.login(loginName, loginPass);
+  const { token, name } = response;
+  await sessionService.saveSession({ token });
+  await sessionService.saveUser({ name });
+  history.push('/');
 };

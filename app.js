@@ -10,6 +10,7 @@ const send = require('koa-send');
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const AsyncBusboy = require('koa-async-busboy');
+const bodyParser = require('koa-bodyparser');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -43,7 +44,7 @@ const app = new Koa();
 onerror(app);
 app.use(json({}));
 app.use(cors());
-// app.use(bodyParser({detectJSON: () => true}));
+app.use(bodyParser());
 app.use(staticFiles(`${__dirname}/client/build`));
 
 let createBroadcast;
@@ -61,6 +62,7 @@ router.get('/api/books', list)
   .get('/api/book/:isbn', view)
   .post('/api/book', create)
   .get('/api/search/:isbn', search)
+  .post('/api/login', login)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
 });
@@ -110,6 +112,19 @@ async function create (ctx) {
   } else {
     ctx.status = 400;
     ctx.body = {message: 'No book metadata'};
+  }
+}
+
+async function login (ctx) {
+  const { name, pass } = ctx.request.body;
+  if (name && pass) {
+    ctx.status = 200;
+    ctx.body = {
+      token: 'deadbeef',
+      name
+    };
+  } else {
+    ctx.status = 401;
   }
 }
 

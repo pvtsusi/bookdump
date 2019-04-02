@@ -2,11 +2,14 @@ import App from './components/App';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import React from 'react';
+import { sessionService } from 'redux-react-session';
 import configureStore, { history } from './configureStore';
 
 import * as serviceWorker from './serviceWorker';
 
 const store = configureStore();
+
+sessionService.initSessionService(store);
 
 ReactDOM.render((
   <Provider store={store}>
