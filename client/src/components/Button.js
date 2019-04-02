@@ -2,13 +2,13 @@ import React from 'react';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import MaterialUiButton from '@material-ui/core/Button';
-import 'typeface-pt-sans-narrow';
+import 'typeface-pt-sans';
 
 const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
     fontFamily: [
-      'PT Sans Narrow',
+      'PT Sans',
       'Arial',
       'Helvetica',
       'sans-serif'

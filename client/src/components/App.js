@@ -16,6 +16,7 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TopBar from './TopBar';
+import AdminLogin from "./AdminLogin";
 
 
 const styles = theme => ({
@@ -77,6 +78,7 @@ class App extends React.Component {
                     <ConnectedRouter history={this.props.history} >
                       <Switch>
                         <Route exact path="/" component={Books} />
+                        <Route exact path="/admin" component={AdminLogin} />
                       </Switch>
                     </ConnectedRouter>
                   </Paper>

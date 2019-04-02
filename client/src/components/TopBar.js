@@ -7,13 +7,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Logo from './Logo';
 import 'typeface-pt-sans-narrow';
+import Button from './Button';
 
 const styles = {
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   title: {
-
+    flexGrow: 1
   }
 };
 
@@ -38,10 +39,13 @@ function TopBar(props) {
         <Toolbar>
           <Logo/>
           <MuiThemeProvider theme={theme}>
-            <Typography variant="h4" color="inherit">
+            <Typography className={classes.title} variant="h4" color="inherit">
               Bookdump
             </Typography>
           </MuiThemeProvider>
+          <Button className={classes.loginButton}>
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
