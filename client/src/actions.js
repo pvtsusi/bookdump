@@ -26,9 +26,20 @@ export const doPoke = options => async dispatch => {
 };
 
 export const login = (loginName, loginPass, history) => async dispatch => {
-  const response = await agent.Session.login(loginName, loginPass);
-  const { token, name } = response;
-  await sessionService.saveSession({ token });
-  await sessionService.saveUser({ name });
-  history.push('/');
+  dispatch({ type: 'LOADING' });
+  try {
+    const response = await agent.Session.login(loginName, loginPass);
+    const { token, name } = response;
+    await sessionService.saveSession({ token });
+    await sessionService.saveUser({ name });
+    history.push('/');
+  } catch (err) {
+    if (err.status === 401) {
+      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Invalid password'});
+    } else {
+      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Failed to log in'});
+    }
+  } finally {
+    dispatch({type: 'LOADED'});
+  }
 };

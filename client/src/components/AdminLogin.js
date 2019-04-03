@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import {createMuiTheme, withStyles, MuiThemeProvider} from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography/Typography";
@@ -29,8 +27,16 @@ const theme = createMuiTheme({
   }
 });
 
+const mapStateToProps = ({ user }) => ({
+  errors: user.errors
+});
+
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ login }, dispatch);
+  bindActionCreators({
+    login,
+    setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message}),
+    clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR'})
+  }, dispatch);
 
 
 class AdminLogin extends React.Component {
@@ -40,17 +46,29 @@ class AdminLogin extends React.Component {
       name: '',
       pass: ''
     };
-    this.onChangeName = event => this.setState({...this.state, name: event.target.value});
-    this.onChangePass = event => this.setState({...this.state, pass: event.target.value});
+    this.onChangeName = event => {
+      this.props.clearErrors();
+      this.setState({...this.state, name: event.target.value});
+    };
+    this.onChangePass = event => {
+      this.props.clearErrors();
+      this.setState({...this.state, pass: event.target.value});
+    };
     this.onSubmit = event => {
       event.preventDefault();
       const { name, pass } = this.state;
+      if (!name) {
+        return this.props.setError('name', 'Name cannot be empty');
+      }
+      if (!pass) {
+        return this.props.setError('pass', 'Password cannot be empty');
+      }
       this.props.login(name, pass, this.props.history);
     };
   }
 
   render () {
-    const { classes } = this.props;
+    const { classes, errors } = this.props;
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -63,16 +81,19 @@ class AdminLogin extends React.Component {
             </Grid>
             <Grid item sm={6} xs={12}>
               <TextField
+                error={!!(errors && errors.name)}
                 id="name-input"
                 label="Name"
                 onChange={this.onChangeName}
                 className={classes.textField}
                 margin="normal"
                 variant="outlined"
+                helperText={errors && errors.name}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
               <TextField
+                error={!!(errors && errors.pass)}
                 id="password-input"
                 label="Password"
                 onChange={this.onChangePass}
@@ -80,6 +101,7 @@ class AdminLogin extends React.Component {
                 type="password"
                 margin="normal"
                 variant="outlined"
+                helperText={errors && errors.pass}
               />
             </Grid>
           </Grid>
@@ -94,4 +116,4 @@ AdminLogin.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(() => ({}), mapDispatchToProps)(AdminLogin));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AdminLogin));

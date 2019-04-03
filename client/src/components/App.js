@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TopBar from './TopBar';
 import AdminLogin from "./AdminLogin";
+import ModalProgress from './ModalProgress';
 
 
 const styles = theme => ({
@@ -48,6 +49,10 @@ const theme = createMuiTheme({
   }
 });
 
+const mapStateToProps = ({ progress }) => ({
+  loading: progress.loading
+});
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -69,6 +74,7 @@ class App extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <MuiThemeProvider theme={theme}>
+          <ModalProgress show={this.props.loading}/>
           <div className={this.classes.root}>
             <TopBar/>
             <Grid container justify="center">
@@ -97,4 +103,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(state => state, { doPoke: Actions.doPoke })(App));
+export default withStyles(styles)(connect(mapStateToProps, { doPoke: Actions.doPoke })(App));
