@@ -8,6 +8,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import StarIcon from '@material-ui/icons/Star';
 import PropTypes from "prop-types";
+import CardActionArea from '@material-ui/core/CardActionArea';
 
 const styles = theme => ({
   cover: {
@@ -25,23 +26,25 @@ class Book extends React.Component {
 
   render () {
     return (
-      <ListItem onClick={this.onSelect}>
-        {
-          this.book.cover &&
-          <Paper>
-            <ListItemAvatar className={this.classes.cover}>
-              <Avatar src={this.book.cover}/>
-            </ListItemAvatar>
-          </Paper>
-        }
-        <ListItemText inset primary={this.book.title} secondary={this.book.author}/>
-        {
-          this.book.recommended &&
-          <ListItemIcon>
-            <StarIcon/>
-          </ListItemIcon>
-        }
-      </ListItem>
+      <CardActionArea>
+        <ListItem onClick={this.onSelect}>
+          {
+            this.book.cover &&
+            <Paper>
+              <ListItemAvatar className={this.classes.cover}>
+                <Avatar src={this.book.cover}/>
+              </ListItemAvatar>
+            </Paper>
+          }
+          <ListItemText inset primary={this.book.title} secondary={this.book.author}/>
+          {
+            this.book.recommended &&
+            <ListItemIcon>
+              <StarIcon/>
+            </ListItemIcon>
+          }
+        </ListItem>
+      </CardActionArea>
     );
   }
 }
