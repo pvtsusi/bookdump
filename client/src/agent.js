@@ -4,11 +4,13 @@ const responseBody = res => res.body;
 
 const requests = {
   get: url => superagent.get(url).then(responseBody),
-  post: (url, body) => superagent.post(url, body).then(responseBody)
+  post: (url, body) => superagent.post(url, body).then(responseBody),
+  patch: (url, body) => superagent.patch(url, body).then(responseBody)
 };
 
 const Books = {
-  all: () => requests.get('/api/books')
+  all: () => requests.get('/api/books'),
+  update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, {[field]: value})
 };
 
 const Session = {

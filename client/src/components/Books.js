@@ -67,7 +67,7 @@ class Books extends React.Component {
             })
           }
         </List>
-        <BookDialog book={this.props.selected} />
+        <BookDialog book={this.props.books.find(book => book.isbn === this.props.selected)} />
       </React.Fragment>
     );
   }

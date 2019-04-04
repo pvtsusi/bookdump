@@ -60,6 +60,7 @@ const socketService = socket => {
 
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
+  .patch('/api/book/:isbn', edit)
   .post('/api/book', create)
   .get('/api/search/:isbn', search)
   .post('/api/login', login)
@@ -75,6 +76,16 @@ async function list (ctx) {
 
 async function view (ctx) {
   ctx.body = await db(retrieveBook, ctx.params.isbn);
+}
+
+async function edit (ctx) {
+  const book = await db(retrieveBook, ctx.params.isbn);
+  const patch = ctx.request.body;
+  const patched = {...book, ...patch};
+  await db(storeBook, patched);
+  ctx.set('Content-Location', `/api/book/${patched.isbn}`);
+  ctx.status = 204;
+  ctx.body = null;
 }
 
 async function search (ctx) {
@@ -107,7 +118,7 @@ async function create (ctx) {
     promises.push(db(storeBook, book));
     await Promise.all(promises);
     ctx.status = 201;
-    ctx.set('Location', `/book/${book.isbn}`);
+    ctx.set('Content-Location', `/book/${book.isbn}`);
     ctx.body = book
   } else {
     ctx.status = 400;

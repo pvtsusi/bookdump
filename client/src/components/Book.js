@@ -19,7 +19,6 @@ const styles = theme => ({
 class Book extends React.Component {
   constructor(props) {
     super(props);
-    this.book = props.book;
     this.classes = props.classes;
     this.onSelect = props.onSelect;
   }
@@ -29,16 +28,16 @@ class Book extends React.Component {
       <CardActionArea>
         <ListItem onClick={this.onSelect}>
           {
-            this.book.cover &&
+            this.props.book.cover &&
             <Paper>
               <ListItemAvatar className={this.classes.cover}>
-                <Avatar src={this.book.cover}/>
+                <Avatar src={this.props.book.cover}/>
               </ListItemAvatar>
             </Paper>
           }
-          <ListItemText inset primary={this.book.title} secondary={this.book.author}/>
+          <ListItemText inset primary={this.props.book.title} secondary={this.props.book.author}/>
           {
-            this.book.recommended &&
+            this.props.book.recommended &&
             <ListItemIcon>
               <StarIcon/>
             </ListItemIcon>

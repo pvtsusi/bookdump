@@ -13,6 +13,7 @@ import connect from "react-redux/es/connect/connect";
 import {bindActionCreators} from "redux";
 import {deselectBook} from "../reducers/books";
 import CardContent from "@material-ui/core/es/CardContent/CardContent";
+import BookField from './BookField';
 
 const EDGE = 270;
 
@@ -43,6 +44,10 @@ const styles = theme => ({
   }
 });
 
+const mapStateToProps = ({ books }) => ({
+  editing: books.editing
+});
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
@@ -69,13 +74,14 @@ const Cover = props =>  {
   return null;
 };
 
+
 class BookDialog extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render () {
-    const { classes, book } = this.props;
+    const { classes, book, editing } = this.props;
     return (
       <Dialog open={!!book} onClose={this.props.deselectBook}>
         <DialogContent className={classes.dialog}>
@@ -83,12 +89,16 @@ class BookDialog extends React.Component {
             <Cover book={book} classes={classes} />
             <div className={classes.metadata}>
               <CardContent className={classes.content}>
-                <Typography gutterBottom variant="h5" component="h5">
-                  {book ? book.title : ''}
-                </Typography>
-                <Typography gutterBottom variant="subtitle1" color="textSecondary">
-                  {book ? book.author : ''}
-                </Typography>
+                <BookField field="title" book={this.props.book} editing={editing === 'title'}>
+                  <Typography gutterBottom variant="h5" component="h5">
+                    {this.props.book ? this.props.book.title : ''}
+                  </Typography>
+                </BookField>
+                <BookField field="author" book={this.props.book} editing={editing === 'author'}>
+                  <Typography gutterBottom variant="subtitle1" color="textSecondary">
+                    {this.props.book ? this.props.book.author : ''}
+                  </Typography>
+                </BookField>
               </CardContent>
               <CardActions className={classes.actions}>
                 <Button onClick={this.props.deselectBook}>
@@ -107,4 +117,4 @@ BookDialog.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(() => ({}), mapDispatchToProps)(BookDialog));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(BookDialog));
