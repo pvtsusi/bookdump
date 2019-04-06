@@ -1,11 +1,10 @@
-import superagent from 'superagent';
-
-const responseBody = res => res.body;
+const resBody = async res => await res.json();
+const reqBody = (method, body) => ({method, body: JSON.stringify(body), headers: {'Content-Type': 'application/json'}});
 
 const requests = {
-  get: url => superagent.get(url).then(responseBody),
-  post: (url, body) => superagent.post(url, body).then(responseBody),
-  patch: (url, body) => superagent.patch(url, body).then(responseBody)
+  get: url => fetch(url).then(resBody),
+  post: (url, body) => fetch(url, reqBody('POST', body)).then(resBody),
+  patch: (url, body) => fetch(url, reqBody('PATCH', body)).then(resBody)
 };
 
 const Books = {

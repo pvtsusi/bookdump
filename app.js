@@ -11,6 +11,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const AsyncBusboy = require('koa-async-busboy');
 const bodyParser = require('koa-bodyparser');
+const jwt = require('jsonwebtoken')
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -18,6 +19,7 @@ const redis = require('redis').createClient(redisUrl);
 const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
 const BOOK_PREFIX = 'isbn:';
+const ADMIN_TOKEN_EXPIRATION = '1h';
 
 const envOverride = `${__dirname}/.env`;
 if (fs.existsSync(envOverride)) {
@@ -30,15 +32,21 @@ if (fs.existsSync(envOverride)) {
   });
 }
 
-if (!process.env.AWS_ACCESS_KEY_ID) {
-  console.error('AWS_ACCESS_KEY_ID environment variable is not set');
-  process.exit(1);
-}
-if (!process.env.AWS_SECRET_ACCESS_KEY) {
-  console.error('AWS_SECRET_ACCESS_KEY environment variable is not set');
-  process.exit(1);
-}
+const requiredEnvVars = [
+  'AWS_ACCESS_KEY_ID',
+  'AWS_SECRET_ACCESS_KEY',
+  'ADMIN_NAME',
+  'ADMIN_PASS',
+  'APP_SECRET'
+];
 
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`${envVar} environment variable is not set`);
+    process.exit(1);
+  }
+}
+const { ADMIN_NAME, ADMIN_PASS, APP_SECRET } = process.env;
 
 const app = new Koa();
 onerror(app);
@@ -84,8 +92,8 @@ async function edit (ctx) {
   const patched = {...book, ...patch};
   await db(storeBook, patched);
   ctx.set('Content-Location', `/api/book/${patched.isbn}`);
-  ctx.status = 204;
-  ctx.body = null;
+  ctx.status = 200;
+  ctx.body = {message: 'Ok'};
 }
 
 async function search (ctx) {
@@ -128,15 +136,26 @@ async function create (ctx) {
 
 async function login (ctx) {
   const { name, pass } = ctx.request.body;
-  if (name && pass) {
+  if (name === ADMIN_NAME && pass === ADMIN_PASS) {
+    const token = await signAdminToken();
     ctx.status = 200;
-    ctx.body = {
-      token: 'deadbeef',
-      name
-    };
+    ctx.body = { token, name };
   } else {
+    console.log(ctx.request.body);
     ctx.status = 401;
+    ctx.body = 'Unauthorized';
   }
+}
+
+function signAdminToken () {
+  return new Promise((resolve, reject) => {
+    jwt.sign({admin: true}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(token);
+    });
+  });
 }
 
 function upload (stream, name, mimeType) {
