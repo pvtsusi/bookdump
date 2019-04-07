@@ -5,6 +5,17 @@ const initialState = {
   editing: null
 };
 
+function updateField(books, isbn, field, value) {
+  return (books || []).map((book) => {
+    if (book.isbn === isbn) {
+      return {...book, [field]: value};
+    } else {
+      return book;
+    }
+  });
+}
+
+
 export default (state = initialState, action) => {
   const { field, value } = action;
   switch (action.type) {
@@ -17,14 +28,9 @@ export default (state = initialState, action) => {
     case 'EDIT_BOOK':
       return { ...state, editing: field };
     case 'UPDATE_BOOK':
-      const books = (state.books || []).map((book) => {
-        if (book.isbn === action.book.isbn) {
-          return { ...book, [field]: value};
-        } else {
-          return book;
-        }
-      });
-      return { ...state, books, editing: null };
+      return { ...state, books: updateField(state.books, action.book.isbn, field, value), editing: null };
+    case 'RESERVE_BOOK':
+      return { ...state, books: updateField(state.books, action.book.isbn, 'reserver', action.name), editing: null };
     default:
       return state;
   }
@@ -59,5 +65,12 @@ export const updateBook = (book, field, value) => {
   return async dispatch => {
     await agent.Books.update(book.isbn, field, value);
     dispatch({ type: 'UPDATE_BOOK', book, field, value});
+  }
+};
+
+export const reserveBook = (book) => {
+  return async dispatch => {
+    const { name } = await agent.Books.reserve(book.isbn);
+    dispatch({ type: 'RESERVE_BOOK', book, name});
   }
 };

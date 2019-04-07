@@ -31,7 +31,8 @@ const requests = {
 
 const Books = {
   all: () => requests.get('/api/books'),
-  update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, {[field]: value})
+  update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, {[field]: value}),
+  reserve: (isbn) => requests.post(`/api/book/${isbn}/reserve`, {})
 };
 
 const Session = {

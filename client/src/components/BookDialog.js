@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 
 import connect from "react-redux/es/connect/connect";
 import {bindActionCreators} from "redux";
-import {deselectBook} from "../reducers/books";
+import {deselectBook, reserveBook} from "../reducers/books";
 import CardContent from "@material-ui/core/es/CardContent/CardContent";
 import BookField from './BookField';
 
@@ -39,8 +39,9 @@ const styles = theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit
+    justifyContent: 'space-between',
+    paddingRight: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
   }
 });
 
@@ -51,7 +52,8 @@ const mapStateToProps = ({ books }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      deselectBook
+      deselectBook,
+      reserveBook
     }, dispatch
   );
 
@@ -101,6 +103,9 @@ class BookDialog extends React.Component {
                 <Button onClick={this.props.deselectBook}>
                   Close
                 </Button>
+                <Button onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
+                  I want this
+                </Button>
               </CardActions>
             </div>
           </Card>
@@ -110,6 +115,7 @@ class BookDialog extends React.Component {
   }
 }
 
+//                 <!-- how_to_vote  save_alt  local_library  book  check_circle  check_circle_outline  pan_tool -->
 BookDialog.propTypes = {
   classes: PropTypes.object.isRequired,
 };

@@ -19,7 +19,10 @@ const theme = createMuiTheme({
 function Button(props) {
   return (
     <MuiThemeProvider theme={theme}>
-      <MaterialUiButton onClick={props.onClick} color="primary">
+      <MaterialUiButton
+        onClick={props.onClick}
+        color={props.color || 'primary'}
+        variant={props.variant || 'text'}>
         {props.children}
       </MaterialUiButton>
     </MuiThemeProvider>

@@ -13,6 +13,7 @@ const AsyncBusboy = require('koa-async-busboy');
 const bodyParser = require('koa-bodyparser');
 const webToken = require('jsonwebtoken');
 const jwt = require('koa-jwt');
+const crypto = require('crypto');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -38,7 +39,8 @@ const requiredEnvVars = [
   'AWS_SECRET_ACCESS_KEY',
   'ADMIN_NAME',
   'ADMIN_PASS',
-  'APP_SECRET'
+  'APP_SECRET',
+  'NAME_SECRET'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -47,7 +49,17 @@ for (const envVar of requiredEnvVars) {
     process.exit(1);
   }
 }
-const { ADMIN_NAME, ADMIN_PASS, APP_SECRET } = process.env;
+const { ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
+
+const scripts = {
+  getAll: null,
+  reserve: null
+};
+const selectedDb = selectDb();
+for (const scriptName of Object.keys(scripts)) {
+  const script = fs.readFileSync(`${__dirname}/redis/${scriptName}.lua`).toString();
+  scripts[scriptName] = db(loadScript, script);
+}
 
 const app = new Koa();
 onerror(app);
@@ -75,6 +87,7 @@ router.get('/api/books', list)
   .post('/api/book', create)
   .get('/api/search/:isbn', search)
   .post('/api/login', login)
+  .post('/api/book/:isbn/reserve', reserve)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
 });
@@ -150,13 +163,36 @@ async function login (ctx) {
     ctx.body = { token, name, admin: true };
   } else {
     ctx.status = 401;
-    ctx.body = 'Unauthorized';
+    ctx.body = {message: 'Unauthorized'};
   }
+}
+
+async function reserve (ctx) {
+  if (!(ctx.state.user && ctx.state.user.name)) {
+    ctx.status = 401;
+    ctx.body = {message: 'User not recognized'};
+    return;
+  }
+  if (!ctx.params.isbn) {
+    ctx.status = 400;
+    ctx.body = {message: 'No ISBN given'};
+    return;
+  }
+  await reserveBook(ctx.params.isbn, ctx.state.user.name);
+  ctx.status = 200;
+  ctx.body = {name: ctx.state.user.name};
+}
+
+function userSha(name) {
+  return crypto.createHash('sha1')
+    .update(NAME_SECRET, 'utf8')
+    .update(name, 'utf8')
+    .digest('hex');
 }
 
 function signAdminToken () {
   return new Promise((resolve, reject) => {
-    webToken.sign({admin: true}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
+    webToken.sign({admin: true, name: ADMIN_NAME}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
       if (err) {
         return reject(err);
       }
@@ -172,8 +208,8 @@ function upload (stream, name, mimeType) {
 }
 
 
-function db (dbFunction, arg) {
-  return selectDb().then(() => dbFunction(arg));
+function db (dbFunction, ...args) {
+  return selectedDb.then(() => dbFunction(...args));
 }
 
 function selectDb () {
@@ -187,18 +223,28 @@ function selectDb () {
   });
 }
 
-function retrieveBooks () {
+function loadScript (script) {
   return new Promise((resolve, reject) => {
-    redis.keys(`${BOOK_PREFIX}*`, (error, keys) => {
+    redis.script('load', script, (error, digest) => {
       if (error) {
         return reject({message: error});
       }
-      redis.mget(keys, (error, books) => {
+      resolve(digest);
+    });
+  });
+}
+
+function retrieveBooks () {
+  return new Promise((resolve, reject) => {
+    scripts.getAll.then(digest => {
+      redis.evalsha(digest, 0, (error, books) => {
         if (error) {
-          return reject({message: error})
+          return reject({message: error});
         }
         resolve(books.map(JSON.parse));
-      });
+      })
+    }).catch(error => {
+      reject({message: error});
     });
   });
 }
@@ -232,6 +278,23 @@ function normalizeAuthor (book) {
   }
   return book;
 }
+
+function reserveBook (isbn, name) {
+  const sha = userSha(name);
+  return new Promise((resolve, reject) => {
+    scripts.reserve.then(digest => {
+      redis.evalsha(digest, 3, isbn, sha, name, (error) => {
+        if (error) {
+          return reject({message: error});
+        }
+        resolve();
+      })
+    }).catch(error => {
+      reject({message: error});
+    });
+  });
+}
+
 
 async function searchFromAll (isbn) {
   return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
