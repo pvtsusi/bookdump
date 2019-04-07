@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from './Button';
@@ -76,9 +76,6 @@ const Cover = props =>  {
 
 
 class BookDialog extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   render () {
     const { classes, book, editing } = this.props;
