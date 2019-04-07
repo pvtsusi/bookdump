@@ -29,9 +29,9 @@ export const login = (loginName, loginPass, history) => async dispatch => {
   dispatch({ type: 'LOADING' });
   try {
     const response = await agent.Session.login(loginName, loginPass);
-    const { token, name } = response;
+    const { token, name, admin } = response;
     await sessionService.saveSession({ token });
-    await sessionService.saveUser({ name });
+    await sessionService.saveUser({ name, admin });
     history.push('/');
   } catch (err) {
     if (err.status === 401) {

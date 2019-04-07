@@ -5,6 +5,10 @@ import {editBook, updateBook} from "../reducers/books";
 import {bindActionCreators} from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
+const mapStateToProps = ({ session }) => ({
+  admin: session.authenticated && session.user && session.user.admin
+});
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
@@ -12,7 +16,6 @@ const mapDispatchToProps = dispatch =>
       updateBook
     }, dispatch
   );
-
 
 class BookField extends React.Component {
   constructor(props) {
@@ -41,13 +44,15 @@ class BookField extends React.Component {
           <input type="submit" style={{display: 'none'}} />
         </form>
       );
+    } else if (this.props.admin) {
+      return (
+        <CardActionArea onClick={this.onClick}>
+          {this.props.children}
+        </CardActionArea>
+      );
     }
-    return (
-      <CardActionArea onClick={this.onClick}>
-        {this.props.children}
-      </CardActionArea>
-    );
+    return this.props.children;
   }
 }
 
-export default connect(() => ({}), mapDispatchToProps)(BookField);
+export default connect(mapStateToProps, mapDispatchToProps)(BookField);

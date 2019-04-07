@@ -147,7 +147,7 @@ async function login (ctx) {
   if (name === ADMIN_NAME && pass === ADMIN_PASS) {
     const token = await signAdminToken();
     ctx.status = 200;
-    ctx.body = { token, name };
+    ctx.body = { token, name, admin: true };
   } else {
     ctx.status = 401;
     ctx.body = 'Unauthorized';
