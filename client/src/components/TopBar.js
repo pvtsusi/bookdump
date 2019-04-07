@@ -8,6 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import Logo from './Logo';
 import 'typeface-pt-sans-narrow';
 import Button from './Button';
+import { connect } from 'react-redux';
+import { logout } from '../actions';
+import { bindActionCreators } from 'redux';
+
 
 const styles = {
   root: {
@@ -30,30 +34,46 @@ const theme = createMuiTheme({
   }
 });
 
-function TopBar(props) {
-  const {classes} = props;
+const mapStateToProps = ({ session }) => ({
+  signedIn: session.user && session.user.name
+});
 
-  return (
-    <div className={classes.root}>
-      <AppBar color="default">
-        <Toolbar>
-          <Logo/>
-          <MuiThemeProvider theme={theme}>
-            <Typography className={classes.title} variant="h4" color="inherit">
-              Bookdump
-            </Typography>
-          </MuiThemeProvider>
-          <Button className={classes.loginButton}>
-            Login
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({
+      logout
+    }, dispatch);
+
+class TopBar extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const {classes} = this.props;
+    return (
+      <div className={classes.root}>
+        <AppBar color="default">
+          <Toolbar>
+            <Logo/>
+            <MuiThemeProvider theme={theme}>
+              <Typography className={classes.title} variant="h4" color="inherit">
+                Bookdump
+              </Typography>
+            </MuiThemeProvider>
+            {this.props.signedIn &&
+            <Button onClick={this.props.logout}>
+              Sign out
+            </Button>
+            }
+          </Toolbar>
+        </AppBar>
+      </div>
+    );
+  }
 }
 
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TopBar);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(TopBar));

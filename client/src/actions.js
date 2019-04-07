@@ -43,3 +43,8 @@ export const login = (loginName, loginPass, history) => async dispatch => {
     dispatch({type: 'LOADED'});
   }
 };
+
+export const logout = () => async () => {
+  await sessionService.deleteUser();
+  await sessionService.deleteSession();
+};
