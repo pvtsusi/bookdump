@@ -11,7 +11,8 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const AsyncBusboy = require('koa-async-busboy');
 const bodyParser = require('koa-bodyparser');
-const jwt = require('jsonwebtoken')
+const webToken = require('jsonwebtoken');
+const jwt = require('koa-jwt');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -66,6 +67,8 @@ const socketService = socket => {
   createBroadcast = (book) => socket.broadcast.emit('kickback', book);
 };
 
+app.use(jwt({ secret: APP_SECRET, passthrough: true }));
+
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
   .patch('/api/book/:isbn', edit)
@@ -87,6 +90,11 @@ async function view (ctx) {
 }
 
 async function edit (ctx) {
+  if (!(ctx.state.user && ctx.state.user.admin)) {
+    ctx.status = 401;
+    ctx.body = {message: 'Unauthorized'};
+    return;
+  }
   const book = await db(retrieveBook, ctx.params.isbn);
   const patch = ctx.request.body;
   const patched = {...book, ...patch};
@@ -141,7 +149,6 @@ async function login (ctx) {
     ctx.status = 200;
     ctx.body = { token, name };
   } else {
-    console.log(ctx.request.body);
     ctx.status = 401;
     ctx.body = 'Unauthorized';
   }
@@ -149,7 +156,7 @@ async function login (ctx) {
 
 function signAdminToken () {
   return new Promise((resolve, reject) => {
-    jwt.sign({admin: true}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
+    webToken.sign({admin: true}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
       if (err) {
         return reject(err);
       }
