@@ -20,7 +20,8 @@ const styles = theme => ({
 
 const mapStateToProps = ({ books }) => ({
   books: books.books,
-  selected: books.selected
+  selected: books.selected,
+  error: books.error
 });
 
 const mapDispatchToProps = dispatch =>
@@ -42,6 +43,14 @@ class Books extends React.Component {
   }
 
   render () {
+    if (this.props.error) {
+      return (
+        <Typography className={this.classes.notification}>
+          Error: {this.props.error}
+        </Typography>
+      );
+    }
+
     if (!this.props.books) {
       return (
         <Progress className={this.classes.notification}/>

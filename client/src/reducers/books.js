@@ -5,22 +5,22 @@ const initialState = {
   editing: null
 };
 
-function updateField(books, isbn, field, value) {
-  return (books || []).map((book) => {
-    if (book.isbn === isbn) {
-      return {...book, [field]: value};
-    } else {
-      return book;
-    }
-  });
-}
-
-
 export default (state = initialState, action) => {
   const { field, value } = action;
+  const updateField = (f, v) =>
+    (state.books || []).map((book) => {
+      if (book.isbn === action.book.isbn) {
+        return {...book, [f]: v};
+      } else {
+        return book;
+      }
+    });
+
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
       return { ...state, books: action.payload };
+    case 'BOOKS_VIEW_ERROR':
+      return { ...state, error: action.error };
     case 'SELECT_BOOK':
       return { ...state, selected: action.book.isbn };
     case 'DESELECT_BOOK':
@@ -28,9 +28,9 @@ export default (state = initialState, action) => {
     case 'EDIT_BOOK':
       return { ...state, editing: field };
     case 'UPDATE_BOOK':
-      return { ...state, books: updateField(state.books, action.book.isbn, field, value), editing: null };
+      return { ...state, books: updateField(field, value), editing: null };
     case 'RESERVE_BOOK':
-      return { ...state, books: updateField(state.books, action.book.isbn, 'reserver', action.name), editing: null };
+      return { ...state, books: updateField('reserverName', action.name), editing: null };
     default:
       return state;
   }
@@ -38,8 +38,12 @@ export default (state = initialState, action) => {
 
 export const getBooks = () => {
   return async dispatch => {
-    const payload = await agent.Books.all();
-    dispatch({ type: 'BOOKS_VIEW_LOADED', payload });
+    try {
+      const payload = await agent.Books.all();
+      dispatch({ type: 'BOOKS_VIEW_LOADED', payload });
+    } catch (err) {
+      dispatch({ type: 'BOOKS_VIEW_ERROR', error: err.statusText});
+    }
   };
 };
 

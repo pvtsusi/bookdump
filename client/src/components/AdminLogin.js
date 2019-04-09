@@ -2,28 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import {createMuiTheme, withStyles, MuiThemeProvider} from '@material-ui/core/styles';
+import { withStyles, MuiThemeProvider} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography/Typography";
 import { login } from '../actions';
+import themes from '../themes';
 
 
 const styles = theme => ({
   textField: {
     width: '80%'
-  }
-});
-
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-    fontFamily: [
-      'PT Sans Narrow',
-      'Arial',
-      'Helvetica',
-      'sans-serif'
-    ].join(',')
   }
 });
 
@@ -71,7 +60,7 @@ class AdminLogin extends React.Component {
     const { classes, errors } = this.props;
 
     return (
-      <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={themes.narrow}>
         <form onSubmit={this.onSubmit} noValidate autoComplete="off">
           <Grid container spacing={16}>
             <Grid item sm={12}>

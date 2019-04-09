@@ -11,8 +11,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const AsyncBusboy = require('koa-async-busboy');
 const bodyParser = require('koa-bodyparser');
-const webToken = require('jsonwebtoken');
-const jwt = require('koa-jwt');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
@@ -74,12 +73,42 @@ const socketService = socket => {
   const _poke = async data => {
     socket.emit('kickback', 'yow!');
   };
-  console.log('Socket connection started!');
   socket.on('poke', _poke);
   createBroadcast = (book) => socket.broadcast.emit('kickback', book);
+
+  socket.on('validate_session', async data => {
+    try {
+      await verifyToken(data.token);
+      socket.emit('session_validated', {valid: true});
+    } catch (err) {
+      socket.emit('session_validated', {valid: false});
+    }
+  });
 };
 
-app.use(jwt({ secret: APP_SECRET, passthrough: true }));
+app.use(async (ctx, next) => {
+  const token = parseToken(ctx);
+  if (token) {
+    try {
+      ctx.state.user = await verifyToken(token);
+    } catch (err) {
+      ctx.state.authError = err;
+      if (err.name === 'TokenExpiredError') {
+        ctx.state.expired = true;
+        ctx.set('Token-Expired', 'true');
+      }
+    }
+  }
+  return next();
+});
+
+function parseToken(ctx) {
+  const auth = ctx.header && ctx.header.authorization || '';
+  if (!auth.toLowerCase().startsWith('bearer ')) {
+    return null;
+  }
+  return auth.substr('bearer '.length);
+}
 
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
@@ -95,7 +124,10 @@ router.get('/api/books', list)
 app.use(router.routes());
 
 async function list (ctx) {
-  ctx.body = await db(retrieveBooks);
+  const name = ctx.state.user && ctx.state.user.name;
+  const sha = name ? userSha(name) : null;
+  const admin = ctx.state.user && ctx.state.user.admin;
+  ctx.body = await db(retrieveBooks, sha, admin);
 }
 
 async function view (ctx) {
@@ -104,8 +136,8 @@ async function view (ctx) {
 
 async function edit (ctx) {
   if (!(ctx.state.user && ctx.state.user.admin)) {
-    ctx.status = 401;
-    ctx.body = {message: 'Unauthorized'};
+    ctx.status = 403;
+    ctx.body = {message: 'Forbidden'};
     return;
   }
   const book = await db(retrieveBook, ctx.params.isbn);
@@ -171,6 +203,7 @@ async function reserve (ctx) {
   if (!(ctx.state.user && ctx.state.user.name)) {
     ctx.status = 401;
     ctx.body = {message: 'User not recognized'};
+    ctx.set('WWW-Authenticate', 'Bearer');
     return;
   }
   if (!ctx.params.isbn) {
@@ -192,11 +225,22 @@ function userSha(name) {
 
 function signAdminToken () {
   return new Promise((resolve, reject) => {
-    webToken.sign({admin: true, name: ADMIN_NAME}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
+    jwt.sign({admin: true, name: ADMIN_NAME}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
       if (err) {
         return reject(err);
       }
       resolve(token);
+    });
+  });
+}
+
+function verifyToken (token) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, APP_SECRET, (err, decoded) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(decoded);
     });
   });
 }
@@ -206,7 +250,6 @@ function upload (stream, name, mimeType) {
   const s3 = new AWS.S3({params, region: 'eu-north-1'});
   return s3.upload({Body: stream, Key: name, ContentType: mimeType}).promise();
 }
-
 
 function db (dbFunction, ...args) {
   return selectedDb.then(() => dbFunction(...args));
@@ -234,10 +277,10 @@ function loadScript (script) {
   });
 }
 
-function retrieveBooks () {
+function retrieveBooks (sha, allNames) {
   return new Promise((resolve, reject) => {
     scripts.getAll.then(digest => {
-      redis.evalsha(digest, 0, (error, books) => {
+      redis.evalsha(digest, 2, sha || '', (!!allNames).toString(), (error, books) => {
         if (error) {
           return reject({message: error});
         }

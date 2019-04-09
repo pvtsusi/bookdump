@@ -9,13 +9,28 @@ async function sessionToken() {
   }
 }
 
-const resBody = async res => await res.json();
-async function reqBody(method, body) {
+class ResponseError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+    this.statusText = message;
+  }
+}
+
+const resBody = async res => {
+  if (!res.ok) {
+    throw new ResponseError(res.statusText, res.status);
+  }
+  return await res.json();
+};
+
+async function reqOpts(method, body = null) {
   const token = await sessionToken();
   const auth = token ? {Authorization: `Bearer ${token}`} : {};
+  const jsonBody = body ? {body: JSON.stringify(body)} : {}
   return {
     method,
-    body: JSON.stringify(body),
+    ...jsonBody,
     headers: {
       'Content-Type': 'application/json',
       ...auth
@@ -24,9 +39,9 @@ async function reqBody(method, body) {
 }
 
 const requests = {
-  get: url => fetch(url).then(resBody),
-  post: (url, body) => reqBody('POST', body).then(opts => fetch(url, opts)).then(resBody),
-  patch: (url, body) => reqBody('PATCH', body).then(opts => fetch(url, opts)).then(resBody)
+  get: url => reqOpts('GET').then(opts => fetch(url, opts)).then(resBody),
+  post: (url, body) => reqOpts('POST', body).then(opts => fetch(url, opts)).then(resBody),
+  patch: (url, body) => reqOpts('PATCH', body).then(opts => fetch(url, opts)).then(resBody)
 };
 
 const Books = {

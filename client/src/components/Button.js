@@ -1,24 +1,12 @@
 import React from 'react';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import MaterialUiButton from '@material-ui/core/Button';
-import 'typeface-pt-sans';
-
-const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-    fontFamily: [
-      'PT Sans',
-      'Arial',
-      'Helvetica',
-      'sans-serif'
-    ].join(',')
-  }
-});
+import themes from '../themes';
 
 function Button(props) {
   return (
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={themes.normal}>
       <MaterialUiButton
         onClick={props.onClick}
         color={props.color || 'primary'}
