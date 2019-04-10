@@ -30,7 +30,7 @@ const mapStateToProps = ({ session }) => ({
   userName: session.user && session.user.name
 });
 
-class Reserved extends React.Component {
+class ReservedBanner extends React.Component {
   constructor(props){
     super(props);
     this.classes = props.classes;
@@ -57,8 +57,8 @@ class Reserved extends React.Component {
   }
 }
 
-Reserved.propTypes = {
+ReservedBanner.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(mapStateToProps, () => ({}))(Reserved));
+export default withStyles(styles)(connect(mapStateToProps, () => ({}))(ReservedBanner));

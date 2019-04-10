@@ -9,12 +9,13 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 
-import connect from "react-redux/es/connect/connect";
+import { connect } from 'react-redux';
 import {bindActionCreators} from "redux";
-import {deselectBook, reserveBook} from "../reducers/books";
+import {deselectBook} from "../reducers/books";
 import CardContent from "@material-ui/core/es/CardContent/CardContent";
 import BookField from './BookField';
-import Reserved from './Reserved';
+import ReservedBanner from './ReservedBanner';
+import ReserveButton from './ReserveButton';
 
 const EDGE = 270;
 
@@ -54,7 +55,6 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       deselectBook,
-      reserveBook
     }, dispatch
   );
 
@@ -77,16 +77,15 @@ const Cover = props =>  {
   return null;
 };
 
-
 class BookDialog extends React.Component {
 
   render () {
-    const { classes, book, editing } = this.props;
+    const { classes, editing } = this.props;
     return (
-      <Dialog open={!!book} onClose={this.props.deselectBook}>
+      <Dialog open={!!this.props.book} onClose={this.props.deselectBook}>
         <DialogContent className={classes.dialog}>
           <Card className={classes.card}>
-            <Cover book={book} classes={classes} />
+            <Cover book={this.props.book} classes={classes} />
             <div className={classes.metadata}>
               <CardContent className={classes.content}>
                 <BookField field="title" book={this.props.book} editing={editing === 'title'}>
@@ -99,15 +98,13 @@ class BookDialog extends React.Component {
                     {this.props.book ? this.props.book.author : ''}
                   </Typography>
                 </BookField>
-                <Reserved reserver={this.props.book ? this.props.book.reserverName : null}/>
+                <ReservedBanner reserver={this.props.book ? this.props.book.reserverName : null}/>
               </CardContent>
               <CardActions className={classes.actions}>
                 <Button onClick={this.props.deselectBook}>
                   Close
                 </Button>
-                <Button onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
-                  I want this
-                </Button>
+                <ReserveButton book={this.props.book}/>
               </CardActions>
             </div>
           </Card>

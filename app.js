@@ -52,7 +52,8 @@ const { ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
 
 const scripts = {
   getAll: null,
-  reserve: null
+  reserve: null,
+  decline: null
 };
 const selectedDb = selectDb();
 for (const scriptName of Object.keys(scripts)) {
@@ -117,6 +118,7 @@ router.get('/api/books', list)
   .get('/api/search/:isbn', search)
   .post('/api/login', login)
   .post('/api/book/:isbn/reserve', reserve)
+  .post('/api/book/:isbn/decline', decline)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
 });
@@ -215,6 +217,24 @@ async function reserve (ctx) {
   ctx.status = 200;
   ctx.body = {name: ctx.state.user.name};
 }
+
+async function decline (ctx) {
+  if (!(ctx.state.user && ctx.state.user.name)) {
+    ctx.status = 401;
+    ctx.body = {message: 'User not recognized'};
+    ctx.set('WWW-Authenticate', 'Bearer');
+    return;
+  }
+  if (!ctx.params.isbn) {
+    ctx.status = 400;
+    ctx.body = {message: 'No ISBN given'};
+    return;
+  }
+  await declineBook(ctx.params.isbn, ctx.state.user.name);
+  ctx.status = 200;
+  ctx.body = {message: 'Ok'};
+}
+
 
 function userSha(name) {
   return crypto.createHash('sha1')
@@ -338,6 +358,21 @@ function reserveBook (isbn, name) {
   });
 }
 
+function declineBook (isbn, name) {
+  const sha = userSha(name);
+  return new Promise((resolve, reject) => {
+    scripts.reserve.then(digest => {
+      redis.evalsha(digest, 3, isbn, sha, name, (error) => {
+        if (error) {
+          return reject({message: error});
+        }
+        resolve();
+      })
+    }).catch(error => {
+      reject({message: error});
+    });
+  });
+}
 
 async function searchFromAll (isbn) {
   return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {

@@ -16,6 +16,16 @@ export default (state = initialState, action) => {
       }
     });
 
+  const deleteReserver = () =>
+    (state.books || []).map((book) => {
+      if (book.isbn === action.book.isbn) {
+        const {reserver, reserverName, ...clearedBook} = book;
+        return clearedBook;
+      } else {
+        return book;
+      }
+    });
+
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
       return { ...state, books: action.payload };
@@ -31,6 +41,8 @@ export default (state = initialState, action) => {
       return { ...state, books: updateField(field, value), editing: null };
     case 'RESERVE_BOOK':
       return { ...state, books: updateField('reserverName', action.name), editing: null };
+    case 'DECLINE_BOOK':
+      return { ...state, books: deleteReserver(), editing: null };
     default:
       return state;
   }
@@ -76,5 +88,12 @@ export const reserveBook = (book) => {
   return async dispatch => {
     const { name } = await agent.Books.reserve(book.isbn);
     dispatch({ type: 'RESERVE_BOOK', book, name});
+  }
+};
+
+export const declineBook = (book) => {
+  return async dispatch => {
+    await agent.Books.decline(book.isbn);
+    dispatch({ type: 'DECLINE_BOOK', book });
   }
 };
