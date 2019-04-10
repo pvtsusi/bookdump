@@ -14,6 +14,7 @@ import {bindActionCreators} from "redux";
 import {deselectBook, reserveBook} from "../reducers/books";
 import CardContent from "@material-ui/core/es/CardContent/CardContent";
 import BookField from './BookField';
+import Reserved from './Reserved';
 
 const EDGE = 270;
 
@@ -98,6 +99,7 @@ class BookDialog extends React.Component {
                     {this.props.book ? this.props.book.author : ''}
                   </Typography>
                 </BookField>
+                <Reserved reserver={this.props.book ? this.props.book.reserverName : null}/>
               </CardContent>
               <CardActions className={classes.actions}>
                 <Button onClick={this.props.deselectBook}>
