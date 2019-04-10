@@ -115,7 +115,6 @@ class BookDialog extends React.Component {
   }
 }
 
-//                 <!-- how_to_vote  save_alt  local_library  book  check_circle  check_circle_outline  pan_tool -->
 BookDialog.propTypes = {
   classes: PropTypes.object.isRequired,
 };
