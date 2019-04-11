@@ -6,7 +6,6 @@ import {withStyles, MuiThemeProvider} from '@material-ui/core';
 import themes from '../themes';
 import ReservedIcon from '@material-ui/icons/HowToVote'
 import PropTypes from "prop-types";
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import { connect } from 'react-redux';
 
 

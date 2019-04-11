@@ -25,14 +25,21 @@ export const doPoke = options => async dispatch => {
   socket.emit(POKE, options);
 };
 
-export const login = (loginName, loginPass, history) => async dispatch => {
+export const login = (loginName, loginPass, history, onSuccess) => async dispatch => {
   dispatch({ type: 'LOADING' });
   try {
     const response = await agent.Session.login(loginName, loginPass);
     const { token, name, admin } = response;
     await sessionService.saveSession({ token });
     await sessionService.saveUser({ name, admin });
-    history.push('/');
+    if (admin && history) {
+      history.push('/');
+    } else {
+      dispatch({type: 'LOGGED_IN'});
+    }
+    if (onSuccess) {
+      onSuccess();
+    }
   } catch (err) {
     if (err.status === 401) {
       dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Invalid password'});

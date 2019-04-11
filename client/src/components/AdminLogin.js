@@ -71,7 +71,7 @@ class AdminLogin extends React.Component {
             <Grid item sm={6} xs={12}>
               <TextField
                 error={!!(errors && errors.name)}
-                id="name-input"
+                id="admin-name-input"
                 label="Name"
                 onChange={this.onChangeName}
                 className={classes.textField}
@@ -83,7 +83,7 @@ class AdminLogin extends React.Component {
             <Grid item sm={6} xs={12}>
               <TextField
                 error={!!(errors && errors.pass)}
-                id="password-input"
+                id="admin-password-input"
                 label="Password"
                 onChange={this.onChangePass}
                 className={classes.textField}

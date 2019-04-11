@@ -86,14 +86,31 @@ export const updateBook = (book, field, value) => {
 
 export const reserveBook = (book) => {
   return async dispatch => {
-    const { name } = await agent.Books.reserve(book.isbn);
-    dispatch({ type: 'RESERVE_BOOK', book, name});
+    try {
+      const {name} = await agent.Books.reserve(book.isbn);
+      dispatch({ type: 'RESERVE_BOOK', book, name});
+    } catch (err) {
+      if (err.status === 401) {
+        dispatch({ type: 'LOG_IN', onSuccess: 'reserve', isbn: book.isbn})
+      } else {
+        throw err;
+      }
+    }
   }
 };
 
 export const declineBook = (book) => {
   return async dispatch => {
-    await agent.Books.decline(book.isbn);
-    dispatch({ type: 'DECLINE_BOOK', book });
+    try {
+      await agent.Books.decline(book.isbn);
+      dispatch({type: 'DECLINE_BOOK', book});
+    } catch (err) {
+      if (err.status === 401) {
+        dispatch({ type: 'LOG_IN', onSuccess: 'decline', isbn: book.isbn})
+      } else {
+        throw err;
+      }
+
+    }
   }
 };

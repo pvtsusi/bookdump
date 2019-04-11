@@ -192,9 +192,12 @@ async function create (ctx) {
 async function login (ctx) {
   const { name, pass } = ctx.request.body;
   if (name === ADMIN_NAME && pass === ADMIN_PASS) {
-    const token = await signAdminToken();
+    const adminToken = await signToken(name, true);
     ctx.status = 200;
-    ctx.body = { token, name, admin: true };
+    ctx.body = {token: adminToken, name, admin: true};
+  } else if (name && !pass) {
+    const token = await signToken(name);
+    ctx.body = {token, name};
   } else {
     ctx.status = 401;
     ctx.body = {message: 'Unauthorized'};
@@ -243,9 +246,11 @@ function userSha(name) {
     .digest('hex');
 }
 
-function signAdminToken () {
+function signToken (name, admin) {
+  const payload = admin ? { admin: true, name: name } : { name : name };
+  const options = admin ? { expiresIn: ADMIN_TOKEN_EXPIRATION } : {};
   return new Promise((resolve, reject) => {
-    jwt.sign({admin: true, name: ADMIN_NAME}, APP_SECRET, {expiresIn: ADMIN_TOKEN_EXPIRATION}, (err, token) => {
+    jwt.sign(payload, APP_SECRET, options, (err, token) => {
       if (err) {
         return reject(err);
       }
@@ -361,7 +366,7 @@ function reserveBook (isbn, name) {
 function declineBook (isbn, name) {
   const sha = userSha(name);
   return new Promise((resolve, reject) => {
-    scripts.reserve.then(digest => {
+    scripts.decline.then(digest => {
       redis.evalsha(digest, 3, isbn, sha, name, (error) => {
         if (error) {
           return reject({message: error});

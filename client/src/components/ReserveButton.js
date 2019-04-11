@@ -1,10 +1,9 @@
 import React from 'react';
 import Button from './Button';
-import CardActions from '@material-ui/core/CardActions/CardActions';
 import {bindActionCreators} from 'redux';
 import {deselectBook, reserveBook, declineBook} from '../reducers/books';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import LoginDialog from './LoginDialog';
 
 
 const mapDispatchToProps = dispatch =>
@@ -29,16 +28,15 @@ class ReserveButton extends React.Component {
       );
     }
     return (
-      <Button onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
-        I want this
-      </Button>
+      <React.Fragment>
+        <Button onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
+          I want this
+        </Button>
+        <LoginDialog onSuccess={() => this.props.reserveBook(this.props.book)}/>
+      </React.Fragment>
     );
   }
 }
-
-ReserveButton.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 
 export default connect(() => ({}), mapDispatchToProps)(ReserveButton);
