@@ -2,7 +2,8 @@ import agent from '../agent';
 
 const initialState = {
   selected: null,
-  editing: null
+  editing: null,
+  booksByReserver: {}
 };
 
 export default (state = initialState, action) => {
@@ -26,9 +27,17 @@ export default (state = initialState, action) => {
       }
     });
 
+  const groupByReserver = () =>
+    (action.payload || [])
+      .filter(book => book.reserver)
+      .reduce((acc, curr) => {
+        (acc[curr.reserver] = acc[curr.reserver] || []).push(curr);
+        return acc;
+      }, {});
+
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
-      return { ...state, books: action.payload };
+      return { ...state, books: action.payload, booksByReserver: groupByReserver() };
     case 'BOOKS_VIEW_ERROR':
       return { ...state, error: action.error };
     case 'SELECT_BOOK':

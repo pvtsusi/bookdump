@@ -16,8 +16,9 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = ({ user }) => ({
-  errors: user.errors
+const mapStateToProps = ({ user, progress }) => ({
+  errors: user.errors,
+  loading: progress.loading
 });
 
 const mapDispatchToProps = dispatch =>
@@ -78,6 +79,7 @@ class AdminLogin extends React.Component {
                 margin="normal"
                 variant="outlined"
                 helperText={errors && errors.name}
+                disabled={this.props.loading}
               />
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -91,6 +93,7 @@ class AdminLogin extends React.Component {
                 margin="normal"
                 variant="outlined"
                 helperText={errors && errors.pass}
+                disabled={this.props.loading}
               />
             </Grid>
           </Grid>

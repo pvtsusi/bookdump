@@ -10,6 +10,7 @@ function Button(props) {
       <MaterialUiButton
         onClick={props.onClick}
         color={props.color || 'primary'}
+        mini={props.mini}
         variant={props.variant || 'text'}>
         {props.children}
       </MaterialUiButton>

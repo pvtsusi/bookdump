@@ -204,6 +204,10 @@ async function login (ctx) {
   }
 }
 
+function slowDown(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function reserve (ctx) {
   if (!(ctx.state.user && ctx.state.user.name)) {
     ctx.status = 401;
@@ -233,7 +237,7 @@ async function decline (ctx) {
     ctx.body = {message: 'No ISBN given'};
     return;
   }
-  await declineBook(ctx.params.isbn, ctx.state.user.name);
+  await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.admin);
   ctx.status = 200;
   ctx.body = {message: 'Ok'};
 }
@@ -363,11 +367,11 @@ function reserveBook (isbn, name) {
   });
 }
 
-function declineBook (isbn, name) {
+function declineBook (isbn, name, override) {
   const sha = userSha(name);
   return new Promise((resolve, reject) => {
     scripts.decline.then(digest => {
-      redis.evalsha(digest, 3, isbn, sha, name, (error) => {
+      redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error) => {
         if (error) {
           return reject({message: error});
         }

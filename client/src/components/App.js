@@ -16,7 +16,7 @@ import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import TopBar from './TopBar';
-import AdminLogin from "./AdminLogin";
+import AdminView from './AdminView';
 import ModalProgress from './ModalProgress';
 import { isValidSession } from '../reducers/socket';
 import LoggedOutSnackbar from './LoggedOutSnackbar';
@@ -94,7 +94,7 @@ class App extends React.Component {
                     <ConnectedRouter history={this.props.history} >
                       <Switch>
                         <Route exact path="/" component={Books} />
-                        <Route exact path="/admin" component={AdminLogin} />
+                        <Route exact path="/admin" component={AdminView} />
                       </Switch>
                     </ConnectedRouter>
                   </Paper>

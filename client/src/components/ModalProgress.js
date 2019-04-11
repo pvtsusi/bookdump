@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core';
 import Progress from './Progress';
 import Grid from '@material-ui/core/Grid/Grid';
+import Fade from '@material-ui/core/Fade/Fade';
 
 const styles = theme => ({
   backdrop: {
@@ -26,12 +27,16 @@ class ModalProgress extends React.Component {
     if (this.props.show) {
       return (
         <React.Fragment>
-          <Backdrop open={this.props.show} className={this.classes.backdrop}/>
-          <Grid container spacing={0} alignItems="center" justify="center" className={this.classes.container}>
-            <Grid item xs={3}>
-              <Progress/>
+          <Fade in style={{transitionDelay: this.props.show ? '600ms' : '0ms'}} unmountOnExit>
+            <Backdrop open={this.props.show} className={this.classes.backdrop}/>
+          </Fade>
+          <Fade in style={{transitionDelay: this.props.show ? '500ms' : '0ms'}} unmountOnExit>
+            <Grid container spacing={0} alignItems="center" justify="center" className={this.classes.container}>
+              <Grid item xs={3}>
+                <Progress/>
+              </Grid>
             </Grid>
-          </Grid>
+          </Fade>
         </React.Fragment>
       );
     }

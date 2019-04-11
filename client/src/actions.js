@@ -1,5 +1,6 @@
 import { sessionService } from 'redux-react-session';
 import agent from './agent';
+import {getBooks} from './reducers/books';
 
 export const POKE = 'poke';
 export const KICKBACK = 'kickback';
@@ -51,7 +52,8 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
   }
 };
 
-export const logout = () => async () => {
+export const logout = () => async dispatch => {
   await sessionService.deleteUser();
   await sessionService.deleteSession();
+  getBooks()(dispatch);
 };
