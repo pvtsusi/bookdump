@@ -10,9 +10,9 @@ import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListSubheader from '@material-ui/core/es/ListSubheader/ListSubheader';
 import {MuiThemeProvider} from '@material-ui/core';
 import themes from '../themes';
-import ListItemIcon from '@material-ui/core/ListItemIcon/ListItemIcon';
 import CloseIcon from '@material-ui/icons/Close';
-import Button from './Button';
+import ListItemSecondaryAction from '@material-ui/core/es/ListItemSecondaryAction/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton/IconButton';
 
 const mapStateToProps = ({ session, books }) => ({
   admin: session.authenticated && session.user && session.user.admin,
@@ -75,7 +75,7 @@ class AdminView extends React.Component {
                 const reserverName = this.props.books[reserver][0].reserverName;
                 return (
                   <li key={reserver}>
-                    <ul>
+                    <ul style={{listStyle: 'none'}}>
                       <ListSubheader>
                         <Typography variant="h6">
                           {reserverName}
@@ -85,12 +85,12 @@ class AdminView extends React.Component {
                         this.props.books[reserver]
                           .filter(book => !this.state.declined[book.isbn]).map(book => (
                           <ListItem key={book.isbn}>
-                            <ListItemIcon>
-                              <Button onClick={() => this.decline(book)} variant="fab" mini>
-                                <CloseIcon/>
-                              </Button>
-                            </ListItemIcon>
                             <ListItemText inset primary={book.title} secondary={book.author}/>
+                            <ListItemSecondaryAction>
+                              <IconButton onClick={() => this.decline(book)} color="secondary">
+                                <CloseIcon/>
+                              </IconButton>
+                            </ListItemSecondaryAction>
                           </ListItem>
                         ))
                       }
