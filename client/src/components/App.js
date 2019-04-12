@@ -39,8 +39,9 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = ({ progress }) => ({
-  loading: progress.loading
+const mapStateToProps = ({ progress, session }) => ({
+  loading: progress.loading,
+  admin: session.authenticated && session.user && session.user.admin,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -64,7 +65,7 @@ class App extends React.Component {
     });
     this.socket.on('session_validated', data => {
       if (!data.valid) {
-        this.props.logout();
+        this.props.logout(this.props.admin);
         this.props.loggedOut();
       }
       this.props.sessionValidated();

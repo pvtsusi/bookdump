@@ -93,6 +93,8 @@ app.use(async (ctx, next) => {
   if (token) {
     try {
       ctx.state.user = await verifyToken(token);
+      const userShaInput = ctx.state.user.admin ? ctx.state.user.name : `${token}:${ctx.state.user.name}`;
+      ctx.state.user.sha = userSha(userShaInput);
     } catch (err) {
       ctx.state.authError = err;
       if (err.name === 'TokenExpiredError') {
@@ -128,8 +130,7 @@ router.get('/api/books', list)
 app.use(router.routes());
 
 async function list (ctx) {
-  const name = ctx.state.user && ctx.state.user.name;
-  const sha = name ? userSha(name) : null;
+  const sha = ctx.state.user && ctx.state.user.sha;
   const admin = ctx.state.user && ctx.state.user.admin;
   ctx.body = await db(retrieveBooks, sha, admin);
 }
@@ -208,11 +209,12 @@ async function login (ctx) {
 
 async function forget (ctx) {
   const name = ctx.state.user && ctx.state.user.name;
+  const sha = ctx.state.user && ctx.state.user.sha;
   if (name === ADMIN_NAME) {
     ctx.status = 400;
     ctx.body = {message: 'Unable to forget'};
-  } else if (name) {
-    await forgetUser(name);
+  } else if (sha) {
+    await forgetUser(sha);
     ctx.status = 200;
     ctx.body = {message: 'Ok'}
   } else {
@@ -237,7 +239,7 @@ async function reserve (ctx) {
     ctx.body = {message: 'No ISBN given'};
     return;
   }
-  await reserveBook(ctx.params.isbn, ctx.state.user.name);
+  await reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
   ctx.status = 200;
   ctx.body = {name: ctx.state.user.name};
 }
@@ -254,7 +256,7 @@ async function decline (ctx) {
     ctx.body = {message: 'No ISBN given'};
     return;
   }
-  await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.admin);
+  await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
   ctx.status = 200;
   ctx.body = {message: 'Ok'};
 }
@@ -368,8 +370,7 @@ function normalizeAuthor (book) {
   return book;
 }
 
-function reserveBook (isbn, name) {
-  const sha = userSha(name);
+function reserveBook (isbn, name, sha) {
   return new Promise((resolve, reject) => {
     scripts.reserve.then(digest => {
       redis.evalsha(digest, 3, isbn, sha, name, (error) => {
@@ -384,8 +385,7 @@ function reserveBook (isbn, name) {
   });
 }
 
-function declineBook (isbn, name, override) {
-  const sha = userSha(name);
+function declineBook (isbn, name, sha, override) {
   return new Promise((resolve, reject) => {
     scripts.decline.then(digest => {
       redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error) => {
@@ -400,8 +400,7 @@ function declineBook (isbn, name, override) {
   });
 }
 
-function forgetUser (name) {
-  const sha = userSha(name);
+function forgetUser (sha) {
   return new Promise((resolve, reject) => {
     scripts.forget.then(digest => {
       redis.evalsha(digest, 1, sha, (error) => {

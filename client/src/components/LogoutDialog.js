@@ -17,8 +17,9 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = ({ user }) => ({
-  loggingOut: user.loggingOut
+const mapStateToProps = ({ user, session }) => ({
+  loggingOut: user.loggingOut,
+  admin: session.authenticated && session.user && session.user.admin,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -54,7 +55,7 @@ class LogoutDialog extends React.Component {
             <Button onClick={this.props.cancelLoggingOut}>
               Never mind
             </Button>
-            <Button variant="contained" color="secondary" onClick={this.props.logout}>
+            <Button variant="contained" color="secondary" onClick={() => this.props.logout(this.props.admin)}>
               Yes, do that
             </Button>
           </DialogActions>

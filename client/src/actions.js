@@ -52,8 +52,10 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
   }
 };
 
-export const logout = () => async dispatch => {
-  await agent.Session.forget();
+export const logout = (admin) => async dispatch => {
+  if (!admin) {
+    await agent.Session.forget();
+  }
   await sessionService.deleteUser();
   await sessionService.deleteSession();
   getBooks()(dispatch);
