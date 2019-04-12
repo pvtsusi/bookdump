@@ -53,7 +53,8 @@ const { ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
 const scripts = {
   getAll: null,
   reserve: null,
-  decline: null
+  decline: null,
+  forget: null
 };
 const selectedDb = selectDb();
 for (const scriptName of Object.keys(scripts)) {
@@ -117,6 +118,7 @@ router.get('/api/books', list)
   .post('/api/book', create)
   .get('/api/search/:isbn', search)
   .post('/api/login', login)
+  .post('/api/forget', forget)
   .post('/api/book/:isbn/reserve', reserve)
   .post('/api/book/:isbn/decline', decline)
   .all('*', async (ctx) => {
@@ -198,6 +200,21 @@ async function login (ctx) {
   } else if (name && !pass) {
     const token = await signToken(name);
     ctx.body = {token, name};
+  } else {
+    ctx.status = 401;
+    ctx.body = {message: 'Unauthorized'};
+  }
+}
+
+async function forget (ctx) {
+  const name = ctx.state.user && ctx.state.user.name;
+  if (name === ADMIN_NAME) {
+    ctx.status = 400;
+    ctx.body = {message: 'Unable to forget'};
+  } else if (name) {
+    await forgetUser(name);
+    ctx.status = 200;
+    ctx.body = {message: 'Ok'}
   } else {
     ctx.status = 401;
     ctx.body = {message: 'Unauthorized'};
@@ -372,6 +389,22 @@ function declineBook (isbn, name, override) {
   return new Promise((resolve, reject) => {
     scripts.decline.then(digest => {
       redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error) => {
+        if (error) {
+          return reject({message: error});
+        }
+        resolve();
+      })
+    }).catch(error => {
+      reject({message: error});
+    });
+  });
+}
+
+function forgetUser (name) {
+  const sha = userSha(name);
+  return new Promise((resolve, reject) => {
+    scripts.forget.then(digest => {
+      redis.evalsha(digest, 1, sha, (error) => {
         if (error) {
           return reject({message: error});
         }

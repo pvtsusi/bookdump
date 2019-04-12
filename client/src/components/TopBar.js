@@ -7,11 +7,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Logo from './Logo';
 import 'typeface-pt-sans-narrow';
-import Button from './Button';
-import { connect } from 'react-redux';
-import { logout } from '../actions';
-import { bindActionCreators } from 'redux';
 import themes from '../themes';
+import SessionPopover from './SessionPopover';
 
 
 const styles = {
@@ -22,15 +19,6 @@ const styles = {
     flexGrow: 1
   }
 };
-
-const mapStateToProps = ({ session }) => ({
-  signedIn: session.user && session.user.name
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({
-      logout
-    }, dispatch);
 
 class TopBar extends React.Component {
   render() {
@@ -45,11 +33,7 @@ class TopBar extends React.Component {
                 Bookdump
               </Typography>
             </MuiThemeProvider>
-            {this.props.signedIn &&
-            <Button onClick={this.props.logout}>
-              Sign out
-            </Button>
-            }
+            <SessionPopover/>
           </Toolbar>
         </AppBar>
       </div>
@@ -61,4 +45,4 @@ TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(TopBar));
+export default withStyles(styles)(TopBar);

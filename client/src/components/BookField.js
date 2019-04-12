@@ -24,7 +24,7 @@ class BookField extends React.Component {
       editedValue: this.props.book ? this.props.book[this.props.field] : ''
     };
     this.onClick = () => this.props.editBook(this.props.field);
-    this.onChange = event => this.setState({...this.state, editedValue: event.target.value});
+    this.onChange = event => this.setState({ editedValue: event.target.value});
     this.onSubmit = event => {
       event.preventDefault();
       this.props.updateBook(this.props.book, this.props.field, this.state.editedValue);

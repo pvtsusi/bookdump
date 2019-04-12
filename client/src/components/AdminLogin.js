@@ -38,11 +38,11 @@ class AdminLogin extends React.Component {
     };
     this.onChangeName = event => {
       this.props.clearErrors();
-      this.setState({...this.state, name: event.target.value});
+      this.setState({ name: event.target.value});
     };
     this.onChangePass = event => {
       this.props.clearErrors();
-      this.setState({...this.state, pass: event.target.value});
+      this.setState({ pass: event.target.value});
     };
     this.onSubmit = event => {
       event.preventDefault();

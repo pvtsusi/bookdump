@@ -4,15 +4,12 @@ import {MuiThemeProvider, withStyles} from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog/Dialog';
 import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
 import themes from '../themes';
-import Typography from '@material-ui/core/es/Typography/Typography';
-import Grid from '@material-ui/core/Grid/Grid';
 import TextField from '@material-ui/core/TextField/TextField';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
 import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
 import Button from './Button';
 import {bindActionCreators} from 'redux';
-import {deselectBook} from '../reducers/books';
 import { login } from '../actions';
 
 const styles = theme => ({

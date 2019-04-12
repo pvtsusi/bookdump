@@ -6,13 +6,16 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
+import grey from '@material-ui/core/colors/grey';
 
 
-const styles = {
+const styles = theme => ({
   message: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: grey[50],
+    color: 'black'
   }
-};
+});
 
 const mapStateToProps = ({ user }) => ({
   loggedOut: user.loggedOut
@@ -38,6 +41,7 @@ class LoggedOutSnackbar extends React.Component {
         <Snackbar
           open={this.props.loggedOut}
           onClose={this.props.confirmLoggedOut}
+          autoHideDuration={5000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
           <SnackbarContent message="You have been logged out." className={this.classes.message} />
         </Snackbar>

@@ -52,7 +52,8 @@ const Books = {
 };
 
 const Session = {
-  login: (name, pass) => requests.post('/api/login', {name, pass})
+  login: (name, pass) => requests.post('/api/login', {name, pass}),
+  forget: () => requests.post('/api/forget', {})
 };
 
 export default {

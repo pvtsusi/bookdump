@@ -22,14 +22,14 @@ class ReserveButton extends React.Component {
     }
     if (this.props.book.reserverName) {
       return (
-        <Button onClick={() => this.props.declineBook(this.props.book)} variant="contained">
+        <Button disableRipple onClick={() => this.props.declineBook(this.props.book)} variant="outlined" color="secondary">
           I don't want this
         </Button>
       );
     }
     return (
       <React.Fragment>
-        <Button onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
+        <Button disableRipple onClick={() => this.props.reserveBook(this.props.book)} variant="contained">
           I want this
         </Button>
         <LoginDialog onSuccess={() => this.props.reserveBook(this.props.book)}/>

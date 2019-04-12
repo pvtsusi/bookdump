@@ -4,7 +4,7 @@ import AdminLogin from './AdminLogin';
 import List from '@material-ui/core/List/List';
 import Typography from '@material-ui/core/Typography/Typography';
 import {bindActionCreators} from 'redux';
-import {declineBook, getBooks, selectBook} from '../reducers/books';
+import {declineBook, getBooks} from '../reducers/books';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
 import ListSubheader from '@material-ui/core/es/ListSubheader/ListSubheader';
@@ -37,7 +37,7 @@ class AdminView extends React.Component {
     };
     this.decline = (book) => {
       this.props.declineBook(book);
-      this.setState({...this.state, declined:{ ...this.state.declined, [book.isbn]: true}});
+      this.setState({ declined:{ ...this.state.declined, [book.isbn]: true}});
     };
   }
   componentWillMount () {

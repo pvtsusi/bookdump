@@ -5,7 +5,7 @@ import { getBooks, selectBook } from '../reducers/books';
 import { bindActionCreators } from 'redux';
 
 import PropTypes from 'prop-types';
-import {MuiThemeProvider, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Progress from './Progress';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
