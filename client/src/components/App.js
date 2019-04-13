@@ -6,10 +6,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import Books from './Books';
 import {bindActionCreators} from 'redux';
 
-import * as Actions from '../actions';
 import openSocket from 'socket.io-client';
-
-import { kickback } from '../actions';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
@@ -21,6 +18,7 @@ import ModalProgress from './ModalProgress';
 import { isValidSession } from '../reducers/socket';
 import LoggedOutSnackbar from './LoggedOutSnackbar';
 import themes from '../themes';
+import {logout} from '../reducers/user';
 
 
 const styles = theme => ({
@@ -47,11 +45,10 @@ const mapStateToProps = ({ progress, session }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      poke: Actions.doPoke,
       isValidSession,
       sessionValidated: () => dispatch({ type: 'SESSION_VALIDATED'}),
       loggedOut: () => dispatch({ type: 'LOGGED_OUT' }),
-      logout: Actions.logout
+      logout: logout
     }, dispatch
   );
 
@@ -59,10 +56,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.socket = openSocket('/');
-    this.socket.on(Actions.KICKBACK, data => {
-      console.log(data);
-      kickback(data);
-    });
     this.socket.on('session_validated', data => {
       if (!data.valid) {
         this.props.logout(this.props.admin);
@@ -74,8 +67,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // Accessible because we 'connected'
-    this.props.poke({ socket: this.socket });
     setInterval(() => this.props.isValidSession({socket: this.socket}), 5000);
   }
 

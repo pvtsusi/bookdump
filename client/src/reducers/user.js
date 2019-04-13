@@ -1,3 +1,7 @@
+import agent from '../agent';
+import {sessionService} from 'redux-react-session';
+import {getBooks} from './books';
+
 const initialState = {
   errors: {},
   loggingOut: false,
@@ -34,3 +38,39 @@ export default (state = initialState, action) => {
       return state;
   }
 }
+
+export const login = (loginName, loginPass, history, onSuccess) => async dispatch => {
+  dispatch({ type: 'LOADING' });
+  try {
+    const response = await agent.Session.login(loginName, loginPass);
+    const { token, name, admin } = response;
+    await sessionService.saveSession({ token });
+    await sessionService.saveUser({ name, admin });
+    if (admin && history) {
+      history.push('/');
+    } else {
+      dispatch({type: 'LOGGED_IN'});
+    }
+    if (onSuccess) {
+      onSuccess();
+    }
+  } catch (err) {
+    if (err.status === 401) {
+      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Invalid password'});
+    } else {
+      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Failed to log in'});
+    }
+  } finally {
+    dispatch({type: 'LOADED'});
+  }
+};
+
+export const logout = (admin) => async dispatch => {
+  if (!admin) {
+    await agent.Session.forget();
+  }
+  await sessionService.deleteUser();
+  await sessionService.deleteSession();
+  getBooks()(dispatch);
+  dispatch({type: 'LOGGED_OUT'});
+};

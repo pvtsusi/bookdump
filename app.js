@@ -17,6 +17,8 @@ const crypto = require('crypto');
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
 
+const socketIo = require('socket.io');
+
 const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
 const BOOK_PREFIX = 'isbn:';
@@ -69,25 +71,6 @@ app.use(cors());
 app.use(bodyParser());
 app.use(staticFiles(`${__dirname}/client/build`));
 
-let createBroadcast;
-
-const socketService = socket => {
-  const _poke = async data => {
-    socket.emit('kickback', 'yow!');
-  };
-  socket.on('poke', _poke);
-  createBroadcast = (book) => socket.broadcast.emit('kickback', book);
-
-  socket.on('validate_session', async data => {
-    try {
-      await verifyToken(data.token);
-      socket.emit('session_validated', {valid: true});
-    } catch (err) {
-      socket.emit('session_validated', {valid: false});
-    }
-  });
-};
-
 app.use(async (ctx, next) => {
   const token = parseToken(ctx);
   if (token) {
@@ -128,6 +111,22 @@ router.get('/api/books', list)
 });
 
 app.use(router.routes());
+
+const server = http.createServer(app.callback());
+const io = socketIo(server);
+
+function socketService(socket) {
+  socket.on('validate_session', async data => {
+    try {
+      await verifyToken(data.token);
+      socket.emit('session_validated', {valid: true});
+    } catch (err) {
+      socket.emit('session_validated', {valid: false});
+    }
+  });
+}
+
+io.on('connection', socketService);
 
 async function list (ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
@@ -481,11 +480,6 @@ function findOpenLibrary (isbn) {
     }));
   });
 }
-
-
-const server = http.createServer(app.callback());
-const io = require('socket.io')(server);
-io.on('connection', socketService);
 
 server.listen(PORT);
 server.on('listening', () => console.log(`Listening on port ${PORT}`));

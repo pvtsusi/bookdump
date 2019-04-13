@@ -1,25 +1,12 @@
-import * as Actions from '../actions';
 import {sessionService} from 'redux-react-session';
 
 const initialState = {
-  isPoking: false,
   isValidatingSession: false,
   shouldLogin: true
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case Actions.POKE:
-      return {
-        ...state,
-        isPoking: true
-      };
-    case Actions.KICKBACK:
-      return {
-        ...state,
-        kickback: action.data,
-        isPoking: false
-      };
     case 'VALIDATE_SESSION':
       return {
         ...state,
@@ -33,12 +20,6 @@ export default (state = initialState, action) => {
     default:
       return state;
   }
-};
-
-export const kickback = (data) => {
-  return dispatch => {
-    dispatch(Actions.kickback(data));
-  };
 };
 
 export const isValidSession = (options) => {

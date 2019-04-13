@@ -9,7 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText/DialogContent
 import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
 import Button from './Button';
 import {bindActionCreators} from 'redux';
-import {logout} from '../actions';
+import {logout} from '../reducers/user';
 
 const styles = theme => ({
   actions: {

@@ -6,8 +6,8 @@ import { withStyles, MuiThemeProvider} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from "@material-ui/core/Typography/Typography";
-import { login } from '../actions';
 import themes from '../themes';
+import {login} from '../reducers/user';
 
 
 const styles = theme => ({
