@@ -66,11 +66,18 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
 };
 
 export const logout = (admin) => async dispatch => {
-  if (!admin) {
-    await agent.Session.forget();
+  dispatch({ type: 'LOADING' });
+  try {
+    if (!admin) {
+      await agent.Session.forget();
+    }
+    await sessionService.deleteUser();
+    await sessionService.deleteSession();
+    getBooks()(dispatch);
+    dispatch({type: 'LOGGED_OUT'});
+  } catch (err) {
+    dispatch({type: 'SHOW_ERROR', error: err.statusText});
+  } finally {
+    dispatch({ type: 'LOADED' });
   }
-  await sessionService.deleteUser();
-  await sessionService.deleteSession();
-  getBooks()(dispatch);
-  dispatch({type: 'LOGGED_OUT'});
 };

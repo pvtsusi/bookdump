@@ -212,12 +212,8 @@ async function login (ctx) {
 }
 
 async function forget (ctx) {
-  const name = ctx.state.user && ctx.state.user.name;
   const sha = ctx.state.user && ctx.state.user.sha;
-  if (name === ADMIN_NAME) {
-    ctx.status = 400;
-    ctx.body = {message: 'Unable to forget'};
-  } else if (sha) {
+  if (sha) {
     const books = await forgetUser(sha);
     for (const book of books) {
       io.emit('dispatch', {type: 'ADD_BOOK', book, origin: sha});

@@ -20,6 +20,7 @@ import LoggedOutSnackbar from './LoggedOutSnackbar';
 import themes from '../themes';
 import {logout} from '../reducers/user';
 import TooSlowSnackbar from './TooSlowSnackbar';
+import ErrorSnackbar from './ErrorSnackbar';
 
 
 const styles = theme => ({
@@ -86,6 +87,7 @@ class App extends React.Component {
           <ModalProgress show={this.props.loading}/>
           <LoggedOutSnackbar/>
           <TooSlowSnackbar/>
+          <ErrorSnackbar/>
           <div className={this.classes.root}>
             <TopBar/>
             <Grid container justify="center">

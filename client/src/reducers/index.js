@@ -5,6 +5,7 @@ import books from './books';
 import socket from './socket';
 import progress from './progress';
 import user from './user';
+import error from './error';
 
 export default (history) => combineReducers({
   router: connectRouter(history),
@@ -12,5 +13,6 @@ export default (history) => combineReducers({
   socket,
   progress,
   user,
+  error,
   session: sessionReducer
 });

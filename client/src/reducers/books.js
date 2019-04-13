@@ -154,6 +154,7 @@ export const updateBook = (book, field, value) => {
 
 export const reserveBook = (book) => {
   return async dispatch => {
+    dispatch({ type: 'LOADING' });
     try {
       const {name} = await agent.Books.reserve(book.isbn);
       dispatch({ type: 'RESERVE_BOOK', book, name});
@@ -161,14 +162,17 @@ export const reserveBook = (book) => {
       if (err.status === 401) {
         dispatch({ type: 'LOG_IN', onSuccess: 'reserve', isbn: book.isbn})
       } else {
-        throw err;
+        dispatch({ type: 'SHOW_ERROR', error: err.statusText });
       }
+    } finally {
+      dispatch({ type: 'LOADED' });
     }
   }
 };
 
 export const declineBook = (book) => {
   return async dispatch => {
+    dispatch({ type: 'LOADING' });
     try {
       await agent.Books.decline(book.isbn);
       dispatch({type: 'DECLINE_BOOK', book});
@@ -176,9 +180,10 @@ export const declineBook = (book) => {
       if (err.status === 401) {
         dispatch({ type: 'LOG_IN', onSuccess: 'decline', isbn: book.isbn})
       } else {
-        throw err;
+        dispatch({ type: 'SHOW_ERROR', error: err.statusText });
       }
-
+    } finally {
+      dispatch({ type: 'LOADED' });
     }
   }
 };

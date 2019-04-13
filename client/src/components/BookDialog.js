@@ -23,6 +23,9 @@ const EDGE_XS = 180;
 const EDGE = 270;
 
 const breakpoints = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   breakpoints: {
     values: {
       xs: 0,
@@ -33,7 +36,6 @@ const breakpoints = createMuiTheme({
     }
   }
 });
-
 
 const styles = theme => ({
   dialog: {
