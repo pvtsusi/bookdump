@@ -44,6 +44,10 @@ export const kickback = (data) => {
 export const isValidSession = (options) => {
   return async dispatch => {
     try {
+      const user = await sessionService.loadUser();
+      if (!user || !user.admin) {
+        return;
+      }
       const session = await sessionService.loadSession();
       if (session.token) {
         dispatch({ type: 'VALIDATE_SESSION' });

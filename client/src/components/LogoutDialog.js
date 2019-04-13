@@ -46,11 +46,13 @@ class LogoutDialog extends React.Component {
           <DialogTitle>
             Are you sure you want to sign out?
           </DialogTitle>
+          {!this.props.admin &&
           <DialogContent>
             <DialogContentText>
               If you sign out, I will forget you and all about you.
             </DialogContentText>
           </DialogContent>
+          }
           <DialogActions className={this.classes.actions}>
             <Button onClick={this.props.cancelLoggingOut}>
               Never mind

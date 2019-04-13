@@ -68,6 +68,7 @@ class LoginDialog extends React.Component {
                 className={this.classes.textField}
                 margin="normal"
                 fullWidth
+                autoFocus
               />
             </DialogContent>
             <DialogActions className={this.classes.actions}>

@@ -24,7 +24,8 @@ const styles = (theme) => ({
 
 const mapStateToProps = ({ session }) => ({
   signedIn: session.user && session.user.name,
-  userName: session.user.name
+  userName: session.user.name,
+  admin: session.user && session.user.admin
 });
 
 const mapDispatchToProps = dispatch =>
@@ -81,7 +82,7 @@ class SessionPopover extends React.Component {
             <Grid className={this.classes.root} container>
               <Grid item xs={12} className={this.classes.message}>
                 <Typography variant="body1">
-                You are signed in as {this.props.userName}
+                You are signed in as {this.props.userName} {this.props.admin && '(admin)'}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
