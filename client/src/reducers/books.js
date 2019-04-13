@@ -28,16 +28,45 @@ export default (state = initialState, action) => {
     });
 
   const groupByReserver = () =>
-    (action.payload || [])
+    (action.books || [])
       .filter(book => book.reserver)
       .reduce((acc, curr) => {
         (acc[curr.reserver] = acc[curr.reserver] || []).push(curr);
         return acc;
       }, {});
 
+  const surname = (fullName) => {
+    const parts = fullName.split(/\s+/);
+    return parts[parts.length - 1];
+  };
+
+  const sortableTitle = (title) => {
+    const parts = title.split(/\s+/);
+    // Uhh..
+    const articles = ['a', 'an', 'the', 'en', 'ett', 'un', 'une', 'le', 'la', 'les'];
+    if (parts.length > 1 && articles.includes(parts[0].toLowerCase())) {
+      parts.shift();
+      return parts.join(' ');
+    }
+    return title;
+  };
+
+  const sortedByAuthor = () =>
+    (action.books || []).slice().sort((a, b) => {
+      const surnameComparison = surname(a.author).localeCompare(surname(b.author));
+      if (surnameComparison !== 0) {
+        return surnameComparison;
+      }
+      const nameComparison = a.author.localeCompare(b.author);
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+      return sortableTitle(a.title).localeCompare(b.title);
+    });
+
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
-      return { ...state, books: action.payload, booksByReserver: groupByReserver() };
+      return { ...state, books: sortedByAuthor(action.books), booksByReserver: groupByReserver() };
     case 'BOOKS_VIEW_ERROR':
       return { ...state, error: action.error };
     case 'SELECT_BOOK':
@@ -60,8 +89,8 @@ export default (state = initialState, action) => {
 export const getBooks = () => {
   return async dispatch => {
     try {
-      const payload = await agent.Books.all();
-      dispatch({ type: 'BOOKS_VIEW_LOADED', payload });
+      const books = await agent.Books.all();
+      dispatch({ type: 'BOOKS_VIEW_LOADED', books });
     } catch (err) {
       dispatch({ type: 'BOOKS_VIEW_ERROR', error: err.statusText});
     }
