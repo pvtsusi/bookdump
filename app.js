@@ -226,10 +226,6 @@ async function forget (ctx) {
   }
 }
 
-function slowDown(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function reserve (ctx) {
   if (!(ctx.state.user && ctx.state.user.name)) {
     ctx.status = 401;
