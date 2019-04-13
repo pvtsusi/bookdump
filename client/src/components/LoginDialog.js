@@ -66,7 +66,7 @@ class LoginDialog extends React.Component {
                 label="Your name"
                 onChange={this.onChange}
                 className={this.classes.textField}
-                margin="normal"
+                margin="none"
                 fullWidth
                 autoFocus
               />

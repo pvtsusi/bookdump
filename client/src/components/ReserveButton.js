@@ -23,7 +23,7 @@ class ReserveButton extends React.Component {
     if (this.props.book.reserverName) {
       return (
         <Button disableRipple onClick={() => this.props.declineBook(this.props.book)} variant="outlined" color="secondary">
-          I don't want this
+          Never mind
         </Button>
       );
     }

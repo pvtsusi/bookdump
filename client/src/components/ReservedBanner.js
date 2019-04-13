@@ -12,7 +12,11 @@ import { connect } from 'react-redux';
 const styles = theme => ({
   root: {
     marginTop: theme.spacing.unit * 2,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    [theme.breakpoints.down('xs')]: {
+      position: 'absolute',
+      top: 0
+    }
   },
   message: {
     padding: theme.spacing.unit,

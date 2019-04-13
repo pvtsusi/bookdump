@@ -419,7 +419,6 @@ function forgetUser (sha) {
 
 async function searchFromAll (isbn) {
   return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
-    console.log(allFound);
     return allFound.flat().filter(book => book.title && book.author).map(normalizeAuthor);
   });
 }
