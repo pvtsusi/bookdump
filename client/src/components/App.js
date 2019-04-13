@@ -19,6 +19,7 @@ import { isValidSession } from '../reducers/socket';
 import LoggedOutSnackbar from './LoggedOutSnackbar';
 import themes from '../themes';
 import {logout} from '../reducers/user';
+import TooSlowSnackbar from './TooSlowSnackbar';
 
 
 const styles = theme => ({
@@ -40,6 +41,7 @@ const styles = theme => ({
 const mapStateToProps = ({ progress, session }) => ({
   loading: progress.loading,
   admin: session.authenticated && session.user && session.user.admin,
+  userSha: session.user && session.user.sha
 });
 
 const mapDispatchToProps = dispatch =>
@@ -48,6 +50,7 @@ const mapDispatchToProps = dispatch =>
       isValidSession,
       sessionValidated: () => dispatch({ type: 'SESSION_VALIDATED'}),
       loggedOut: () => dispatch({ type: 'LOGGED_OUT' }),
+      dispatchActionFromServer: (action) => dispatch(action),
       logout: logout
     }, dispatch
   );
@@ -63,6 +66,11 @@ class App extends React.Component {
       }
       this.props.sessionValidated();
     });
+    this.socket.on('dispatch', action => {
+      if (!action.origin || !this.props.userSha || action.origin !== this.props.userSha) {
+        this.props.dispatchActionFromServer(action);
+      }
+    });
     this.classes = props.classes;
   }
 
@@ -77,6 +85,7 @@ class App extends React.Component {
         <MuiThemeProvider theme={themes.vollkorn}>
           <ModalProgress show={this.props.loading}/>
           <LoggedOutSnackbar/>
+          <TooSlowSnackbar/>
           <div className={this.classes.root}>
             <TopBar/>
             <Grid container justify="center">

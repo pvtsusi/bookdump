@@ -76,8 +76,7 @@ app.use(async (ctx, next) => {
   if (token) {
     try {
       ctx.state.user = await verifyToken(token);
-      const userShaInput = ctx.state.user.admin ? ctx.state.user.name : `${token}:${ctx.state.user.name}`;
-      ctx.state.user.sha = userSha(userShaInput);
+      ctx.state.user.sha = userSha(ctx.state.user.name, token, ctx.state.user.admin);
     } catch (err) {
       ctx.state.authError = err;
       if (err.name === 'TokenExpiredError') {
@@ -148,6 +147,7 @@ async function edit (ctx) {
   const patch = ctx.request.body;
   const patched = {...book, ...patch};
   await db(storeBook, patched);
+  io.emit('dispatch', {type: 'PATCH_BOOK', isbn: book.isbn, patch});
   ctx.set('Content-Location', `/api/book/${patched.isbn}`);
   ctx.status = 200;
   ctx.body = {message: 'Ok'};
@@ -182,6 +182,7 @@ async function create (ctx) {
     }
     promises.push(db(storeBook, book));
     await Promise.all(promises);
+    io.emit('dispatch', {type: 'ADD_BOOK', book});
     ctx.status = 201;
     ctx.set('Content-Location', `/book/${book.isbn}`);
     ctx.body = book
@@ -196,10 +197,10 @@ async function login (ctx) {
   if (name === ADMIN_NAME && pass === ADMIN_PASS) {
     const adminToken = await signToken(name, true);
     ctx.status = 200;
-    ctx.body = {token: adminToken, name, admin: true};
+    ctx.body = {token: adminToken, name, admin: true, sha: userSha(name, adminToken, true)};
   } else if (name && !pass) {
     const token = await signToken(name);
-    ctx.body = {token, name};
+    ctx.body = {token, name, sha: userSha(name, token)};
   } else {
     ctx.status = 401;
     ctx.body = {message: 'Unauthorized'};
@@ -213,7 +214,10 @@ async function forget (ctx) {
     ctx.status = 400;
     ctx.body = {message: 'Unable to forget'};
   } else if (sha) {
-    await forgetUser(sha);
+    const books = await forgetUser(sha);
+    for (const book of books) {
+      io.emit('dispatch', {type: 'ADD_BOOK', book, origin: sha});
+    }
     ctx.status = 200;
     ctx.body = {message: 'Ok'}
   } else {
@@ -239,6 +243,7 @@ async function reserve (ctx) {
     return;
   }
   await reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
+  io.emit('dispatch', {type: 'HIDE_BOOK', isbn: ctx.params.isbn, origin: ctx.state.user.sha});
   ctx.status = 200;
   ctx.body = {name: ctx.state.user.name};
 }
@@ -255,16 +260,18 @@ async function decline (ctx) {
     ctx.body = {message: 'No ISBN given'};
     return;
   }
-  await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
+  const book = await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
+  io.emit('dispatch', {type: 'ADD_BOOK', book, origin: ctx.state.user.sha});
   ctx.status = 200;
   ctx.body = {message: 'Ok'};
 }
 
 
-function userSha(name) {
+function userSha(name, token, admin) {
+  const input = admin ? name : `${token}:${name}`;
   return crypto.createHash('sha1')
     .update(NAME_SECRET, 'utf8')
-    .update(name, 'utf8')
+    .update(input, 'utf8')
     .digest('hex');
 }
 
@@ -387,11 +394,11 @@ function reserveBook (isbn, name, sha) {
 function declineBook (isbn, name, sha, override) {
   return new Promise((resolve, reject) => {
     scripts.decline.then(digest => {
-      redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error) => {
+      redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error, book) => {
         if (error) {
           return reject({message: error});
         }
-        resolve();
+        resolve(JSON.parse(book));
       })
     }).catch(error => {
       reject({message: error});
@@ -402,11 +409,12 @@ function declineBook (isbn, name, sha, override) {
 function forgetUser (sha) {
   return new Promise((resolve, reject) => {
     scripts.forget.then(digest => {
-      redis.evalsha(digest, 1, sha, (error) => {
+      redis.evalsha(digest, 1, sha, (error, books) => {
         if (error) {
           return reject({message: error});
         }
-        resolve();
+        console.log(books);
+        resolve(books.map(JSON.parse));
       })
     }).catch(error => {
       reject({message: error});

@@ -3,15 +3,25 @@ import agent from '../agent';
 const initialState = {
   selected: null,
   editing: null,
+  tooSlow: false,
   booksByReserver: {}
 };
 
 export default (state = initialState, action) => {
-  const { field, value } = action;
+  const { field, value, patch } = action;
   const updateField = (f, v) =>
     (state.books || []).map((book) => {
       if (book.isbn === action.book.isbn) {
         return {...book, [f]: v};
+      } else {
+        return book;
+      }
+    });
+
+  const patchBook = () =>
+    (state.books || []).map((book) => {
+      if (book.isbn === action.isbn) {
+        return {...book, ...patch};
       } else {
         return book;
       }
@@ -51,8 +61,8 @@ export default (state = initialState, action) => {
     return title;
   };
 
-  const sortedByAuthor = () =>
-    (action.books || []).slice().sort((a, b) => {
+  const sortedByAuthor = (books) =>
+    (books || []).slice().sort((a, b) => {
       const surnameComparison = surname(a.author).localeCompare(surname(b.author));
       if (surnameComparison !== 0) {
         return surnameComparison;
@@ -63,6 +73,12 @@ export default (state = initialState, action) => {
       }
       return sortableTitle(a.title).localeCompare(b.title);
     });
+
+  const upsert = () => {
+    const upserted = (state.books || []).filter((book) => action.book.isbn !== book.isbn);
+    upserted.push(action.book);
+    return sortedByAuthor(upserted);
+  };
 
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
@@ -81,6 +97,20 @@ export default (state = initialState, action) => {
       return { ...state, books: updateField('reserverName', action.name), editing: null };
     case 'DECLINE_BOOK':
       return { ...state, books: deleteReserver(), editing: null };
+    case 'PATCH_BOOK':
+      return { ...state, books: patchBook() };
+    case 'HIDE_BOOK':
+      const tooSlow = state.selected === action.isbn;
+      return {
+        ...state,
+        books: (state.books || []).filter(book => book.isbn !== action.isbn),
+        tooSlow: tooSlow || state.tooSlow,
+        selected: tooSlow ? null : state.selected
+      };
+    case 'CONFIRM_TOO_SLOW':
+      return { ...state, tooSlow: false };
+    case 'ADD_BOOK':
+      return { ...state, books: upsert() };
     default:
       return state;
   }

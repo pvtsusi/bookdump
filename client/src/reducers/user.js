@@ -43,9 +43,9 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
   dispatch({ type: 'LOADING' });
   try {
     const response = await agent.Session.login(loginName, loginPass);
-    const { token, name, admin } = response;
+    const { token, name, sha, admin } = response;
     await sessionService.saveSession({ token });
-    await sessionService.saveUser({ name, admin });
+    await sessionService.saveUser({ name, admin, sha });
     if (admin && history) {
       history.push('/');
     } else {

@@ -18,4 +18,4 @@ redis.call('SET', 'user:' .. sha, name)
 redis.call('SREM', 'reservations:' .. sha, isbn)
 redis.call('SET', 'isbn:' .. isbn, book_json)
 
-return redis.status_reply('Ok')
+return book_json
