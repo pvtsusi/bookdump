@@ -409,7 +409,6 @@ function forgetUser (sha) {
         if (error) {
           return reject({message: error});
         }
-        console.log(books);
         resolve(books.map(JSON.parse));
       })
     }).catch(error => {
@@ -482,6 +481,9 @@ function findOpenLibrary (isbn) {
       author: record.authors && record.authors.length ? record.authors[0].name : null,
       title: record.title
     }));
+  }).catch((error) => {
+    console.log(`Failed retrieval from Open Library: ${error}`);
+    return [];
   });
 }
 
