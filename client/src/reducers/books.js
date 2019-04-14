@@ -71,7 +71,7 @@ export default (state = initialState, action) => {
       if (nameComparison !== 0) {
         return nameComparison;
       }
-      return sortableTitle(a.title).localeCompare(b.title);
+      return sortableTitle(a.title).localeCompare(sortableTitle(b.title));
     });
 
   const upsert = () => {
