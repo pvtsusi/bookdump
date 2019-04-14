@@ -15,7 +15,7 @@ function Progress(props) {
   const { classes } = props;
   return (
     <Grid container spacing={0} alignItems="center" justify="center">
-      <CircularProgress className={classes.progress} />
+      <CircularProgress className={classes.progress} disableShrink />
     </Grid>
   );
 }
