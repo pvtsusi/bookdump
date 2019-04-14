@@ -4,6 +4,8 @@ import CardActionArea from '@material-ui/core/es/CardActionArea/CardActionArea';
 import {editBook, updateBook} from "../reducers/books";
 import {bindActionCreators} from 'redux';
 import connect from 'react-redux/es/connect/connect';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import themes from '../themes';
 
 const mapStateToProps = ({ session }) => ({
   admin: session.authenticated && session.user && session.user.admin
@@ -51,7 +53,11 @@ class BookField extends React.Component {
         </CardActionArea>
       );
     }
-    return this.props.children;
+    return (
+      <MuiThemeProvider theme={themes.vollkorn}>
+        {this.props.children}
+      </MuiThemeProvider>
+    );
   }
 }
 

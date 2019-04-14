@@ -19,14 +19,17 @@ const styles = theme => ({
 });
 
 const mapStateToProps = ({ user }) => ({
-  loggingIn: user.loggingIn
+  loggingIn: user.loggingIn,
+  errors: user.errors
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       cancelLogin: () => dispatch => dispatch({ type: 'CANCEL_LOGIN' }),
-      login: (user, onSuccess) => login(user, null, null, onSuccess)
+      login: (user, onSuccess) => login(user, null, null, onSuccess),
+      setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message}),
+      clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR'})
     }, dispatch
   );
 
@@ -37,15 +40,22 @@ class LoginDialog extends React.Component {
     this.state = {
       name: ''
     };
-    this.onChange = event => this.setState({...this.state, name: event.target.value });
+    this.onChange = event => {
+      this.props.clearErrors();
+      this.setState({ name: event.target.value });
+    };
     this.classes = props.classes;
     this.onSubmit = (event) => {
       event.preventDefault();
+      if (!this.state.name) {
+        return this.props.setError('name', 'Don\'t leave this empty');
+      }
       this.props.login(this.state.name, this.props.onSuccess);
     };
   }
 
   render() {
+    const { errors } = this.props;
     return (
       <Dialog
         disableBackdropClick
@@ -61,10 +71,11 @@ class LoginDialog extends React.Component {
                 Give me your name so that I know whom to give this to.
               </DialogContentText>
               <TextField
-                error={null}
+                error={!!(errors && errors.name)}
                 id="name-input"
                 label="Your name"
                 onChange={this.onChange}
+                helperText={errors && errors.name}
                 className={this.classes.textField}
                 margin="none"
                 fullWidth
