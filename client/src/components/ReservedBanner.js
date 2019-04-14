@@ -7,6 +7,7 @@ import themes from '../themes';
 import ReservedIcon from '@material-ui/icons/HowToVote'
 import PropTypes from "prop-types";
 import { connect } from 'react-redux';
+import Zoom from '@material-ui/core/Zoom/Zoom';
 
 
 const styles = theme => ({
@@ -47,14 +48,16 @@ class ReservedBanner extends React.Component {
     const reserved = `Reserved for ${reserver}`;
     return (
       <Grid container spacing={0} className={this.classes.root} alignItems="center" justify="center">
-        <Paper className={this.classes.message}>
-          <ReservedIcon className={this.classes.reserved} />
-          <MuiThemeProvider theme={themes.narrow}>
-            <Typography variant="body1" component="h5">
-              {reserved}
-            </Typography>
-          </MuiThemeProvider>
-        </Paper>
+        <Zoom in>
+          <Paper className={this.classes.message}>
+            <ReservedIcon className={this.classes.reserved} />
+            <MuiThemeProvider theme={themes.narrow}>
+              <Typography variant="body1" component="h5">
+                {reserved}
+              </Typography>
+            </MuiThemeProvider>
+          </Paper>
+        </Zoom>
       </Grid>
     );
   }

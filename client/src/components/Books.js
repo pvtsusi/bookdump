@@ -15,6 +15,9 @@ const styles = theme => ({
   notification: {
     textAlign: 'center',
     fontWeight: 600,
+  },
+  list: {
+    paddingBottom: theme.spacing.unit * 5
   }
 });
 
@@ -67,7 +70,7 @@ class Books extends React.Component {
 
     return (
       <React.Fragment>
-        <List>
+        <List className={this.classes.list}>
           {
             this.props.books.map(book => {
               return (
