@@ -13,7 +13,7 @@ const AsyncBusboy = require('koa-async-busboy');
 const bodyParser = require('koa-bodyparser');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const sslify = require('koa-sslify');
+const { default: sslify, xForwardedProtoResolver: resolver } = require('koa-sslify');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -68,7 +68,7 @@ for (const scriptName of Object.keys(scripts)) {
 const app = new Koa();
 onerror(app);
 if (process.env.NODE_ENV === 'production') {
-  app.use(sslify.default());
+  app.use(sslify({ resolver }));
 }
 app.use(json({}));
 app.use(cors());
