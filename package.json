@@ -14,7 +14,6 @@
   "dependencies": {
     "@koa/cors": "^2.2.3",
     "aws-sdk": "^2.431.0",
-    "axios": "^0.18.0",
     "debug": "^2.6.3",
     "dotenv": "^6.2.0",
     "jsonwebtoken": "^8.5.1",
