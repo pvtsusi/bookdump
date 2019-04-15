@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles, createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from './Button';
@@ -18,6 +18,7 @@ import ReservedBanner from './ReservedBanner';
 import ReserveButton from './ReserveButton';
 import Grid from '@material-ui/core/Grid/Grid';
 import withWidth from '@material-ui/core/withWidth';
+import coverUrl from '../cover';
 
 const EDGE_XS = 180;
 const EDGE = 270;
@@ -108,7 +109,12 @@ const Cover = withWidth()(props =>  {
 
     return (
       <Grid className={props.classes.coverContainer} item xs={12} sm={6}>
-        <CardMedia component="img" className={props.classes.cover} image={cover} title={title} style={style}/>
+        <CardMedia
+          component="img"
+          className={props.classes.cover}
+          srcSet={`${coverUrl(cover, 270)}, ${coverUrl(cover, 540)} 2x`}
+          title={title}
+          style={style}/>
       </Grid>
     );
   }

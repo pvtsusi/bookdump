@@ -14,6 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import { connect } from 'react-redux';
 import themes from '../themes';
 import Zoom from '@material-ui/core/Zoom/Zoom';
+import cover from '../cover';
 
 
 const styles = theme => ({
@@ -79,7 +80,7 @@ class Book extends React.Component {
             this.props.book.cover &&
             <Paper>
               <ListItemAvatar className={this.classes.cover}>
-                <Avatar src={this.props.book.cover}/>
+                <Avatar srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x`}/>
               </ListItemAvatar>
             </Paper>
           }

@@ -14,6 +14,9 @@ const bodyParser = require('koa-bodyparser');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { default: sslify, xForwardedProtoResolver: resolver } = require('koa-sslify');
+const sharp = require('sharp');
+const stream = require('stream');
+const path = require('path');
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const redis = require('redis').createClient(redisUrl);
@@ -166,12 +169,13 @@ async function create (ctx) {
     headers: ctx.req.headers
   });
   let fileName, book;
-  const promises = [];
+  let promises = [];
   await busboy
     .onFile((fieldName, fileStream, filename, _, mimeType) => {
       if (fieldName === 'cover') {
         fileName = `${Math.round(Math.random() * 10000000)}_${filename}`;
-        promises.push(upload(fileStream, fileName, mimeType));
+        const uploads = resizeAndUpload(fileStream, fileName, mimeType);
+        promises = promises.concat(uploads);
       }
     })
     .onField((fieldName, val) => {
@@ -194,6 +198,18 @@ async function create (ctx) {
     ctx.status = 400;
     ctx.body = {message: 'No book metadata'};
   }
+}
+
+async function resizeAndUpload(fileStream, fileName, mimeType) {
+  const resizer = sharp();
+  const promises = [];
+  for (const dim of [540, 270, 80, 40]) {
+    promises.push(new Promise((resolve, reject) =>
+      resizer.clone().resize(dim, dim, {fit: sharp.fit.inside})
+        .pipe(upload(resizedName(fileName, `${dim}`), mimeType, resolve, reject))));
+  }
+  fileStream.pipe(resizer);
+  return promises;
 }
 
 async function login (ctx) {
@@ -295,10 +311,23 @@ function verifyToken (token) {
   });
 }
 
-function upload (stream, name, mimeType) {
+function resizedName(fileName, sizeSuffix) {
+  const ext = path.extname(fileName);
+  const base = path.basename(fileName, ext);
+  return `${base}_${sizeSuffix}${ext}`;
+}
+
+function upload (name, mimeType, resolve, reject) {
+  const pass = new stream.PassThrough();
   const params = {Bucket: 'bookdump', ACL: 'public-read'};
   const s3 = new AWS.S3({params, region: 'eu-north-1'});
-  return s3.upload({Body: stream, Key: name, ContentType: mimeType}).promise();
+  s3.upload({Body: pass, Key: name, ContentType: mimeType}, (err, result) => {
+    if (err) {
+      return reject(err);
+    }
+    resolve(result);
+  });
+  return pass;
 }
 
 function db (dbFunction, ...args) {
