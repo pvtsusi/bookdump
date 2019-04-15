@@ -112,6 +112,7 @@ router.get('/api/books', list)
   .post('/api/forget', forget)
   .post('/api/book/:isbn/reserve', reserve)
   .post('/api/book/:isbn/decline', decline)
+  .post('/api/transform', transform)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
 });
@@ -200,7 +201,7 @@ async function create (ctx) {
   }
 }
 
-async function resizeAndUpload(fileStream, fileName, mimeType) {
+function resizeAndUpload(fileStream, fileName, mimeType) {
   const resizer = sharp();
   const promises = [];
   for (const dim of [540, 270, 80, 40]) {
@@ -328,6 +329,37 @@ function upload (name, mimeType, resolve, reject) {
     resolve(result);
   });
   return pass;
+}
+
+const axios = require('axios');
+
+async function transform (ctx) {
+  const urls = (await db(retrieveBooks)).map(book => book.cover);
+  for (const url of urls) {
+    console.log(url);
+    try {
+      const response = await axios({url: url, responseType: 'stream'});
+      const uploads = resizeAndUpload(response.data, path.basename(url), 'image/jpeg');
+      await Promise.all(uploads);
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
+    }
+  }
+  ctx.body = 'Done';
 }
 
 function db (dbFunction, ...args) {
