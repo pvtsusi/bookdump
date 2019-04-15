@@ -33,8 +33,11 @@ const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       width: 'calc(100% - 40px)'
     },
-    marginLeft: 2,
-    marginRight: 2
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      marginLeft: 2,
+      marginRight: 2
+    }
   },
   paper: {
     padding: theme.spacing.unit * 2

@@ -134,12 +134,7 @@ io.on('connection', socketService);
 async function list (ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
   const admin = ctx.state.user && ctx.state.user.admin;
-  await sleep(5000);
   ctx.body = await db(retrieveBooks, sha, admin);
-}
-
-async function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function view (ctx) {

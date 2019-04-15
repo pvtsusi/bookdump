@@ -22,21 +22,6 @@ import withWidth from '@material-ui/core/withWidth';
 const EDGE_XS = 180;
 const EDGE = 270;
 
-const breakpoints = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 568,
-      md: 960,
-      lg: 1280,
-      xl: 1920
-    }
-  }
-});
-
 const styles = theme => ({
   dialog: {
     padding: '0!important'
@@ -135,7 +120,6 @@ class BookDialog extends React.Component {
   render () {
     const { classes, editing } = this.props;
     return (
-      <MuiThemeProvider theme={breakpoints}>
       <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm" classes={{paper: classes.paper}}>
         <DialogContent className={classes.dialog}>
           <Card className={classes.card}>
@@ -170,7 +154,6 @@ class BookDialog extends React.Component {
           </Card>
         </DialogContent>
       </Dialog>
-      </MuiThemeProvider>
     );
   }
 }
