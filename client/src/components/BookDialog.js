@@ -84,7 +84,7 @@ const styles = theme => ({
 });
 
 const mapStateToProps = ({ books }) => ({
-  editing: books.editing
+  editing: books.editing,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -113,6 +113,7 @@ const Cover = withWidth()(props =>  {
           component="img"
           className={props.classes.cover}
           srcSet={`${coverUrl(cover, 270)}, ${coverUrl(cover, 540)} 2x`}
+          src={coverUrl(cover, 540)}
           title={title}
           style={style}/>
       </Grid>
@@ -144,7 +145,9 @@ class BookDialog extends React.Component {
                         {this.props.book ? this.props.book.author : ''}
                       </Typography>
                     </BookField>
-                    <ReservedBanner reserver={this.props.book ? this.props.book.reserverName : null}/>
+                    <ReservedBanner
+                      isbn={this.props.book && this.props.book.isbn}
+                      reserver={this.props.book ? this.props.book.reserverName : null}/>
                   </CardContent>
                   <div className={classes.actionsContainer}>
                     <CardActions className={classes.actions}>

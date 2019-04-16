@@ -13,7 +13,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import { connect } from 'react-redux';
 import themes from '../themes';
-import Zoom from '@material-ui/core/Zoom/Zoom';
 import cover from '../cover';
 
 
@@ -40,15 +39,13 @@ class BookIcon extends React.Component {
     const reserved = `Reserved for ${reserver}`;
     if (this.props.book.reserverName) {
       return (
-        <Zoom in>
-          <ListItemIcon>
-            <MuiThemeProvider theme={themes.normal}>
-              <Tooltip title={reserved} aria-label={reserved}>
-                <ReservedIcon className={this.props.reservedClass} fontSize="large"/>
-              </Tooltip>
-            </MuiThemeProvider>
-          </ListItemIcon>
-        </Zoom>
+        <ListItemIcon>
+          <MuiThemeProvider theme={themes.normal}>
+            <Tooltip title={reserved} aria-label={reserved}>
+              <ReservedIcon className={this.props.reservedClass} fontSize="large"/>
+            </Tooltip>
+          </MuiThemeProvider>
+        </ListItemIcon>
       );
     } else if (this.props.book.recommended) {
       return (

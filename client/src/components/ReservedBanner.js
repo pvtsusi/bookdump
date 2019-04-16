@@ -8,6 +8,7 @@ import ReservedIcon from '@material-ui/icons/HowToVote'
 import PropTypes from "prop-types";
 import { connect } from 'react-redux';
 import Zoom from '@material-ui/core/Zoom/Zoom';
+import {bindActionCreators} from 'redux';
 
 
 const styles = theme => ({
@@ -30,9 +31,17 @@ const styles = theme => ({
   }
 });
 
-const mapStateToProps = ({ session }) => ({
-  userName: session.user && session.user.name
+const mapStateToProps = ({ session, books }) => ({
+  userName: session.user && session.user.name,
+  reservations: books.reservations
 });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      transitioned: (isbn) => dispatch => dispatch({type: 'RESERVATION_TRANSITIONED', isbn: isbn})
+    }, dispatch
+  );
 
 class ReservedBanner extends React.Component {
   constructor(props){
@@ -41,16 +50,18 @@ class ReservedBanner extends React.Component {
   }
 
   render() {
-    if (!this.props.reserver) {
-      return null;
-    }
     const reserver = this.props.reserver === this.props.userName ? 'you' : this.props.reserver;
     const reserved = `Reserved for ${reserver}`;
+    const doTransition = this.props.reservations[this.props.isbn] !== 'exists';
     return (
       <Grid container spacing={0} className={this.classes.root} alignItems="center" justify="center">
-        <Zoom in>
+        <Zoom
+          in={!!this.props.reserver}
+          timeout={doTransition ? 500 : 0}
+          onEntered={() => doTransition && this.props.transitioned(this.props.isbn)}
+          onExited={() => doTransition && this.props.transitioned(this.props.isbn)}>
           <Paper className={this.classes.message}>
-            <ReservedIcon className={this.classes.reserved} />
+            <ReservedIcon className={this.classes.reserved}/>
             <MuiThemeProvider theme={themes.narrow}>
               <Typography variant="body1" component="h5">
                 {reserved}
@@ -67,4 +78,4 @@ ReservedBanner.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(mapStateToProps, () => ({}))(ReservedBanner));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ReservedBanner));

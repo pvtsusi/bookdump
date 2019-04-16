@@ -4,6 +4,7 @@ const initialState = {
   selected: null,
   editing: null,
   tooSlow: false,
+  reservations: {},
   booksByReserver: {}
 };
 
@@ -45,6 +46,17 @@ export default (state = initialState, action) => {
         return acc;
       }, {});
 
+  const existingReservations = () => {
+    const reservations = {};
+    const books = (action.books || []);
+    for (const book of books) {
+      if (book.reserver) {
+        reservations[book.isbn] = 'exists';
+      }
+    }
+    return reservations;
+  };
+
   const surname = (fullName) => {
     const parts = fullName.split(/\s+/);
     return parts[parts.length - 1];
@@ -82,7 +94,12 @@ export default (state = initialState, action) => {
 
   switch (action.type) {
     case 'BOOKS_VIEW_LOADED':
-      return { ...state, books: sortedByAuthor(action.books), booksByReserver: groupByReserver() };
+      return {
+        ...state,
+        books: sortedByAuthor(action.books),
+        booksByReserver: groupByReserver(),
+        reservations: existingReservations()
+      };
     case 'BOOKS_VIEW_ERROR':
       return { ...state, error: action.error };
     case 'SELECT_BOOK':
@@ -94,9 +111,24 @@ export default (state = initialState, action) => {
     case 'UPDATE_BOOK':
       return { ...state, books: updateField(field, value), editing: null };
     case 'RESERVE_BOOK':
-      return { ...state, books: updateField('reserverName', action.name), editing: null };
+      return {
+        ...state,
+        books: updateField('reserverName', action.name),
+        editing: null,
+        reservations: { ...state.reservations, [action.book.isbn]: 'coming' }
+      };
+    case 'RESERVATION_TRANSITIONED':
+      return {
+        ...state,
+        reservations: { ...state.reservations, [action.isbn]: 'exists' }
+      };
     case 'DECLINE_BOOK':
-      return { ...state, books: deleteReserver(), editing: null };
+      return {
+        ...state,
+        books: deleteReserver(),
+        editing: null,
+        reservations: { ...state.reservations, [action.book.isbn]: 'going' }
+      };
     case 'PATCH_BOOK':
       return { ...state, books: patchBook() };
     case 'HIDE_BOOK':
