@@ -1,15 +1,14 @@
-import React from 'react';
-import {MuiThemeProvider, withStyles} from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
-import themes from '../themes';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import {bindActionCreators} from 'redux';
 import grey from '@material-ui/core/colors/grey';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import * as PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import themes from '../themes';
 
-
-const styles = theme => ({
+const styles = () => ({
   message: {
     justifyContent: 'center',
     backgroundColor: grey[50],
@@ -28,9 +27,8 @@ const mapDispatchToProps = dispatch =>
     }, dispatch
   );
 
-
 class TooSlowSnackbar extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.classes = props.classes;
   }
@@ -43,7 +41,7 @@ class TooSlowSnackbar extends React.Component {
           onClose={this.props.confirmTooSlow}
           autoHideDuration={5000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-          <SnackbarContent message="Sorry, someone was quicker than you." className={this.classes.message} />
+          <SnackbarContent message="Sorry, someone was quicker than you." className={this.classes.message}/>
         </Snackbar>
       </MuiThemeProvider>
     );

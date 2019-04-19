@@ -1,16 +1,16 @@
+import { MuiThemeProvider, withStyles } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog/Dialog';
+import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
+import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
+import TextField from '@material-ui/core/TextField/TextField';
 import React from 'react';
 import { connect } from 'react-redux';
-import {MuiThemeProvider, withStyles} from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog/Dialog';
-import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
+import { bindActionCreators } from 'redux';
+import { login } from '../reducers/user';
 import themes from '../themes';
-import TextField from '@material-ui/core/TextField/TextField';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
-import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
 import Button from './Button';
-import {bindActionCreators} from 'redux';
-import {login} from '../reducers/user';
 
 const styles = theme => ({
   actions: {
@@ -28,23 +28,24 @@ const mapDispatchToProps = dispatch =>
     {
       cancelLogin: () => dispatch => dispatch({ type: 'CANCEL_LOGIN' }),
       login: (user, onSuccess) => login(user, null, null, onSuccess),
-      setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message}),
-      clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR'})
+      setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message }),
+      clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR' })
     }, dispatch
   );
 
-
 class LoginDialog extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
+    this.classes = props.classes;
     this.state = {
       name: ''
     };
+
     this.onChange = event => {
       this.props.clearErrors();
       this.setState({ name: event.target.value });
     };
-    this.classes = props.classes;
+
     this.onSubmit = (event) => {
       event.preventDefault();
       if (!this.state.name) {
@@ -79,8 +80,7 @@ class LoginDialog extends React.Component {
                 className={this.classes.textField}
                 margin="none"
                 fullWidth
-                autoFocus
-              />
+                autoFocus/>
             </DialogContent>
             <DialogActions className={this.classes.actions}>
               <Button onClick={this.props.cancelLogin}>

@@ -1,15 +1,14 @@
-import React from 'react';
-import Paper from '@material-ui/core/Paper/Paper';
+import { MuiThemeProvider, withStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid/Grid';
+import Paper from '@material-ui/core/Paper/Paper';
 import Typography from '@material-ui/core/Typography/Typography';
-import {withStyles, MuiThemeProvider} from '@material-ui/core';
-import themes from '../themes';
-import ReservedIcon from '@material-ui/icons/HowToVote'
-import PropTypes from "prop-types";
-import { connect } from 'react-redux';
 import Zoom from '@material-ui/core/Zoom/Zoom';
-import {bindActionCreators} from 'redux';
-
+import ReservedIcon from '@material-ui/icons/HowToVote';
+import * as PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import themes from '../themes';
 
 const styles = theme => ({
   root: {
@@ -39,12 +38,12 @@ const mapStateToProps = ({ session, books }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      transitioned: (isbn) => dispatch => dispatch({type: 'RESERVATION_TRANSITIONED', isbn: isbn})
+      transitioned: (isbn) => dispatch => dispatch({ type: 'RESERVATION_TRANSITIONED', isbn: isbn })
     }, dispatch
   );
 
 class ReservedBanner extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.classes = props.classes;
   }
@@ -76,6 +75,7 @@ class ReservedBanner extends React.Component {
 
 ReservedBanner.propTypes = {
   classes: PropTypes.object.isRequired,
+  reserver: PropTypes.string
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ReservedBanner));

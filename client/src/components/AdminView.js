@@ -1,18 +1,19 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import AdminLogin from './AdminLogin';
+import { MuiThemeProvider } from '@material-ui/core';
+import ListItemSecondaryAction from '@material-ui/core/es/ListItemSecondaryAction/ListItemSecondaryAction';
+import ListSubheader from '@material-ui/core/es/ListSubheader/ListSubheader';
+import IconButton from '@material-ui/core/IconButton/IconButton';
 import List from '@material-ui/core/List/List';
-import Typography from '@material-ui/core/Typography/Typography';
-import {bindActionCreators} from 'redux';
-import {declineBook, getBooks} from '../reducers/books';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
-import ListSubheader from '@material-ui/core/es/ListSubheader/ListSubheader';
-import {MuiThemeProvider} from '@material-ui/core';
-import themes from '../themes';
+import Typography from '@material-ui/core/Typography/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import ListItemSecondaryAction from '@material-ui/core/es/ListItemSecondaryAction/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton/IconButton';
+import * as PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { declineBook, getBooks } from '../reducers/books';
+import themes from '../themes';
+import AdminLogin from './AdminLogin';
 
 const mapStateToProps = ({ session, books }) => ({
   admin: session.authenticated && session.user && session.user.admin,
@@ -28,19 +29,19 @@ const mapDispatchToProps = dispatch =>
     }, dispatch
   );
 
-
 class AdminView extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       declined: {}
     };
     this.decline = (book) => {
       this.props.declineBook(book);
-      this.setState({ declined:{ ...this.state.declined, [book.isbn]: true}});
+      this.setState({ declined: { ...this.state.declined, [book.isbn]: true } });
     };
   }
-  componentWillMount () {
+
+  componentWillMount() {
     this.props.getBooks();
   }
 
@@ -75,7 +76,7 @@ class AdminView extends React.Component {
                 const reserverName = this.props.books[reserver][0].reserverName;
                 return (
                   <li key={reserver}>
-                    <ul style={{listStyle: 'none'}}>
+                    <ul style={{ listStyle: 'none' }}>
                       <ListSubheader>
                         <Typography variant="h6">
                           {reserverName}
@@ -106,5 +107,11 @@ class AdminView extends React.Component {
     return null;
   }
 }
+
+AdminView.propTypes = {
+  books: PropTypes.objectOf(
+    PropTypes.arrayOf(
+      PropTypes.shape({ reserverName: PropTypes.string })))
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminView);

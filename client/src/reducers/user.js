@@ -1,6 +1,8 @@
 import agent from '../agent';
-import {sessionService} from 'redux-react-session';
-import {getBooks} from './books';
+import { sessionService } from 'redux-react-session';
+import { getBooks } from './books';
+
+const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
 
 const initialState = {
   errors: {},
@@ -15,11 +17,10 @@ export default (state = initialState, action) => {
   const { field, message } = action;
   switch (action.type) {
     case 'LOGIN_ERROR':
-      const newErrors = { ...state.errors, [field]: message};
-      return { ...state, errors: newErrors};
+      const newErrors = { ...state.errors, [field]: message };
+      return { ...state, errors: newErrors };
     case 'CLEAR_LOGIN_ERROR':
-      const { errors, ...clearedErrors} = state;
-      return { ...clearedErrors, errors: {} };
+      return { ...state, errors: {} };
     case 'LOG_OUT':
       return { ...state, loggingOut: true };
     case 'CANCEL_LOGOUT':
@@ -44,24 +45,24 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
   try {
     const response = await agent.Session.login(loginName, loginPass);
     const { token, name, sha, admin } = response;
-    await sessionService.saveSession({ token });
-    await sessionService.saveUser({ name, admin, sha });
+    await saveSession({ token });
+    await saveUser({ name, admin, sha });
     if (admin && history) {
       history.push('/');
     } else {
-      dispatch({type: 'LOGGED_IN'});
+      dispatch({ type: 'LOGGED_IN' });
     }
     if (onSuccess) {
       onSuccess();
     }
   } catch (err) {
     if (err.status === 401) {
-      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Invalid password'});
+      dispatch({ type: 'LOGIN_ERROR', field: 'pass', message: 'Invalid password' });
     } else {
-      dispatch({type: 'LOGIN_ERROR', field: 'pass', message: 'Failed to log in'});
+      dispatch({ type: 'LOGIN_ERROR', field: 'pass', message: 'Failed to log in' });
     }
   } finally {
-    dispatch({type: 'LOADED'});
+    dispatch({ type: 'LOADED' });
   }
 };
 
@@ -71,12 +72,12 @@ export const logout = (admin) => async dispatch => {
     if (!admin) {
       await agent.Session.forget();
     }
-    await sessionService.deleteUser();
-    await sessionService.deleteSession();
+    await deleteUser();
+    await deleteSession();
     getBooks()(dispatch);
-    dispatch({type: 'LOGGED_OUT'});
+    dispatch({ type: 'LOGGED_OUT' });
   } catch (err) {
-    dispatch({type: 'SHOW_ERROR', error: err.statusText});
+    dispatch({ type: 'SHOW_ERROR', error: err.statusText });
   } finally {
     dispatch({ type: 'LOADED' });
   }

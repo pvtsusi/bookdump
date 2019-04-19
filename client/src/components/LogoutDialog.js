@@ -1,15 +1,15 @@
+import { MuiThemeProvider, withStyles } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog/Dialog';
+import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
+import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
 import React from 'react';
 import { connect } from 'react-redux';
-import {MuiThemeProvider, withStyles} from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog/Dialog';
-import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
+import { bindActionCreators } from 'redux';
+import { logout } from '../reducers/user';
 import themes from '../themes';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
-import DialogActions from '@material-ui/core/es/DialogActions/DialogActions';
 import Button from './Button';
-import {bindActionCreators} from 'redux';
-import {logout} from '../reducers/user';
 
 const styles = theme => ({
   actions: {
@@ -19,20 +19,20 @@ const styles = theme => ({
 
 const mapStateToProps = ({ user, session }) => ({
   loggingOut: user.loggingOut,
-  admin: session.authenticated && session.user && session.user.admin,
+  admin: session.authenticated && session.user && session.user.admin
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      cancelLoggingOut: () => dispatch => dispatch({type: 'CANCEL_LOGOUT'}),
+      cancelLoggingOut: () => dispatch => dispatch({ type: 'CANCEL_LOGOUT' }),
       logout
     }, dispatch
   );
 
 
 class LogoutDialog extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.classes = props.classes;
   }

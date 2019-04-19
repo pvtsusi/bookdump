@@ -1,18 +1,23 @@
+import Grid from '@material-ui/core/Grid';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography/Typography';
+import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { withStyles, MuiThemeProvider} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Typography from "@material-ui/core/Typography/Typography";
+import { login } from '../reducers/user';
 import themes from '../themes';
-import {login} from '../reducers/user';
 
-
-const styles = theme => ({
+const styles = () => ({
   textField: {
     width: '80%'
+  },
+  hiddenSubmit: {
+    visibility: 'hidden',
+    width: 0,
+    height: 0,
+    overflow: 'none'
   }
 });
 
@@ -24,10 +29,9 @@ const mapStateToProps = ({ user, progress }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     login,
-    setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message}),
-    clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR'})
+    setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message }),
+    clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR' })
   }, dispatch);
-
 
 class AdminLogin extends React.Component {
   constructor(props) {
@@ -36,28 +40,19 @@ class AdminLogin extends React.Component {
       name: '',
       pass: ''
     };
-    this.onChangeName = event => {
+    this.onChange = (field) => event => {
       this.props.clearErrors();
-      this.setState({ name: event.target.value});
-    };
-    this.onChangePass = event => {
-      this.props.clearErrors();
-      this.setState({ pass: event.target.value});
+      this.setState({ [field]: event.target.value });
     };
     this.onSubmit = event => {
       event.preventDefault();
-      const { name, pass } = this.state;
-      if (!name) {
-        return this.props.setError('name', 'Name cannot be empty');
-      }
-      if (!pass) {
-        return this.props.setError('pass', 'Password cannot be empty');
-      }
-      this.props.login(name, pass, this.props.history);
+      ['Name', 'Pass'].forEach(field =>
+        this.state[field.toLowerCase()] || this.props.setError(field.toLowerCase(), `${field} cannot be empty`));
+      this.props.login(this.state.name, this.state.pass, this.props.history);
     };
   }
 
-  render () {
+  render() {
     const { classes, errors } = this.props;
 
     return (
@@ -74,7 +69,7 @@ class AdminLogin extends React.Component {
                 error={!!(errors && errors.name)}
                 id="admin-name-input"
                 label="Name"
-                onChange={this.onChangeName}
+                onChange={this.onChange('name')}
                 className={classes.textField}
                 margin="normal"
                 variant="outlined"
@@ -87,7 +82,7 @@ class AdminLogin extends React.Component {
                 error={!!(errors && errors.pass)}
                 id="admin-password-input"
                 label="Password"
-                onChange={this.onChangePass}
+                onChange={this.onChange('pass')}
                 className={classes.textField}
                 type="password"
                 margin="normal"
@@ -97,7 +92,7 @@ class AdminLogin extends React.Component {
               />
             </Grid>
           </Grid>
-          <input type="submit" style={{display: 'none'}} />
+          <input type="submit" className={classes.hiddenSubmit}/>
         </form>
       </MuiThemeProvider>
     );
@@ -105,7 +100,7 @@ class AdminLogin extends React.Component {
 }
 
 AdminLogin.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AdminLogin));

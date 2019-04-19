@@ -1,10 +1,10 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField/TextField';
 import CardActionArea from '@material-ui/core/es/CardActionArea/CardActionArea';
-import {editBook, updateBook} from "../reducers/books";
-import {bindActionCreators} from 'redux';
-import connect from 'react-redux/es/connect/connect';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField/TextField';
+import React from 'react';
+import connect from 'react-redux/es/connect/connect';
+import { bindActionCreators } from 'redux';
+import { editBook, updateBook } from '../reducers/books';
 import themes from '../themes';
 
 const mapStateToProps = ({ session }) => ({
@@ -26,13 +26,14 @@ class BookField extends React.Component {
       editedValue: this.props.book ? this.props.book[this.props.field] : ''
     };
     this.onClick = () => this.props.editBook(this.props.field);
-    this.onChange = event => this.setState({ editedValue: event.target.value});
+    this.onChange = event => this.setState({ editedValue: event.target.value });
     this.onSubmit = event => {
       event.preventDefault();
       this.props.updateBook(this.props.book, this.props.field, this.state.editedValue);
     };
   }
-  render () {
+
+  render() {
     if (this.props.editing) {
       return (
         <form onSubmit={this.onSubmit} noValidate autoComplete="off">
@@ -43,7 +44,7 @@ class BookField extends React.Component {
             id="title-input"
             helperText={this.props.book ? this.props.book[this.props.field] : ''}
           />
-          <input type="submit" style={{display: 'none'}} />
+          <input type="submit" style={{ display: 'none' }}/>
         </form>
       );
     } else if (this.props.admin) {

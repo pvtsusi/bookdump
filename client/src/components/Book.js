@@ -1,22 +1,21 @@
-import React from 'react';
-import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import StarIcon from '@material-ui/icons/Star';
-import ReservedIcon from '@material-ui/icons/HowToVote'
-import PropTypes from "prop-types";
 import CardActionArea from '@material-ui/core/CardActionArea';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Paper from '@material-ui/core/Paper';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import ReservedIcon from '@material-ui/icons/HowToVote';
+import StarIcon from '@material-ui/icons/Star';
+import * as PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import themes from '../themes';
 import cover from '../cover';
+import themes from '../themes';
 
-
-const styles = theme => ({
+const styles = () => ({
   cover: {
     borderRadius: 0
   },
@@ -32,9 +31,9 @@ const mapStateToProps = ({ session }) => ({
   userName: session.user && session.user.name
 });
 
-
 class BookIcon extends React.Component {
-  render () {
+  render() {
+    const { reservedClass, recommendedClass } = this.props;
     const reserver = this.props.book.reserverName === this.props.userName ? 'you' : this.props.book.reserverName;
     const reserved = `Reserved for ${reserver}`;
     if (this.props.book.reserverName) {
@@ -42,7 +41,7 @@ class BookIcon extends React.Component {
         <ListItemIcon>
           <MuiThemeProvider theme={themes.normal}>
             <Tooltip title={reserved} aria-label={reserved}>
-              <ReservedIcon className={this.props.reservedClass} fontSize="large"/>
+              <ReservedIcon className={reservedClass} fontSize="large"/>
             </Tooltip>
           </MuiThemeProvider>
         </ListItemIcon>
@@ -52,7 +51,7 @@ class BookIcon extends React.Component {
         <ListItemIcon>
           <MuiThemeProvider theme={themes.normal}>
             <Tooltip title="Recommended" aria-label="Recommended">
-              <StarIcon className={this.props.recommendedClass} fontSize="large"/>
+              <StarIcon className={recommendedClass} fontSize="large"/>
             </Tooltip>
           </MuiThemeProvider>
         </ListItemIcon>
@@ -69,7 +68,7 @@ class Book extends React.Component {
     this.onSelect = props.onSelect;
   }
 
-  render () {
+  render() {
     return (
       <CardActionArea>
         <ListItem onClick={this.onSelect}>
@@ -94,7 +93,7 @@ class Book extends React.Component {
 }
 
 Book.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(mapStateToProps, () => ({}))(Book));

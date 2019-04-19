@@ -1,27 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
-import { ConnectedRouter } from 'connected-react-router';
-import Books from './Books';
-import {bindActionCreators} from 'redux';
-
-import openSocket from 'socket.io-client';
-
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import TopBar from './TopBar';
-import AdminView from './AdminView';
-import ModalProgress from './ModalProgress';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { ConnectedRouter } from 'connected-react-router';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Route, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import openSocket from 'socket.io-client';
 import { isValidSession } from '../reducers/socket';
-import LoggedOutSnackbar from './LoggedOutSnackbar';
+import { logout } from '../reducers/user';
 import themes from '../themes';
-import {logout} from '../reducers/user';
-import TooSlowSnackbar from './TooSlowSnackbar';
+import AdminView from './AdminView';
+import Books from './Books';
 import ErrorSnackbar from './ErrorSnackbar';
-
+import LoggedOutSnackbar from './LoggedOutSnackbar';
+import ModalProgress from './ModalProgress';
+import TooSlowSnackbar from './TooSlowSnackbar';
+import TopBar from './TopBar';
 
 const styles = theme => ({
   root: {
@@ -54,7 +51,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       isValidSession,
-      sessionValidated: () => dispatch({ type: 'SESSION_VALIDATED'}),
+      sessionValidated: () => dispatch({ type: 'SESSION_VALIDATED' }),
       loggedOut: () => dispatch({ type: 'LOGGED_OUT' }),
       dispatchActionFromServer: (action) => dispatch(action),
       logout: logout
@@ -64,7 +61,10 @@ const mapDispatchToProps = dispatch =>
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.classes = props.classes;
+
     this.socket = openSocket('/');
+
     this.socket.on('session_validated', data => {
       if (!data.valid) {
         this.props.logout(this.props.admin);
@@ -72,22 +72,22 @@ class App extends React.Component {
       }
       this.props.sessionValidated();
     });
+
     this.socket.on('dispatch', action => {
       if (!action.origin || !this.props.userSha || action.origin !== this.props.userSha) {
         this.props.dispatchActionFromServer(action);
       }
     });
-    this.classes = props.classes;
   }
 
   componentDidMount() {
-    setInterval(() => this.props.isValidSession({socket: this.socket}), 5000);
+    setInterval(() => this.props.isValidSession({ socket: this.socket }), 5000);
   }
 
   render() {
     return (
       <React.Fragment>
-        <CssBaseline />
+        <CssBaseline/>
         <MuiThemeProvider theme={themes.vollkorn}>
           <ModalProgress show={this.props.loading}/>
           <LoggedOutSnackbar/>
@@ -99,10 +99,10 @@ class App extends React.Component {
               <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
                 <Grid item xs={12} sm={10}>
                   <Paper className={this.classes.paper}>
-                    <ConnectedRouter history={this.props.history} >
+                    <ConnectedRouter history={this.props.history}>
                       <Switch>
-                        <Route exact path="/" component={Books} />
-                        <Route exact path="/admin" component={AdminView} />
+                        <Route exact path="/" component={Books}/>
+                        <Route exact path="/admin" component={AdminView}/>
                       </Switch>
                     </ConnectedRouter>
                   </Paper>

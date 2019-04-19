@@ -1,24 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardMedia from '@material-ui/core/CardMedia';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import Button from './Button';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardActions from '@material-ui/core/CardActions';
-import Typography from '@material-ui/core/Typography';
-
-import { connect } from 'react-redux';
-import {bindActionCreators} from "redux";
-import {deselectBook} from "../reducers/books";
-import CardContent from "@material-ui/core/es/CardContent/CardContent";
-import BookField from './BookField';
-import ReservedBanner from './ReservedBanner';
-import ReserveButton from './ReserveButton';
+import CardContent from '@material-ui/core/es/CardContent/CardContent';
 import Grid from '@material-ui/core/Grid/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import withWidth from '@material-ui/core/withWidth';
+import * as PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import coverUrl from '../cover';
+import { deselectBook } from '../reducers/books';
+import BookField from './BookField';
+import Button from './Button';
+import ReserveButton from './ReserveButton';
+import ReservedBanner from './ReservedBanner';
 
 const EDGE_XS = 180;
 const EDGE = 270;
@@ -27,11 +26,8 @@ const styles = theme => ({
   dialog: {
     padding: '0!important'
   },
-  paper: {
-
-  },
   card: {
-    display: 'flex',
+    display: 'flex'
   },
   coverContainer: {
     [theme.breakpoints.down('xs')]: {
@@ -84,34 +80,35 @@ const styles = theme => ({
 });
 
 const mapStateToProps = ({ books }) => ({
-  editing: books.editing,
+  editing: books.editing
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      deselectBook,
+      deselectBook
     }, dispatch
   );
 
-const Cover = withWidth()(props =>  {
-  if (props.book && props.book.cover) {
+const Cover = withWidth()(props => {
+  const { book, width, classes } = props;
+  if (book && book.cover) {
 
-    const { cover, title, width: coverWidth, height: coverHeight } = props.book;
+    const { cover, title, width: coverWidth, height: coverHeight } = book;
 
     const longerEdge = Math.max(coverWidth, coverHeight);
     const shorterEdge = Math.min(coverWidth, coverHeight);
     const scale = EDGE / longerEdge;
     const shorterScaled = scale * shorterEdge;
     const diff = parseInt((EDGE - shorterScaled) / 2) + 1;
-    const margin = coverWidth < coverHeight ? {marginLeft: -diff} : {marginTop: -diff};
-    const style = props.width === 'xs' ? {} : margin;
+    const margin = coverWidth < coverHeight ? { marginLeft: -diff } : { marginTop: -diff };
+    const style = width === 'xs' ? {} : margin;
 
     return (
-      <Grid className={props.classes.coverContainer} item xs={12} sm={6}>
+      <Grid className={classes.coverContainer} item xs={12} sm={6}>
         <CardMedia
           component="img"
-          className={props.classes.cover}
+          className={classes.cover}
           srcSet={`${coverUrl(cover, 270)}, ${coverUrl(cover, 540)} 2x`}
           src={coverUrl(cover, 540)}
           title={title}
@@ -124,14 +121,14 @@ const Cover = withWidth()(props =>  {
 
 class BookDialog extends React.Component {
 
-  render () {
+  render() {
     const { classes, editing } = this.props;
     return (
-      <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm" classes={{paper: classes.paper}}>
+      <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm">
         <DialogContent className={classes.dialog}>
           <Card className={classes.card}>
             <Grid container>
-              <Cover book={this.props.book} classes={classes} />
+              <Cover book={this.props.book} classes={classes}/>
               <Grid item xs={12} sm={6}>
                 <div className={classes.metadata}>
                   <CardContent className={classes.content}>
@@ -168,7 +165,7 @@ class BookDialog extends React.Component {
 }
 
 BookDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(BookDialog));

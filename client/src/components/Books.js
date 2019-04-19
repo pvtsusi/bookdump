@@ -1,20 +1,19 @@
+import List from '@material-ui/core/List';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Book from './Book';
-import { getBooks, selectBook } from '../reducers/books';
 import { bindActionCreators } from 'redux';
-
-import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
-import Progress from './Progress';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
+import { getBooks, selectBook } from '../reducers/books';
+import Book from './Book';
 import BookDialog from './BookDialog';
+import Progress from './Progress';
 
 const styles = theme => ({
   notification: {
     textAlign: 'center',
-    fontWeight: 600,
+    fontWeight: 600
   },
   list: {
     paddingBottom: theme.spacing.unit * 5
@@ -41,11 +40,11 @@ class Books extends React.Component {
     this.classes = props.classes;
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.props.getBooks();
   }
 
-  render () {
+  render() {
     if (this.props.error) {
       return (
         <Typography className={this.classes.notification}>
@@ -74,19 +73,19 @@ class Books extends React.Component {
           {
             this.props.books.map(book => {
               return (
-                <Book book={book} key={book.isbn} onSelect={() => this.props.selectBook(book)} />
+                <Book book={book} key={book.isbn} onSelect={() => this.props.selectBook(book)}/>
               );
             })
           }
         </List>
-        <BookDialog book={this.props.books.find(book => book.isbn === this.props.selected)} />
+        <BookDialog book={this.props.books.find(book => book.isbn === this.props.selected)}/>
       </React.Fragment>
     );
   }
 }
 
 Books.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Books));

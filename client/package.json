@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.2",
@@ -18,10 +18,8 @@
     "redux-react-session": "^2.5.0",
     "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.2.0",
-    "superagent": "^4.1.0",
     "typeface-pt-sans": "0.0.72",
     "typeface-pt-sans-narrow": "0.0.71",
-    "typeface-pt-serif": "0.0.72",
     "typeface-vollkorn": "0.0.72"
   },
   "scripts": {

@@ -1,10 +1,9 @@
 import React from 'react';
-import Button from './Button';
-import {bindActionCreators} from 'redux';
-import {deselectBook, reserveBook, declineBook} from '../reducers/books';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { declineBook, deselectBook, reserveBook } from '../reducers/books';
+import Button from './Button';
 import LoginDialog from './LoginDialog';
-
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -16,13 +15,14 @@ const mapDispatchToProps = dispatch =>
   );
 
 class ReserveButton extends React.Component {
-  render () {
+  render() {
     if (!this.props.book) {
       return null;
     }
     if (this.props.book.reserverName) {
       return (
-        <Button disableRipple onClick={() => this.props.declineBook(this.props.book)} variant="outlined" color="secondary">
+        <Button disableRipple onClick={() => this.props.declineBook(this.props.book)} variant="outlined"
+                color="secondary">
           Never mind
         </Button>
       );

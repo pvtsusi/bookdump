@@ -114,7 +114,7 @@ router.get('/api/books', list)
   .post('/api/book/:isbn/decline', decline)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
-});
+  });
 
 app.use(router.routes());
 
@@ -125,46 +125,46 @@ function socketService(socket) {
   socket.on('validate_session', async data => {
     try {
       await verifyToken(data.token);
-      socket.emit('session_validated', {valid: true});
+      socket.emit('session_validated', { valid: true });
     } catch (err) {
-      socket.emit('session_validated', {valid: false});
+      socket.emit('session_validated', { valid: false });
     }
   });
 }
 
 io.on('connection', socketService);
 
-async function list (ctx) {
+async function list(ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
   const admin = ctx.state.user && ctx.state.user.admin;
   ctx.body = await db(retrieveBooks, sha, admin);
 }
 
-async function view (ctx) {
+async function view(ctx) {
   ctx.body = await db(retrieveBook, ctx.params.isbn);
 }
 
-async function edit (ctx) {
+async function edit(ctx) {
   if (!(ctx.state.user && ctx.state.user.admin)) {
     ctx.status = 403;
-    ctx.body = {message: 'Forbidden'};
+    ctx.body = { message: 'Forbidden' };
     return;
   }
   const book = await db(retrieveBook, ctx.params.isbn);
   const patch = ctx.request.body;
-  const patched = {...book, ...patch};
+  const patched = { ...book, ...patch };
   await db(storeBook, patched);
-  io.emit('dispatch', {type: 'PATCH_BOOK', isbn: book.isbn, patch});
+  io.emit('dispatch', { type: 'PATCH_BOOK', isbn: book.isbn, patch });
   ctx.set('Content-Location', `/api/book/${patched.isbn}`);
   ctx.status = 200;
-  ctx.body = {message: 'Ok'};
+  ctx.body = { message: 'Ok' };
 }
 
-async function search (ctx) {
+async function search(ctx) {
   ctx.body = await searchFromAll(ctx.params.isbn);
 }
 
-async function create (ctx) {
+async function create(ctx) {
   const busboy = new AsyncBusboy({
     headers: ctx.req.headers
   });
@@ -186,17 +186,17 @@ async function create (ctx) {
     .pipe(ctx.req);
   if (book) {
     if (fileName) {
-      book.cover = `https://s3.eu-north-1.amazonaws.com/bookdump/${fileName}`
+      book.cover = `https://s3.eu-north-1.amazonaws.com/bookdump/${fileName}`;
     }
     promises.push(db(storeBook, book));
     await Promise.all(promises);
-    io.emit('dispatch', {type: 'ADD_BOOK', book});
+    io.emit('dispatch', { type: 'ADD_BOOK', book });
     ctx.status = 201;
     ctx.set('Content-Location', `/book/${book.isbn}`);
-    ctx.body = book
+    ctx.body = book;
   } else {
     ctx.status = 400;
-    ctx.body = {message: 'No book metadata'};
+    ctx.body = { message: 'No book metadata' };
   }
 }
 
@@ -205,77 +205,77 @@ async function resizeAndUpload(fileStream, fileName, mimeType) {
   const promises = [];
   for (const dim of [540, 270, 80, 40]) {
     promises.push(new Promise((resolve, reject) =>
-      resizer.clone().resize(dim, dim, {fit: sharp.fit.inside})
+      resizer.clone().resize(dim, dim, { fit: sharp.fit.inside })
         .pipe(upload(resizedName(fileName, `${dim}`), mimeType, resolve, reject))));
   }
   fileStream.pipe(resizer);
   return promises;
 }
 
-async function login (ctx) {
+async function login(ctx) {
   const { name, pass } = ctx.request.body;
   if (name === ADMIN_NAME && pass === ADMIN_PASS) {
     const adminToken = await signToken(name, true);
     ctx.status = 200;
-    ctx.body = {token: adminToken, name, admin: true, sha: userSha(name, adminToken, true)};
+    ctx.body = { token: adminToken, name, admin: true, sha: userSha(name, adminToken, true) };
   } else if (name && !pass) {
     const token = await signToken(name);
-    ctx.body = {token, name, sha: userSha(name, token)};
+    ctx.body = { token, name, sha: userSha(name, token) };
   } else {
     ctx.status = 401;
-    ctx.body = {message: 'Unauthorized'};
+    ctx.body = { message: 'Unauthorized' };
   }
 }
 
-async function forget (ctx) {
+async function forget(ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
   if (sha) {
     const books = await forgetUser(sha);
     for (const book of books) {
-      io.emit('dispatch', {type: 'ADD_BOOK', book, origin: sha});
+      io.emit('dispatch', { type: 'ADD_BOOK', book, origin: sha });
     }
     ctx.status = 200;
-    ctx.body = {message: 'Ok'}
+    ctx.body = { message: 'Ok' };
   } else {
     ctx.status = 401;
-    ctx.body = {message: 'Unauthorized'};
+    ctx.body = { message: 'Unauthorized' };
   }
 }
 
-async function reserve (ctx) {
+async function reserve(ctx) {
   if (!(ctx.state.user && ctx.state.user.name)) {
     ctx.status = 401;
-    ctx.body = {message: 'User not recognized'};
+    ctx.body = { message: 'User not recognized' };
     ctx.set('WWW-Authenticate', 'Bearer');
     return;
   }
   if (!ctx.params.isbn) {
     ctx.status = 400;
-    ctx.body = {message: 'No ISBN given'};
+    ctx.body = { message: 'No ISBN given' };
     return;
   }
   await reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
-  io.emit('dispatch', {type: 'HIDE_BOOK', isbn: ctx.params.isbn, origin: ctx.state.user.sha});
+  io.emit('dispatch', { type: 'HIDE_BOOK', isbn: ctx.params.isbn, origin: ctx.state.user.sha });
   ctx.status = 200;
-  ctx.body = {name: ctx.state.user.name};
+  ctx.body = { name: ctx.state.user.name };
 }
 
-async function decline (ctx) {
+async function decline(ctx) {
   if (!(ctx.state.user && ctx.state.user.name)) {
     ctx.status = 401;
-    ctx.body = {message: 'User not recognized'};
+    ctx.body = { message: 'User not recognized' };
     ctx.set('WWW-Authenticate', 'Bearer');
     return;
   }
   if (!ctx.params.isbn) {
     ctx.status = 400;
-    ctx.body = {message: 'No ISBN given'};
+    ctx.body = { message: 'No ISBN given' };
     return;
   }
   const book = await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
-  io.emit('dispatch', {type: 'ADD_BOOK', book, origin: ctx.state.user.sha});
+  io.emit('dispatch', { type: 'ADD_BOOK', book, origin: ctx.state.user.sha });
   ctx.status = 200;
-  ctx.body = {message: 'Ok'};
+  ctx.body = { message: 'Ok' };
 }
 
 
@@ -287,8 +287,8 @@ function userSha(name, token, admin) {
     .digest('hex');
 }
 
-function signToken (name, admin) {
-  const payload = admin ? { admin: true, name: name } : { name : name };
+function signToken(name, admin) {
+  const payload = admin ? { admin: true, name: name } : { name: name };
   const options = admin ? { expiresIn: ADMIN_TOKEN_EXPIRATION } : {};
   return new Promise((resolve, reject) => {
     jwt.sign(payload, APP_SECRET, options, (err, token) => {
@@ -300,7 +300,7 @@ function signToken (name, admin) {
   });
 }
 
-function verifyToken (token) {
+function verifyToken(token) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, APP_SECRET, (err, decoded) => {
       if (err) {
@@ -317,11 +317,11 @@ function resizedName(fileName, sizeSuffix) {
   return `${base}_${sizeSuffix}${ext}`;
 }
 
-function upload (name, mimeType, resolve, reject) {
+function upload(name, mimeType, resolve, reject) {
   const pass = new stream.PassThrough();
-  const params = {Bucket: 'bookdump', ACL: 'public-read'};
-  const s3 = new AWS.S3({params, region: 'eu-north-1'});
-  s3.upload({Body: pass, Key: name, ContentType: mimeType}, (err, result) => {
+  const params = { Bucket: 'bookdump', ACL: 'public-read' };
+  const s3 = new AWS.S3({ params, region: 'eu-north-1' });
+  s3.upload({ Body: pass, Key: name, ContentType: mimeType }, (err, result) => {
     if (err) {
       return reject(err);
     }
@@ -330,70 +330,70 @@ function upload (name, mimeType, resolve, reject) {
   return pass;
 }
 
-function db (dbFunction, ...args) {
+function db(dbFunction, ...args) {
   return selectedDb.then(() => dbFunction(...args));
 }
 
-function selectDb () {
+function selectDb() {
   return new Promise((resolve, reject) => {
     redis.select(REDIS_DB, (error) => {
       if (error) {
-        return reject({message: error});
+        return reject({ message: error });
       }
       resolve();
     });
   });
 }
 
-function loadScript (script) {
+function loadScript(script) {
   return new Promise((resolve, reject) => {
     redis.script('load', script, (error, digest) => {
       if (error) {
-        return reject({message: error});
+        return reject({ message: error });
       }
       resolve(digest);
     });
   });
 }
 
-function retrieveBooks (sha, allNames) {
+function retrieveBooks(sha, allNames) {
   return new Promise((resolve, reject) => {
     scripts.getAll.then(digest => {
       redis.evalsha(digest, 2, sha || '', (!!allNames).toString(), (error, books) => {
         if (error) {
-          return reject({message: error});
+          return reject({ message: error });
         }
         resolve(books.map(JSON.parse));
-      })
+      });
     }).catch(error => {
-      reject({message: error});
+      reject({ message: error });
     });
   });
 }
 
-function retrieveBook (isbn) {
+function retrieveBook(isbn) {
   return new Promise((resolve, reject) => {
     redis.get(`${BOOK_PREFIX}${isbn}`, (error, book) => {
       if (error) {
-        return reject({message: error, status: 404})
+        return reject({ message: error, status: 404 });
       }
-      resolve(JSON.parse(book))
+      resolve(JSON.parse(book));
     });
   });
 }
 
-function storeBook (book) {
+function storeBook(book) {
   return new Promise((resolve, reject) => {
     redis.set(`${BOOK_PREFIX}${book.isbn}`, JSON.stringify(book), (error) => {
       if (error) {
-        return reject({message: error});
+        return reject({ message: error });
       }
-      resolve()
-    })
+      resolve();
+    });
   });
 }
 
-function normalizeAuthor (book) {
+function normalizeAuthor(book) {
   const match = book.author.match(/^([^,]+), *(.+)$/);
   if (match) {
     book.author = `${match[2]} ${match[1]}`;
@@ -401,58 +401,58 @@ function normalizeAuthor (book) {
   return book;
 }
 
-function reserveBook (isbn, name, sha) {
+function reserveBook(isbn, name, sha) {
   return new Promise((resolve, reject) => {
     scripts.reserve.then(digest => {
       redis.evalsha(digest, 3, isbn, sha, name, (error) => {
         if (error) {
-          return reject({message: error});
+          return reject({ message: error });
         }
         resolve();
-      })
+      });
     }).catch(error => {
-      reject({message: error});
+      reject({ message: error });
     });
   });
 }
 
-function declineBook (isbn, name, sha, override) {
+function declineBook(isbn, name, sha, override) {
   return new Promise((resolve, reject) => {
     scripts.decline.then(digest => {
       redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error, book) => {
         if (error) {
-          return reject({message: error});
+          return reject({ message: error });
         }
         resolve(JSON.parse(book));
-      })
+      });
     }).catch(error => {
-      reject({message: error});
+      reject({ message: error });
     });
   });
 }
 
-function forgetUser (sha) {
+function forgetUser(sha) {
   return new Promise((resolve, reject) => {
     scripts.forget.then(digest => {
       redis.evalsha(digest, 1, sha, (error, books) => {
         if (error) {
-          return reject({message: error});
+          return reject({ message: error });
         }
         resolve(books.map(JSON.parse));
-      })
+      });
     }).catch(error => {
-      reject({message: error});
+      reject({ message: error });
     });
   });
 }
 
-async function searchFromAll (isbn) {
+async function searchFromAll(isbn) {
   return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
     return allFound.flat().filter(book => book.title && book.author).map(normalizeAuthor);
   });
 }
 
-function findFinna (isbn) {
+function findFinna(isbn) {
   const opts = {
     uri: 'https://api.finna.fi/api/v1/search',
     qs: {
@@ -479,7 +479,7 @@ function findFinna (isbn) {
       author: (record.nonPresenterAuthors &&
         record.nonPresenterAuthors.find(author =>
           (author.role && author.role.startsWith('kirjoittaja') || !author.role)) ||
-        {name: null}).name,
+        { name: null }).name,
       title: record.title
     }));
   }).catch((error) => {
@@ -488,7 +488,7 @@ function findFinna (isbn) {
   });
 }
 
-function findOpenLibrary (isbn) {
+function findOpenLibrary(isbn) {
   const opts = {
     uri: 'https://openlibrary.org/api/books',
     qs: {

@@ -1,21 +1,25 @@
 import { sessionService } from 'redux-react-session';
 
+const { loadSession } = sessionService;
+
 async function sessionToken() {
   try {
-    const session = await sessionService.loadSession();
+    const session = await loadSession();
     return session.token;
   } catch {
     return null;
   }
 }
 
-class ResponseError extends Error {
+class ResponseError {
   constructor(message, status) {
-    super(message);
+    this.name = 'ResponseError';
     this.status = status;
-    this.statusText = message;
+    this.message = this.statusText = message;
   }
 }
+
+ResponseError.prototype = Object.create(Error.prototype);
 
 const resBody = async res => {
   if (!res.ok) {
@@ -26,8 +30,8 @@ const resBody = async res => {
 
 async function reqOpts(method, body = null) {
   const token = await sessionToken();
-  const auth = token ? {Authorization: `Bearer ${token}`} : {};
-  const jsonBody = body ? {body: JSON.stringify(body)} : {}
+  const auth = token ? { Authorization: `Bearer ${token}` } : {};
+  const jsonBody = body ? { body: JSON.stringify(body) } : {};
   return {
     method,
     ...jsonBody,
@@ -46,13 +50,13 @@ const requests = {
 
 const Books = {
   all: () => requests.get('/api/books'),
-  update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, {[field]: value}),
+  update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, { [field]: value }),
   reserve: (isbn) => requests.post(`/api/book/${isbn}/reserve`, {}),
   decline: (isbn) => requests.post(`/api/book/${isbn}/decline`, {})
 };
 
 const Session = {
-  login: (name, pass) => requests.post('/api/login', {name, pass}),
+  login: (name, pass) => requests.post('/api/login', { name, pass }),
   forget: () => requests.post('/api/forget', {})
 };
 

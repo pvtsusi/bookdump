@@ -1,15 +1,15 @@
-import React from 'react';
-import {bindActionCreators} from 'redux';
-import IconButton from '@material-ui/core/IconButton/IconButton';
-import PersonIcon from '@material-ui/icons/PermIdentity';
-import connect from 'react-redux/es/connect/connect';
-import Typography from '@material-ui/core/Typography/Typography';
-import Popover from '@material-ui/core/Popover/Popover';
-import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import themes from '../themes';
-import PropTypes from 'prop-types';
-import Button from './Button';
 import Grid from '@material-ui/core/Grid/Grid';
+import IconButton from '@material-ui/core/IconButton/IconButton';
+import Popover from '@material-ui/core/Popover/Popover';
+import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography/Typography';
+import PersonIcon from '@material-ui/icons/PermIdentity';
+import PropTypes from 'prop-types';
+import React from 'react';
+import connect from 'react-redux/es/connect/connect';
+import { bindActionCreators } from 'redux';
+import themes from '../themes';
+import Button from './Button';
 import LogoutDialog from './LogoutDialog';
 
 
@@ -30,11 +30,11 @@ const mapStateToProps = ({ session }) => ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
-    startLoggingOut: () => dispatch => dispatch({type: 'LOG_OUT'})
+    startLoggingOut: () => dispatch => dispatch({ type: 'LOG_OUT' })
   }, dispatch);
 
 class SessionPopover extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.classes = this.props.classes;
     this.state = {
@@ -43,19 +43,19 @@ class SessionPopover extends React.Component {
   }
 
   handleOpen = (event) =>
-    this.setState({anchorEl: event.target});
+    this.setState({ anchorEl: event.target });
 
   handleClose = () =>
-    this.setState({anchorEl: null});
+    this.setState({ anchorEl: null });
 
   startLoggingOut = () => {
     this.handleClose();
     this.props.startLoggingOut();
   };
 
-  render () {
+  render() {
     if (!this.props.signedIn) {
-      return null
+      return null;
     }
     return (
       <React.Fragment>
@@ -72,17 +72,17 @@ class SessionPopover extends React.Component {
           onClose={this.handleClose}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'center',
+            horizontal: 'center'
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'center',
+            horizontal: 'center'
           }}>
           <MuiThemeProvider theme={themes.normal}>
             <Grid className={this.classes.root} container>
               <Grid item xs={12} className={this.classes.message}>
                 <Typography variant="body1">
-                You are signed in as {this.props.userName} {this.props.admin && '(admin)'}
+                  You are signed in as {this.props.userName} {this.props.admin && '(admin)'}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -100,7 +100,7 @@ class SessionPopover extends React.Component {
 }
 
 SessionPopover.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SessionPopover));

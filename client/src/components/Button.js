@@ -1,7 +1,6 @@
-import React from 'react';
-
-import { MuiThemeProvider } from '@material-ui/core/styles';
 import MaterialUiButton from '@material-ui/core/Button';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import React from 'react';
 import themes from '../themes';
 
 function Button(props) {

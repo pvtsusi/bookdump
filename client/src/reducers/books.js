@@ -13,7 +13,7 @@ export default (state = initialState, action) => {
   const updateField = (f, v) =>
     (state.books || []).map((book) => {
       if (book.isbn === action.book.isbn) {
-        return {...book, [f]: v};
+        return { ...book, [f]: v };
       } else {
         return book;
       }
@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
   const patchBook = () =>
     (state.books || []).map((book) => {
       if (book.isbn === action.isbn) {
-        return {...book, ...patch};
+        return { ...book, ...patch };
       } else {
         return book;
       }
@@ -31,7 +31,12 @@ export default (state = initialState, action) => {
   const deleteReserver = () =>
     (state.books || []).map((book) => {
       if (book.isbn === action.book.isbn) {
-        const {reserver, reserverName, ...clearedBook} = book;
+        const clearedBook = {};
+        for (const key of Object.keys(book)) {
+          if (key !== 'reserver' && key !== 'reserverName') {
+            clearedBook[key] = book[key];
+          }
+        }
         return clearedBook;
       } else {
         return book;
@@ -154,7 +159,7 @@ export const getBooks = () => {
       const books = await agent.Books.all();
       dispatch({ type: 'BOOKS_VIEW_LOADED', books });
     } catch (err) {
-      dispatch({ type: 'BOOKS_VIEW_ERROR', error: err.statusText});
+      dispatch({ type: 'BOOKS_VIEW_ERROR', error: err.statusText });
     }
   };
 };
@@ -173,33 +178,33 @@ export const deselectBook = (book) => {
 
 export const editBook = (field) => {
   return async dispatch => {
-    dispatch({ type: 'EDIT_BOOK', field});
-  }
+    dispatch({ type: 'EDIT_BOOK', field });
+  };
 };
 
 export const updateBook = (book, field, value) => {
   return async dispatch => {
     await agent.Books.update(book.isbn, field, value);
-    dispatch({ type: 'UPDATE_BOOK', book, field, value});
-  }
+    dispatch({ type: 'UPDATE_BOOK', book, field, value });
+  };
 };
 
 export const reserveBook = (book) => {
   return async dispatch => {
     dispatch({ type: 'LOADING' });
     try {
-      const {name} = await agent.Books.reserve(book.isbn);
-      dispatch({ type: 'RESERVE_BOOK', book, name});
+      const { name } = await agent.Books.reserve(book.isbn);
+      dispatch({ type: 'RESERVE_BOOK', book, name });
     } catch (err) {
       if (err.status === 401) {
-        dispatch({ type: 'LOG_IN', onSuccess: 'reserve', isbn: book.isbn})
+        dispatch({ type: 'LOG_IN', onSuccess: 'reserve', isbn: book.isbn });
       } else {
         dispatch({ type: 'SHOW_ERROR', error: err.statusText });
       }
     } finally {
       dispatch({ type: 'LOADED' });
     }
-  }
+  };
 };
 
 export const declineBook = (book) => {
@@ -207,15 +212,15 @@ export const declineBook = (book) => {
     dispatch({ type: 'LOADING' });
     try {
       await agent.Books.decline(book.isbn);
-      dispatch({type: 'DECLINE_BOOK', book});
+      dispatch({ type: 'DECLINE_BOOK', book });
     } catch (err) {
       if (err.status === 401) {
-        dispatch({ type: 'LOG_IN', onSuccess: 'decline', isbn: book.isbn})
+        dispatch({ type: 'LOG_IN', onSuccess: 'decline', isbn: book.isbn });
       } else {
         dispatch({ type: 'SHOW_ERROR', error: err.statusText });
       }
     } finally {
       dispatch({ type: 'LOADED' });
     }
-  }
+  };
 };
