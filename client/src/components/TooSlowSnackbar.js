@@ -6,6 +6,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { CONFIRM_TOO_SLOW } from '../reducers/books';
 import themes from '../themes';
 
 const styles = () => ({
@@ -23,7 +24,7 @@ const mapStateToProps = ({ books }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      confirmTooSlow: () => dispatch => dispatch({ type: 'CONFIRM_TOO_SLOW' })
+      confirmTooSlow: () => dispatch => dispatch({ type: CONFIRM_TOO_SLOW })
     }, dispatch
   );
 

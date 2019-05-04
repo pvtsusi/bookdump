@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { login } from '../reducers/user';
+import { CLEAR_LOGIN_ERROR, login, LOGIN_ERROR } from '../reducers/user';
 import themes from '../themes';
 
 const styles = () => ({
@@ -29,8 +29,8 @@ const mapStateToProps = ({ user, progress }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     login,
-    setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message }),
-    clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR' })
+    setError: (field, message) => dispatch({ type: LOGIN_ERROR, field, message }),
+    clearErrors: () => dispatch => dispatch({ type: CLEAR_LOGIN_ERROR })
   }, dispatch);
 
 class AdminLogin extends React.Component {

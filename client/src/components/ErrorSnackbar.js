@@ -6,6 +6,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { CLEAR_ERROR } from '../reducers/error';
 import themes from '../themes';
 
 const styles = () => ({
@@ -23,7 +24,7 @@ const mapStateToProps = ({ error }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      clearError: () => dispatch => dispatch({ type: 'CLEAR_ERROR' })
+      clearError: () => dispatch => dispatch({ type: CLEAR_ERROR })
     }, dispatch
   );
 

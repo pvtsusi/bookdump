@@ -3,14 +3,14 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import { ConnectedRouter } from 'connected-react-router';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import openSocket from 'socket.io-client';
-import { isValidSession } from '../reducers/socket';
-import { logout } from '../reducers/user';
+import { isValidSession, SESSION_VALIDATED } from '../reducers/socket';
+import { LOGGED_OUT, logout } from '../reducers/user';
 import themes from '../themes';
 import AdminView from './AdminView';
 import Books from './Books';
@@ -51,8 +51,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       isValidSession,
-      sessionValidated: () => dispatch({ type: 'SESSION_VALIDATED' }),
-      loggedOut: () => dispatch({ type: 'LOGGED_OUT' }),
+      sessionValidated: () => dispatch({ type: SESSION_VALIDATED }),
+      loggedOut: () => dispatch({ type: LOGGED_OUT }),
       dispatchActionFromServer: (action) => dispatch(action),
       logout: logout
     }, dispatch

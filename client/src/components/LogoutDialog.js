@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/es/DialogContent/DialogContent';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { logout } from '../reducers/user';
+import { CANCEL_LOGOUT, logout } from '../reducers/user';
 import themes from '../themes';
 import Button from './Button';
 
@@ -25,7 +25,7 @@ const mapStateToProps = ({ user, session }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      cancelLoggingOut: () => dispatch => dispatch({ type: 'CANCEL_LOGOUT' }),
+      cancelLoggingOut: () => dispatch => dispatch({ type: CANCEL_LOGOUT }),
       logout
     }, dispatch
   );

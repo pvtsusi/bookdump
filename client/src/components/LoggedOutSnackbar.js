@@ -6,6 +6,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { CONFIRM_LOGGED_OUT } from '../reducers/user';
 import themes from '../themes';
 
 const styles = () => ({
@@ -23,7 +24,7 @@ const mapStateToProps = ({ user }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      confirmLoggedOut: () => dispatch => dispatch({ type: 'CONFIRM_LOGGED_OUT' })
+      confirmLoggedOut: () => dispatch => dispatch({ type: CONFIRM_LOGGED_OUT })
     }, dispatch
   );
 

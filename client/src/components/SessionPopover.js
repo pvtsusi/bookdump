@@ -4,10 +4,11 @@ import Popover from '@material-ui/core/Popover/Popover';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import React from 'react';
 import connect from 'react-redux/es/connect/connect';
 import { bindActionCreators } from 'redux';
+import { LOG_OUT } from '../reducers/user';
 import themes from '../themes';
 import Button from './Button';
 import LogoutDialog from './LogoutDialog';
@@ -30,7 +31,7 @@ const mapStateToProps = ({ session }) => ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
-    startLoggingOut: () => dispatch => dispatch({ type: 'LOG_OUT' })
+    startLoggingOut: () => dispatch => dispatch({ type: LOG_OUT })
   }, dispatch);
 
 class SessionPopover extends React.Component {

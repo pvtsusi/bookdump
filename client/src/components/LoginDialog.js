@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField/TextField';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { login } from '../reducers/user';
+import { CANCEL_LOGIN, CLEAR_LOGIN_ERROR, LOGIN_ERROR, login } from '../reducers/user';
 import themes from '../themes';
 import Button from './Button';
 
@@ -26,10 +26,10 @@ const mapStateToProps = ({ user }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      cancelLogin: () => dispatch => dispatch({ type: 'CANCEL_LOGIN' }),
+      cancelLogin: () => dispatch => dispatch({ type: CANCEL_LOGIN }),
       login: (user, onSuccess) => login(user, null, null, onSuccess),
-      setError: (field, message) => dispatch({ type: 'LOGIN_ERROR', field, message }),
-      clearErrors: () => dispatch => dispatch({ type: 'CLEAR_LOGIN_ERROR' })
+      setError: (field, message) => dispatch({ type: LOGIN_ERROR, field, message }),
+      clearErrors: () => dispatch => dispatch({ type: CLEAR_LOGIN_ERROR })
     }, dispatch
   );
 

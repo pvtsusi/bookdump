@@ -8,6 +8,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FINISH_RESERVATION } from '../reducers/books';
 import themes from '../themes';
 
 const styles = theme => ({
@@ -38,7 +39,7 @@ const mapStateToProps = ({ session, books }) => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      transitioned: (isbn) => dispatch => dispatch({ type: 'RESERVATION_TRANSITIONED', isbn: isbn })
+      transitioned: (isbn) => dispatch => dispatch({ type: FINISH_RESERVATION, isbn: isbn })
     }, dispatch
   );
 
