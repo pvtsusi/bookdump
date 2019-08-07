@@ -1,27 +1,37 @@
-const http = require('http');
-const Koa = require('koa');
-const cors = require('@koa/cors');
-const onerror = require('koa-onerror');
-const router = require('koa-router')();
-const json = require('koa-json');
-const staticFiles = require('koa-static');
-const rp = require('request-promise-native');
-const send = require('koa-send');
-const AWS = require('aws-sdk');
-const fs = require('fs');
-const AsyncBusboy = require('koa-async-busboy');
-const bodyParser = require('koa-bodyparser');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const { default: sslify, xForwardedProtoResolver: resolver } = require('koa-sslify');
-const sharp = require('sharp');
-const stream = require('stream');
-const path = require('path');
+import { fileURLToPath } from 'url';
+import http from 'http';
+import Koa from 'koa';
+import cors from '@koa/cors';
+import onerror from 'koa-onerror';
+import Router from 'koa-router';
+import json from 'koa-json';
+import staticFiles from 'koa-static';
+import rp from 'request-promise-native';
+import send from 'koa-send';
+import AWS from 'aws-sdk';
+import fs from 'fs';
+import AsyncBusboy from 'koa-async-busboy';
+import bodyParser from 'koa-bodyparser';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import koaSslify from 'koa-sslify';
+import sharp from 'sharp';
+import stream from 'stream';
+import path from 'path';
+import Redis from 'redis';
+import socketIo from 'socket.io';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const router = Router();
+const sslify = koaSslify.default;
+const resolver = koaSslify.xForwardedProtoResolver;
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-const redis = require('redis').createClient(redisUrl);
 
-const socketIo = require('socket.io');
+const redis = Redis.createClient(redisUrl);
+
 
 const PORT = process.env.PORT || 5000;
 const REDIS_DB = 1;
