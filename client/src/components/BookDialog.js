@@ -3,7 +3,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardMedia from '@material-ui/core/CardMedia';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import CardContent from '@material-ui/core/es/CardContent/CardContent';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';

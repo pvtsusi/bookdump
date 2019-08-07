@@ -1,8 +1,8 @@
-import CardActionArea from '@material-ui/core/es/CardActionArea/CardActionArea';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField/TextField';
 import React from 'react';
-import connect from 'react-redux/es/connect/connect';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { editBook, updateBook } from '../reducers/books';
 import themes from '../themes';

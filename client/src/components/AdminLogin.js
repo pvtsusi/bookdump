@@ -1,3 +1,4 @@
+import Button from './Button';
 import Grid from '@material-ui/core/Grid';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -75,7 +76,8 @@ class AdminLogin extends React.Component {
                 variant="outlined"
                 helperText={errors && errors.name}
                 disabled={this.props.loading}
-              />
+                autoFocus
+                autoComplete="username"/>
             </Grid>
             <Grid item sm={6} xs={12}>
               <TextField
@@ -89,10 +91,12 @@ class AdminLogin extends React.Component {
                 variant="outlined"
                 helperText={errors && errors.pass}
                 disabled={this.props.loading}
-              />
+                autoComplete="current-password"/>
+            </Grid>
+            <Grid item sm={11} xs={10}>
+              <Button variant="contained" type="submit" fullWidth>Log in</Button>
             </Grid>
           </Grid>
-          <input type="submit" className={classes.hiddenSubmit}/>
         </form>
       </MuiThemeProvider>
     );

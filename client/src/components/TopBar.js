@@ -1,11 +1,10 @@
 import AppBar from '@material-ui/core/AppBar';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import 'typeface-pt-sans-narrow';
-import themes from '../themes';
+import AdminNavigation from './AdminNavigation';
 import Logo from './Logo';
 import SessionPopover from './SessionPopover';
 
@@ -26,11 +25,7 @@ class TopBar extends React.Component {
         <AppBar color="default">
           <Toolbar>
             <Logo/>
-            <MuiThemeProvider theme={themes.narrow}>
-              <Typography className={classes.title} variant="h4" color="inherit">
-                Bookdump
-              </Typography>
-            </MuiThemeProvider>
+            <AdminNavigation/>
             <SessionPopover/>
           </Toolbar>
         </AppBar>

@@ -7,6 +7,7 @@ function Button(props) {
   return (
     <MuiThemeProvider theme={themes.normal}>
       <MaterialUiButton
+        type={props.type || 'button'}
         disableRipple={props.disableRipple}
         onClick={props.onClick}
         color={props.color || 'primary'}

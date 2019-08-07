@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
 import * as PropTypes from 'prop-types';
 import React from 'react';
-import connect from 'react-redux/es/connect/connect';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { LOG_OUT } from '../reducers/user';
 import themes from '../themes';
