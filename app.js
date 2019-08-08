@@ -1,25 +1,25 @@
-import { fileURLToPath } from 'url';
-import http from 'http';
-import Koa from 'koa';
 import cors from '@koa/cors';
-import onerror from 'koa-onerror';
-import Router from 'koa-router';
-import json from 'koa-json';
-import staticFiles from 'koa-static';
-import rp from 'request-promise-native';
-import send from 'koa-send';
 import AWS from 'aws-sdk';
+import crypto from 'crypto';
 import fs from 'fs';
+import http from 'http';
+import jwt from 'jsonwebtoken';
+import Koa from 'koa';
 import AsyncBusboy from 'koa-async-busboy';
 import bodyParser from 'koa-bodyparser';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+import json from 'koa-json';
+import onerror from 'koa-onerror';
+import Router from 'koa-router';
+import send from 'koa-send';
 import koaSslify from 'koa-sslify';
-import sharp from 'sharp';
-import stream from 'stream';
+import staticFiles from 'koa-static';
 import path from 'path';
-import Redis from 'redis';
+import sharp from 'sharp';
 import socketIo from 'socket.io';
+import stream from 'stream';
+import { fileURLToPath } from 'url';
+import { db, retrieveBook, retrieveBooks, storeBook, reserveBook, declineBook, forgetUser } from './db.js';
+import searchFromAll from './library.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,14 +28,7 @@ const router = Router();
 const sslify = koaSslify.default;
 const resolver = koaSslify.xForwardedProtoResolver;
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-
-const redis = Redis.createClient(redisUrl);
-
-
 const PORT = process.env.PORT || 5000;
-const REDIS_DB = 1;
-const BOOK_PREFIX = 'isbn:';
 const ADMIN_TOKEN_EXPIRATION = '1h';
 
 const envOverride = `${__dirname}/.env`;
@@ -65,18 +58,6 @@ for (const envVar of requiredEnvVars) {
   }
 }
 const { ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
-
-const scripts = {
-  getAll: null,
-  reserve: null,
-  decline: null,
-  forget: null
-};
-const selectedDb = selectDb();
-for (const scriptName of Object.keys(scripts)) {
-  const script = fs.readFileSync(`${__dirname}/redis/${scriptName}.lua`).toString();
-  scripts[scriptName] = db(loadScript, script);
-}
 
 const app = new Koa();
 onerror(app);
@@ -338,192 +319,6 @@ function upload(name, mimeType, resolve, reject) {
     resolve(result);
   });
   return pass;
-}
-
-function db(dbFunction, ...args) {
-  return selectedDb.then(() => dbFunction(...args));
-}
-
-function selectDb() {
-  return new Promise((resolve, reject) => {
-    redis.select(REDIS_DB, (error) => {
-      if (error) {
-        return reject({ message: error });
-      }
-      resolve();
-    });
-  });
-}
-
-function loadScript(script) {
-  return new Promise((resolve, reject) => {
-    redis.script('load', script, (error, digest) => {
-      if (error) {
-        return reject({ message: error });
-      }
-      resolve(digest);
-    });
-  });
-}
-
-function retrieveBooks(sha, allNames) {
-  return new Promise((resolve, reject) => {
-    scripts.getAll.then(digest => {
-      redis.evalsha(digest, 2, sha || '', (!!allNames).toString(), (error, books) => {
-        if (error) {
-          return reject({ message: error });
-        }
-        resolve(books.map(JSON.parse));
-      });
-    }).catch(error => {
-      reject({ message: error });
-    });
-  });
-}
-
-function retrieveBook(isbn) {
-  return new Promise((resolve, reject) => {
-    redis.get(`${BOOK_PREFIX}${isbn}`, (error, book) => {
-      if (error) {
-        return reject({ message: error, status: 404 });
-      }
-      resolve(JSON.parse(book));
-    });
-  });
-}
-
-function storeBook(book) {
-  return new Promise((resolve, reject) => {
-    redis.set(`${BOOK_PREFIX}${book.isbn}`, JSON.stringify(book), (error) => {
-      if (error) {
-        return reject({ message: error });
-      }
-      resolve();
-    });
-  });
-}
-
-function normalizeAuthor(book) {
-  const match = book.author.match(/^([^,]+), *(.+)$/);
-  if (match) {
-    book.author = `${match[2]} ${match[1]}`;
-  }
-  return book;
-}
-
-function reserveBook(isbn, name, sha) {
-  return new Promise((resolve, reject) => {
-    scripts.reserve.then(digest => {
-      redis.evalsha(digest, 3, isbn, sha, name, (error) => {
-        if (error) {
-          return reject({ message: error });
-        }
-        resolve();
-      });
-    }).catch(error => {
-      reject({ message: error });
-    });
-  });
-}
-
-function declineBook(isbn, name, sha, override) {
-  return new Promise((resolve, reject) => {
-    scripts.decline.then(digest => {
-      redis.evalsha(digest, 4, isbn, sha, name, (!!override).toString(), (error, book) => {
-        if (error) {
-          return reject({ message: error });
-        }
-        resolve(JSON.parse(book));
-      });
-    }).catch(error => {
-      reject({ message: error });
-    });
-  });
-}
-
-function forgetUser(sha) {
-  return new Promise((resolve, reject) => {
-    scripts.forget.then(digest => {
-      redis.evalsha(digest, 1, sha, (error, books) => {
-        if (error) {
-          return reject({ message: error });
-        }
-        resolve(books.map(JSON.parse));
-      });
-    }).catch(error => {
-      reject({ message: error });
-    });
-  });
-}
-
-async function searchFromAll(isbn) {
-  return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
-    return allFound.flat().filter(book => book.title && book.author).map(normalizeAuthor);
-  });
-}
-
-function findFinna(isbn) {
-  const opts = {
-    uri: 'https://api.finna.fi/api/v1/search',
-    qs: {
-      lookfor: `cleanIsbn:${isbn}`,
-      type: 'AllFields',
-      field: ['languages', 'nonPresenterAuthors', 'title'],
-      sort: 'relevance,id asc',
-      page: 1,
-      limit: 20,
-      prettyPrint: 'true',
-      lng: 'en'
-    },
-    headers: {
-      Accept: 'application/json'
-    },
-    json: true
-  };
-  return rp(opts).then(results => {
-    if (!results.records) {
-      return [];
-    }
-    return results.records.map(record => ({
-      language: record.languages && record.languages.length ? record.languages[0] : null,
-      author: (record.nonPresenterAuthors &&
-        record.nonPresenterAuthors.find(author =>
-          (author.role && author.role.startsWith('kirjoittaja') || !author.role)) ||
-        { name: null }).name,
-      title: record.title
-    }));
-  }).catch((error) => {
-    console.log(`Failed retrieval from Finna: ${error}`);
-    return [];
-  });
-}
-
-function findOpenLibrary(isbn) {
-  const opts = {
-    uri: 'https://openlibrary.org/api/books',
-    qs: {
-      bibkeys: `ISBN:${isbn}`,
-      format: 'json',
-      jscmd: 'details'
-    },
-    headers: {
-      Accept: 'application/json'
-    },
-    json: true
-  };
-  return rp(opts).then(results => {
-    if (!Object.values(results).length) {
-      return [];
-    }
-    return Object.values(results).map(record => record.details).map(record => ({
-      language: record.languages && record.languages.length ? record.languages[0].key.substr(11) : null,
-      author: record.authors && record.authors.length ? record.authors[0].name : null,
-      title: record.title
-    }));
-  }).catch((error) => {
-    console.log(`Failed retrieval from Open Library: ${error}`);
-    return [];
-  });
 }
 
 server.listen(PORT);
