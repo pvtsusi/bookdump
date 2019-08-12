@@ -2,6 +2,7 @@ import agent from '../agent';
 import { SHOW_ERROR } from './error';
 import { LOADED, LOADING } from './progress';
 import { LOG_IN } from './user';
+import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions.mjs';
 
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
@@ -15,9 +16,6 @@ const EDIT_BOOK = 'EDIT_BOOK';
 const UPDATE_BOOK = 'UPDATE_BOOK';
 const RESERVE_BOOK = 'RESERVE_BOOK';
 const DECLINE_BOOK = 'DECLINE_BOOK';
-const PATCH_BOOK = 'PATCH_BOOK';
-const HIDE_BOOK = 'HIDE_BOOK';
-const ADD_BOOK = 'ADD_BOOK';
 const DELETE_BOOK = 'DELETE_BOOK';
 
 const initialState = {

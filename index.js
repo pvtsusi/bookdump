@@ -28,6 +28,7 @@ import {
   forgetUser,
   deleteByReserver } from './db.js';
 import searchFromAll from './library.js';
+import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -154,7 +155,7 @@ async function edit(ctx) {
   const patch = ctx.request.body;
   const patched = { ...book, ...patch };
   await db(storeBook, patched);
-  io.emit('dispatch', { type: 'PATCH_BOOK', isbn: book.isbn, patch });
+  io.emit('dispatch', { type: PATCH_BOOK, isbn: book.isbn, patch });
   ctx.set('Content-Location', `/api/book/${patched.isbn}`);
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
@@ -190,7 +191,7 @@ async function create(ctx) {
     }
     promises.push(db(storeBook, book));
     await Promise.all(promises);
-    io.emit('dispatch', { type: 'ADD_BOOK', book });
+    io.emit('dispatch', { type: ADD_BOOK, book });
     ctx.status = 201;
     ctx.set('Content-Location', `/book/${book.isbn}`);
     ctx.body = book;
@@ -232,7 +233,7 @@ async function forget(ctx) {
   if (sha) {
     const books = await forgetUser(sha);
     for (const book of books) {
-      io.emit('dispatch', { type: 'ADD_BOOK', book, origin: sha });
+      io.emit('dispatch', { type: ADD_BOOK, book, origin: sha });
     }
     ctx.status = 200;
     ctx.body = { message: 'Ok' };
@@ -255,7 +256,7 @@ async function reserve(ctx) {
     return;
   }
   await reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
-  io.emit('dispatch', { type: 'HIDE_BOOK', isbn: ctx.params.isbn, origin: ctx.state.user.sha });
+  io.emit('dispatch', { type: HIDE_BOOK, isbn: ctx.params.isbn, origin: ctx.state.user.sha });
   ctx.status = 200;
   ctx.body = { name: ctx.state.user.name };
 }
@@ -273,7 +274,7 @@ async function decline(ctx) {
     return;
   }
   const book = await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
-  io.emit('dispatch', { type: 'ADD_BOOK', book, origin: ctx.state.user.sha });
+  io.emit('dispatch', { type: ADD_BOOK, book, origin: ctx.state.user.sha });
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
 }
