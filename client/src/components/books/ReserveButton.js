@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { declineBook, deselectBook, reserveBook } from '../reducers/books';
-import Button from './Button';
-import LoginDialog from './LoginDialog';
+import { declineBook, deselectBook, reserveBook } from '../../reducers/books';
+import Button from '../Button';
+import LoginDialog from '../sessions/LoginDialog';
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

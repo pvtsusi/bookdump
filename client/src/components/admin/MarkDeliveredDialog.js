@@ -7,8 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CANCEL_MARK_DELIVERED, markDelivered } from '../reducers/books';
-import Button from './Button';
+import { CANCEL_MARK_DELIVERED, markDelivered } from '../../reducers/books';
+import Button from '../Button';
 
 const styles = theme => ({
   actions: {

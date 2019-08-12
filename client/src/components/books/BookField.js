@@ -4,8 +4,8 @@ import TextField from '@material-ui/core/TextField/TextField';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { editBook, updateBook } from '../reducers/books';
-import themes from '../themes';
+import { editBook, updateBook } from '../../reducers/books';
+import themes from '../../themes';
 
 const mapStateToProps = ({ session }) => ({
   admin: session.authenticated && session.user && session.user.admin

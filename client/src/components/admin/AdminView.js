@@ -13,8 +13,8 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../reducers/books';
-import themes from '../themes';
+import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../../reducers/books';
+import themes from '../../themes';
 import AdminLogin from './AdminLogin';
 import MarkDeliveredDialog from './MarkDeliveredDialog';
 

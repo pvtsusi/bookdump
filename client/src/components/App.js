@@ -13,11 +13,11 @@ import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import { isValidSession, SESSION_VALIDATED } from '../reducers/socket';
 import { LOGGED_OUT, logout } from '../reducers/user';
 import themes from '../themes';
-import AdminView from './AdminView';
-import Books from './Books';
+import AdminView from './admin/AdminView';
+import Books from './books/Books';
 import MessageSnackbar from './MessageSnackbar';
 import ModalProgress from './ModalProgress';
-import TooSlowSnackbar from './TooSlowSnackbar';
+import TooSlowSnackbar from './books/TooSlowSnackbar';
 import TopBar from './TopBar';
 
 const styles = theme => ({

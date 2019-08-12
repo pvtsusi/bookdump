@@ -8,9 +8,9 @@ import TextField from '@material-ui/core/TextField/TextField';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CANCEL_LOGIN, CLEAR_LOGIN_ERROR, LOGIN_ERROR, login } from '../reducers/user';
-import themes from '../themes';
-import Button from './Button';
+import { CANCEL_LOGIN, CLEAR_LOGIN_ERROR, LOGIN_ERROR, login } from '../../reducers/user';
+import themes from '../../themes';
+import Button from '../Button';
 
 const styles = theme => ({
   actions: {

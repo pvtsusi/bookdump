@@ -5,10 +5,10 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getBooks, selectBook } from '../reducers/books';
+import { getBooks, selectBook } from '../../reducers/books';
 import Book from './Book';
 import BookDialog from './BookDialog';
-import Progress from './Progress';
+import Progress from '../Progress';
 
 const styles = theme => ({
   notification: {

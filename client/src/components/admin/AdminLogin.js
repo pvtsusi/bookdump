@@ -1,4 +1,4 @@
-import Button from './Button';
+import Button from '../Button';
 import Grid from '@material-ui/core/Grid';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -7,8 +7,8 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CLEAR_LOGIN_ERROR, login, LOGIN_ERROR } from '../reducers/user';
-import themes from '../themes';
+import { CLEAR_LOGIN_ERROR, login, LOGIN_ERROR } from '../../reducers/user';
+import themes from '../../themes';
 
 const styles = () => ({
   textField: {

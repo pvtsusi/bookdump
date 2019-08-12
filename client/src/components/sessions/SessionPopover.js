@@ -8,8 +8,8 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { LOG_OUT } from '../reducers/user';
-import Button from './Button';
+import { LOG_OUT } from '../../reducers/user';
+import Button from '../Button';
 import LogoutDialog from './LogoutDialog';
 
 

@@ -4,9 +4,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import 'typeface-pt-sans-narrow';
-import AdminNavigation from './AdminNavigation';
+import AdminNavigation from './admin/AdminNavigation';
 import Logo from './Logo';
-import SessionPopover from './SessionPopover';
+import SessionPopover from './sessions/SessionPopover';
 
 const styles = {
   root: {

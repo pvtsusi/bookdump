@@ -7,9 +7,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CANCEL_LOGOUT, logout } from '../reducers/user';
-import themes from '../themes';
-import Button from './Button';
+import { CANCEL_LOGOUT, logout } from '../../reducers/user';
+import themes from '../../themes';
+import Button from '../Button';
 
 const styles = theme => ({
   actions: {

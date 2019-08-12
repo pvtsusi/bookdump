@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CONFIRM_TOO_SLOW } from '../reducers/books';
-import { SNACKBAR_TOO_SLOW } from '../reducers/snackbar';
-import MessageSnackbar from './MessageSnackbar';
+import { CONFIRM_TOO_SLOW } from '../../reducers/books';
+import { SNACKBAR_TOO_SLOW } from '../../reducers/snackbar';
+import MessageSnackbar from '../MessageSnackbar';
 
 const mapStateToProps = ({ books }) => ({
   tooSlow: books.tooSlow

@@ -12,10 +12,10 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import coverUrl from '../cover';
-import { deselectBook } from '../reducers/books';
+import coverUrl from '../../cover';
+import { deselectBook } from '../../reducers/books';
 import BookField from './BookField';
-import Button from './Button';
+import Button from '../Button';
 import ReserveButton from './ReserveButton';
 import ReservedBanner from './ReservedBanner';
 
