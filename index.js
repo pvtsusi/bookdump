@@ -21,6 +21,7 @@ import { fileURLToPath } from 'url';
 import db from './db.js';
 import searchFromAll from './library.js';
 import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions.mjs';
+import resizedName from './client/src/cover.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -319,12 +320,6 @@ function verifyToken(token) {
       resolve(decoded);
     });
   });
-}
-
-function resizedName(fileName, sizeSuffix) {
-  const ext = path.extname(fileName);
-  const base = path.basename(fileName, ext);
-  return `${base}_${sizeSuffix}${ext}`;
 }
 
 function upload(name, mimeType, resolve, reject) {

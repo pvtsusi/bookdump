@@ -12,7 +12,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import coverUrl from '../../cover';
+import coverUrl from '../../cover.mjs';
 import { deselectBook } from '../../reducers/books';
 import BookField from './BookField';
 import Button from '../Button';

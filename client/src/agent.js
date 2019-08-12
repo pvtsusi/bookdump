@@ -46,7 +46,7 @@ const requests = {
   get: url => reqOpts('GET').then(opts => fetch(url, opts)).then(resBody),
   post: (url, body) => reqOpts('POST', body).then(opts => fetch(url, opts)).then(resBody),
   patch: (url, body) => reqOpts('PATCH', body).then(opts => fetch(url, opts)).then(resBody),
-  delete: (url, body) => reqOpts('DELETE').then(opts => fetch(url, opts)).then(resBody),
+  delete: (url) => reqOpts('DELETE').then(opts => fetch(url, opts)).then(resBody),
 };
 
 const Books = {

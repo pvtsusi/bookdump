@@ -12,7 +12,7 @@ import StarIcon from '@material-ui/icons/Star';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import cover from '../../cover';
+import cover from '../../cover.mjs';
 import themes from '../../themes';
 
 const styles = () => ({
