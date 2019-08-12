@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import openSocket from 'socket.io-client';
+import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import { isValidSession, SESSION_VALIDATED } from '../reducers/socket';
 import { LOGGED_OUT, logout } from '../reducers/user';
 import themes from '../themes';
 import AdminView from './AdminView';
 import Books from './Books';
-import ErrorSnackbar from './ErrorSnackbar';
-import LoggedOutSnackbar from './LoggedOutSnackbar';
+import MessageSnackbar from './MessageSnackbar';
 import ModalProgress from './ModalProgress';
 import TooSlowSnackbar from './TooSlowSnackbar';
 import TopBar from './TopBar';
@@ -90,9 +90,9 @@ class App extends React.Component {
         <CssBaseline/>
         <MuiThemeProvider theme={themes.normal}>
           <ModalProgress show={this.props.loading}/>
-          <LoggedOutSnackbar/>
+          <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
+          <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
           <TooSlowSnackbar/>
-          <ErrorSnackbar/>
           <div className={this.classes.root}>
             <TopBar/>
             <Grid container justify="center">

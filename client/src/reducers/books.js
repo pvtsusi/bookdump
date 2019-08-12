@@ -1,6 +1,6 @@
 import agent from '../agent';
-import { SHOW_ERROR } from './error';
 import { LOADED, LOADING } from './progress';
+import { SHOW_SNACKBAR, SNACKBAR_ERROR } from './snackbar';
 import { LOG_IN } from './user';
 import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions.mjs';
 
@@ -232,7 +232,7 @@ export const reserveBook = (book) => {
       if (err.status === 401) {
         dispatch({ type: LOG_IN, onSuccess: 'reserve', isbn: book.isbn });
       } else {
-        dispatch({ type: SHOW_ERROR, error: err.statusText });
+        dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }
     } finally {
       dispatch({ type: LOADED });
@@ -250,7 +250,7 @@ export const declineBook = (book) => {
       if (err.status === 401) {
         dispatch({ type: LOG_IN, onSuccess: 'decline', isbn: book.isbn });
       } else {
-        dispatch({ type: SHOW_ERROR, error: err.statusText });
+        dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }
     } finally {
       dispatch({ type: LOADED });

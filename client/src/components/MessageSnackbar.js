@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { CLEAR_ERROR } from '../reducers/error';
+import { CLEAR_SNACKBAR } from '../reducers/snackbar';
 import themes from '../themes';
 
 const styles = () => ({
@@ -17,19 +17,19 @@ const styles = () => ({
   }
 });
 
-const mapStateToProps = ({ error }) => ({
-  error: error.error
+const mapStateToProps = ({ snackbar }) => ({
+  shown: snackbar
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      clearError: () => dispatch => dispatch({ type: CLEAR_ERROR })
+      clearSnackbar: (key) => dispatch => dispatch({ type: CLEAR_SNACKBAR, key })
     }, dispatch
   );
 
 
-class ErrorSnackbar extends React.Component {
+class MessageSnackbar extends React.Component {
   constructor(props) {
     super(props);
     this.classes = props.classes;
@@ -39,19 +39,24 @@ class ErrorSnackbar extends React.Component {
     return (
       <MuiThemeProvider theme={themes.narrow}>
         <Snackbar
-          open={!!this.props.error}
-          onClose={this.props.clearError}
+          open={this.props.open || !!this.props.shown[this.props.snackbarKey]}
+          onClose={() => {
+            this.props.onClose && this.props.onClose();
+            this.props.clearSnackbar(this.props.snackbarKey);
+          }}
           autoHideDuration={5000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-          <SnackbarContent message={`Error: ${this.props.error}`} className={this.classes.message}/>
+          <SnackbarContent
+            message={this.props.message || this.props.shown[this.props.snackbarKey]}
+            className={this.classes.message}/>
         </Snackbar>
       </MuiThemeProvider>
     );
   }
 }
 
-ErrorSnackbar.propTypes = {
+MessageSnackbar.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ErrorSnackbar));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MessageSnackbar));

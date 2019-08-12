@@ -2,9 +2,9 @@ import { connectRouter } from 'connected-react-router';
 import { combineReducers } from 'redux';
 import { sessionReducer } from 'redux-react-session';
 import books from './books';
-import error from './error';
 import progress from './progress';
 import socket from './socket';
+import snackbar from './snackbar';
 import user from './user';
 
 export default (history) => combineReducers({
@@ -13,6 +13,6 @@ export default (history) => combineReducers({
   socket,
   progress,
   user,
-  error,
+  snackbar,
   session: sessionReducer
 });

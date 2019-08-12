@@ -1,15 +1,14 @@
 import { sessionService } from 'redux-react-session';
 import agent from '../agent';
 import { getBooks } from './books';
-import { SHOW_ERROR } from './error';
 import { LOADED, LOADING } from './progress';
+import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from './snackbar';
 
 const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
 
 export const LOG_IN = 'LOG_IN';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const CLEAR_LOGIN_ERROR = 'CLEAR_LOGIN_ERROR';
-export const CONFIRM_LOGGED_OUT = 'CONFIRM_LOGGED_OUT';
 export const CANCEL_LOGOUT = 'CANCEL_LOGOUT';
 export const LOG_OUT = 'LOG_OUT';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -19,7 +18,6 @@ const LOGGED_IN = 'LOGGED_IN';
 const initialState = {
   errors: {},
   loggingOut: false,
-  loggedOut: false,
   loggingIn: false,
   onSuccess: null,
   isbn: null
@@ -40,9 +38,7 @@ export default (state = initialState, action) => {
     case CANCEL_LOGOUT:
       return { ...state, loggingOut: false };
     case LOGGED_OUT:
-      return { ...state, loggingOut: false, loggedOut: true };
-    case CONFIRM_LOGGED_OUT:
-      return { ...state, loggedOut: false };
+      return { ...state, loggingOut: false };
     case CANCEL_LOGIN:
       return { ...state, loggingIn: false };
     case LOGGED_IN:
@@ -87,9 +83,9 @@ export const logout = (admin) => async dispatch => {
     await deleteUser();
     await deleteSession();
     getBooks()(dispatch);
-    dispatch({ type: LOGGED_OUT });
+    dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_LOGGED_OUT, message: 'You have been logged out.' });
   } catch (err) {
-    dispatch({ type: SHOW_ERROR, error: err.statusText });
+    dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
   } finally {
     dispatch({ type: LOADED });
   }
