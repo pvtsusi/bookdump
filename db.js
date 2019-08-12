@@ -17,7 +17,8 @@ const scripts = {
   getAll: null,
   reserve: null,
   decline: null,
-  forget: null
+  forget: null,
+  delete: null
 };
 for (const scriptName of Object.keys(scripts)) {
   const script = fs.readFileSync(`${__dirname}/redis/${scriptName}.lua`).toString();
@@ -132,3 +133,17 @@ export function forgetUser(sha) {
   });
 }
 
+export function deleteByReserver(sha) {
+  return new Promise((resolve, reject) => {
+    scripts.delete.then(digest => {
+      redis.evalsha(digest, 1, sha, (error) => {
+        if (error) {
+          return reject({ message: error });
+        }
+        resolve();
+      });
+    }).catch(error => {
+      reject({ message: error });
+    });
+  });
+}

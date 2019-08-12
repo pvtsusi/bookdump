@@ -45,14 +45,16 @@ async function reqOpts(method, body = null) {
 const requests = {
   get: url => reqOpts('GET').then(opts => fetch(url, opts)).then(resBody),
   post: (url, body) => reqOpts('POST', body).then(opts => fetch(url, opts)).then(resBody),
-  patch: (url, body) => reqOpts('PATCH', body).then(opts => fetch(url, opts)).then(resBody)
+  patch: (url, body) => reqOpts('PATCH', body).then(opts => fetch(url, opts)).then(resBody),
+  delete: (url, body) => reqOpts('DELETE').then(opts => fetch(url, opts)).then(resBody),
 };
 
 const Books = {
   all: () => requests.get('/api/books'),
   update: (isbn, field, value) => requests.patch(`/api/book/${isbn}`, { [field]: value }),
   reserve: (isbn) => requests.post(`/api/book/${isbn}/reserve`, {}),
-  decline: (isbn) => requests.post(`/api/book/${isbn}/decline`, {})
+  decline: (isbn) => requests.post(`/api/book/${isbn}/decline`, {}),
+  delete: (reserver) => requests.delete(`/api/user/${reserver}/books`)
 };
 
 const Session = {

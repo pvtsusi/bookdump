@@ -5,6 +5,8 @@ import { LOG_IN } from './user';
 
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
+export const CONFIRM_MARK_DELIVERED = 'CONFIRM_MARK_DELIVERED';
+export const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
 const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
 const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
 const SELECT_BOOK = 'SELECT_BOOK';
@@ -16,13 +18,15 @@ const DECLINE_BOOK = 'DECLINE_BOOK';
 const PATCH_BOOK = 'PATCH_BOOK';
 const HIDE_BOOK = 'HIDE_BOOK';
 const ADD_BOOK = 'ADD_BOOK';
+const DELETE_BOOK = 'DELETE_BOOK';
 
 const initialState = {
   selected: null,
   editing: null,
   tooSlow: false,
   reservations: {},
-  booksByReserver: {}
+  booksByReserver: {},
+  markDelivered: null
 };
 
 export default (state = initialState, action) => {
@@ -60,6 +64,9 @@ export default (state = initialState, action) => {
         return book;
       }
     });
+
+  const deleteBooks = () =>
+    (state.books || []).filter((book) => book.reserver !== action.reserver);
 
   const groupByReserver = () =>
     (action.books || [])
@@ -166,19 +173,29 @@ export default (state = initialState, action) => {
       return { ...state, tooSlow: false };
     case ADD_BOOK:
       return { ...state, books: upsert() };
+    case CONFIRM_MARK_DELIVERED:
+      return { ...state, markDelivered: action.reserver };
+    case CANCEL_MARK_DELIVERED:
+      return { ...state, markDelivered: null };
+    case DELETE_BOOK:
+      return { ...state, books: deleteBooks(), markDelivered: null };
     default:
       return state;
   }
 }
 
+async function doGetBooks(dispatch) {
+  try {
+    const books = await agent.Books.all();
+    dispatch({ type: BOOKS_VIEW_LOADED, books });
+  } catch (err) {
+    dispatch({ type: BOOKS_VIEW_ERROR, error: err.statusText });
+  }
+}
+
 export const getBooks = () => {
   return async dispatch => {
-    try {
-      const books = await agent.Books.all();
-      dispatch({ type: BOOKS_VIEW_LOADED, books });
-    } catch (err) {
-      dispatch({ type: BOOKS_VIEW_ERROR, error: err.statusText });
-    }
+    await doGetBooks(dispatch);
   };
 };
 
@@ -240,5 +257,13 @@ export const declineBook = (book) => {
     } finally {
       dispatch({ type: LOADED });
     }
+  };
+};
+
+export const markDelivered = (reserver) => {
+  return async dispatch => {
+    await agent.Books.delete(reserver);
+    await doGetBooks(dispatch);
+    dispatch({ type: DELETE_BOOK, reserver });
   };
 };

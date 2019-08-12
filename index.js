@@ -18,7 +18,15 @@ import sharp from 'sharp';
 import socketIo from 'socket.io';
 import stream from 'stream';
 import { fileURLToPath } from 'url';
-import { db, retrieveBook, retrieveBooks, storeBook, reserveBook, declineBook, forgetUser } from './db.js';
+import {
+  db,
+  retrieveBook,
+  retrieveBooks,
+  storeBook,
+  reserveBook,
+  declineBook,
+  forgetUser,
+  deleteByReserver } from './db.js';
 import searchFromAll from './library.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -103,6 +111,7 @@ router.get('/api/books', list)
   .post('/api/forget', forget)
   .post('/api/book/:isbn/reserve', reserve)
   .post('/api/book/:isbn/decline', decline)
+  .delete('/api/user/:sha/books', deleteBooks)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
   });
@@ -265,6 +274,23 @@ async function decline(ctx) {
   }
   const book = await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
   io.emit('dispatch', { type: 'ADD_BOOK', book, origin: ctx.state.user.sha });
+  ctx.status = 200;
+  ctx.body = { message: 'Ok' };
+}
+
+
+async function deleteBooks(ctx) {
+  if (!(ctx.state.user && ctx.state.user.admin)) {
+    ctx.status = 403;
+    ctx.body = { message: 'Forbidden' };
+    return;
+  }
+  if (!ctx.params.sha) {
+    ctx.status = 400;
+    ctx.body = { message: 'No reserver SHA given' };
+    return;
+  }
+  await deleteByReserver(ctx.params.sha);
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
 }

@@ -5,15 +5,19 @@ import IconButton from '@material-ui/core/IconButton/IconButton';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Typography from '@material-ui/core/Typography/Typography';
 import CloseIcon from '@material-ui/icons/Close';
+import DoneIcon from '@material-ui/icons/Done';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { declineBook, getBooks } from '../reducers/books';
+import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../reducers/books';
 import themes from '../themes';
 import AdminLogin from './AdminLogin';
+import MarkDeliveredDialog from './MarkDeliveredDialog';
+
 
 const mapStateToProps = ({ session, books }) => ({
   admin: session.authenticated && session.user && session.user.admin,
@@ -25,7 +29,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       getBooks,
-      declineBook
+      declineBook,
+      confirmMarkDelivered: (reserver) => dispatch => dispatch({ type: CONFIRM_MARK_DELIVERED, reserver })
     }, dispatch
   );
 
@@ -59,49 +64,59 @@ class AdminView extends React.Component {
       );
     }
 
-    if (this.props.books && this.props.books.length === 0) {
+    if (this.props.books && Object.keys(this.props.books).length === 0) {
       return (
         <Typography>
-          No books
+          No reserved books
         </Typography>
       );
     }
 
     if (this.props.books) {
       return (
-        <MuiThemeProvider theme={themes.narrow}>
-          <List subheader={<li/>}>
-            {
-              Object.keys(this.props.books).map(reserver => {
-                const reserverName = this.props.books[reserver][0].reserverName;
-                return (
-                  <li key={reserver}>
-                    <ul style={{ listStyle: 'none' }}>
-                      <ListSubheader>
-                        <Typography variant="h6">
-                          {reserverName}
-                        </Typography>
-                      </ListSubheader>
-                      {
-                        this.props.books[reserver]
-                          .filter(book => !this.state.declined[book.isbn]).map(book => (
-                          <ListItem key={book.isbn}>
-                            <ListItemText inset primary={book.title} secondary={book.author}/>
-                            <ListItemSecondaryAction>
-                              <IconButton onClick={() => this.decline(book)} color="secondary">
-                                <CloseIcon/>
+        <React.Fragment>
+          <MarkDeliveredDialog/>
+          <MuiThemeProvider theme={themes.narrow}>
+            <List subheader={<li/>}>
+              {
+                Object.keys(this.props.books).map(reserver => {
+                  const reserverName = this.props.books[reserver][0].reserverName;
+                  return (
+                    <li key={reserver}>
+                      <ul style={{ listStyle: 'none' }}>
+                        <ListSubheader>
+                          <Typography variant="h6">
+                            {reserverName}
+                            <Tooltip title="Mark all delivered" aria-label="Mark all delivered">
+                              <IconButton onClick={() => this.props.confirmMarkDelivered(reserver)} color="primary">
+                                <DoneIcon/>
                               </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))
-                      }
-                    </ul>
-                  </li>
-                );
-              })
-            }
-          </List>
-        </MuiThemeProvider>
+                            </Tooltip>
+                          </Typography>
+                        </ListSubheader>
+                        {
+                          this.props.books[reserver]
+                            .filter(book => !this.state.declined[book.isbn]).map(book => (
+                            <ListItem key={book.isbn}>
+                              <ListItemText inset primary={book.title} secondary={book.author}/>
+                              <ListItemSecondaryAction>
+                                <Tooltip title="Cancel reservation" aria-label="Cancel reservation">
+                                  <IconButton onClick={() => this.decline(book)} color="secondary">
+                                    <CloseIcon/>
+                                  </IconButton>
+                                </Tooltip>
+                              </ListItemSecondaryAction>
+                            </ListItem>
+                          ))
+                        }
+                      </ul>
+                    </li>
+                  );
+                })
+              }
+            </List>
+          </MuiThemeProvider>
+        </React.Fragment>
       );
     }
     return null;
