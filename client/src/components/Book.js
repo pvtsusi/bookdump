@@ -39,21 +39,17 @@ class BookIcon extends React.Component {
     if (this.props.book.reserverName) {
       return (
         <ListItemIcon>
-          <MuiThemeProvider theme={themes.normal}>
-            <Tooltip title={reserved} aria-label={reserved}>
-              <ReservedIcon className={reservedClass} fontSize="large"/>
-            </Tooltip>
-          </MuiThemeProvider>
+          <Tooltip title={reserved} aria-label={reserved}>
+            <ReservedIcon className={reservedClass} fontSize="large"/>
+          </Tooltip>
         </ListItemIcon>
       );
     } else if (this.props.book.recommended) {
       return (
         <ListItemIcon>
-          <MuiThemeProvider theme={themes.normal}>
-            <Tooltip title="Recommended" aria-label="Recommended">
-              <StarIcon className={recommendedClass} fontSize="large"/>
-            </Tooltip>
-          </MuiThemeProvider>
+          <Tooltip title="Recommended" aria-label="Recommended">
+            <StarIcon className={recommendedClass} fontSize="large"/>
+          </Tooltip>
         </ListItemIcon>
       );
     }
@@ -80,7 +76,9 @@ class Book extends React.Component {
               </ListItemAvatar>
             </Paper>
           }
-          <ListItemText inset primary={this.props.book.title} secondary={this.props.book.author}/>
+          <MuiThemeProvider theme={themes.vollkorn}>
+            <ListItemText inset primary={this.props.book.title} secondary={this.props.book.author}/>
+          </MuiThemeProvider>
           <BookIcon
             book={this.props.book}
             userName={this.props.userName}

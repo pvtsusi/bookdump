@@ -88,7 +88,7 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline/>
-        <MuiThemeProvider theme={themes.vollkorn}>
+        <MuiThemeProvider theme={themes.normal}>
           <ModalProgress show={this.props.loading}/>
           <LoggedOutSnackbar/>
           <TooSlowSnackbar/>

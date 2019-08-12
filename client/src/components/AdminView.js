@@ -74,9 +74,8 @@ class AdminView extends React.Component {
 
     if (this.props.books) {
       return (
-        <React.Fragment>
-          <MarkDeliveredDialog/>
           <MuiThemeProvider theme={themes.narrow}>
+            <MarkDeliveredDialog/>
             <List subheader={<li/>}>
               {
                 Object.keys(this.props.books).map(reserver => {
@@ -116,7 +115,6 @@ class AdminView extends React.Component {
               }
             </List>
           </MuiThemeProvider>
-        </React.Fragment>
       );
     }
     return null;

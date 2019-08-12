@@ -1,7 +1,7 @@
 import Grid from '@material-ui/core/Grid/Grid';
 import IconButton from '@material-ui/core/IconButton/IconButton';
 import Popover from '@material-ui/core/Popover/Popover';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
 import * as PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { LOG_OUT } from '../reducers/user';
-import themes from '../themes';
 import Button from './Button';
 import LogoutDialog from './LogoutDialog';
 
@@ -79,20 +78,18 @@ class SessionPopover extends React.Component {
             vertical: 'top',
             horizontal: 'center'
           }}>
-          <MuiThemeProvider theme={themes.normal}>
-            <Grid className={this.classes.root} container>
-              <Grid item xs={12} className={this.classes.message}>
-                <Typography variant="body1">
-                  You are signed in as {this.props.userName} {this.props.admin && '(admin)'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Button fullWidth variant="outlined" onClick={this.startLoggingOut}>
-                  Sign out
-                </Button>
-              </Grid>
+          <Grid className={this.classes.root} container>
+            <Grid item xs={12} className={this.classes.message}>
+              <Typography variant="body1">
+                You are signed in as {this.props.userName} {this.props.admin && '(admin)'}
+              </Typography>
             </Grid>
-          </MuiThemeProvider>
+            <Grid item xs={12}>
+              <Button fullWidth variant="outlined" onClick={this.startLoggingOut}>
+                Sign out
+              </Button>
+            </Grid>
+          </Grid>
         </Popover>
         <LogoutDialog/>
       </React.Fragment>
