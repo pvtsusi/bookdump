@@ -18,15 +18,7 @@ import sharp from 'sharp';
 import socketIo from 'socket.io';
 import stream from 'stream';
 import { fileURLToPath } from 'url';
-import {
-  db,
-  retrieveBook,
-  retrieveBooks,
-  storeBook,
-  reserveBook,
-  declineBook,
-  forgetUser,
-  deleteByReserver } from './db.js';
+import db from './db.js';
 import searchFromAll from './library.js';
 import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions.mjs';
 
@@ -138,11 +130,11 @@ io.on('connection', socketService);
 async function list(ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
   const admin = ctx.state.user && ctx.state.user.admin;
-  ctx.body = await db(retrieveBooks, sha, admin);
+  ctx.body = await db.retrieveBooks(sha, admin);
 }
 
 async function view(ctx) {
-  ctx.body = await db(retrieveBook, ctx.params.isbn);
+  ctx.body = await db.retrieveBook(ctx.params.isbn);
 }
 
 async function edit(ctx) {
@@ -151,10 +143,10 @@ async function edit(ctx) {
     ctx.body = { message: 'Forbidden' };
     return;
   }
-  const book = await db(retrieveBook, ctx.params.isbn);
+  const book = await db.retrieveBook(ctx.params.isbn);
   const patch = ctx.request.body;
   const patched = { ...book, ...patch };
-  await db(storeBook, patched);
+  await db.storeBook(patched);
   io.emit('dispatch', { type: PATCH_BOOK, isbn: book.isbn, patch });
   ctx.set('Content-Location', `/api/book/${patched.isbn}`);
   ctx.status = 200;
@@ -189,7 +181,7 @@ async function create(ctx) {
     if (fileName) {
       book.cover = `https://s3.eu-north-1.amazonaws.com/bookdump/${fileName}`;
     }
-    promises.push(db(storeBook, book));
+    promises.push(db.storeBook(book));
     await Promise.all(promises);
     io.emit('dispatch', { type: ADD_BOOK, book });
     ctx.status = 201;
@@ -231,7 +223,7 @@ async function login(ctx) {
 async function forget(ctx) {
   const sha = ctx.state.user && ctx.state.user.sha;
   if (sha) {
-    const books = await forgetUser(sha);
+    const books = await db.forgetUser(sha);
     for (const book of books) {
       io.emit('dispatch', { type: ADD_BOOK, book, origin: sha });
     }
@@ -255,7 +247,7 @@ async function reserve(ctx) {
     ctx.body = { message: 'No ISBN given' };
     return;
   }
-  await reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
+  await db.reserveBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha);
   io.emit('dispatch', { type: HIDE_BOOK, isbn: ctx.params.isbn, origin: ctx.state.user.sha });
   ctx.status = 200;
   ctx.body = { name: ctx.state.user.name };
@@ -273,7 +265,7 @@ async function decline(ctx) {
     ctx.body = { message: 'No ISBN given' };
     return;
   }
-  const book = await declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
+  const book = await db.declineBook(ctx.params.isbn, ctx.state.user.name, ctx.state.user.sha, ctx.state.user.admin);
   io.emit('dispatch', { type: ADD_BOOK, book, origin: ctx.state.user.sha });
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
@@ -291,7 +283,7 @@ async function deleteBooks(ctx) {
     ctx.body = { message: 'No reserver SHA given' };
     return;
   }
-  await deleteByReserver(ctx.params.sha);
+  await db.deleteByReserver(ctx.params.sha);
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
 }
