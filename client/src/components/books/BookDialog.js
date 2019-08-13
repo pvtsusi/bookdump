@@ -26,22 +26,32 @@ const styles = theme => ({
   dialog: {
     padding: '0!important'
   },
+  dialogPaper: {
+    [theme.breakpoints.up('xs')]: {
+      marginTop: 0,
+      marginBottom: 0
+    },
+    [theme.breakpoints.up('sm')]: {
+      marginTop: theme.spacing.unit * 2,
+      marginBottom: theme.spacing.unit * 8
+    }
+  },
   card: {
     display: 'flex'
   },
   coverContainer: {
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       display: 'flex',
       justifyContent: 'center'
     }
   },
   cover: {
     objectFit: 'contain',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       maxHeight: EDGE_XS,
       maxWidth: EDGE_XS
     },
-    [theme.breakpoints.up('xs')]: {
+    [theme.breakpoints.up('sm')]: {
       height: EDGE,
       width: EDGE
     }
@@ -124,7 +134,7 @@ class BookDialog extends React.Component {
   render() {
     const { classes, editing } = this.props;
     return (
-      <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm">
+      <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm" classes={{paper: classes.dialogPaper}}>
         <DialogContent className={classes.dialog}>
           <Card className={classes.card}>
             <Grid container>
