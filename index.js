@@ -8,6 +8,8 @@ import Koa from 'koa';
 import AsyncBusboy from 'koa-async-busboy';
 import bodyParser from 'koa-bodyparser';
 import json from 'koa-json';
+import basicAuth from 'koa-basic-auth';
+import mount from 'koa-mount';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
 import send from 'koa-send';
@@ -96,6 +98,8 @@ function parseToken(ctx) {
   return auth.substr('bearer '.length);
 }
 
+app.use(mount('/api/test', basicAuth({ name: ADMIN_NAME, pass: ADMIN_PASS })));
+
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
   .patch('/api/book/:isbn', edit)
@@ -106,6 +110,7 @@ router.get('/api/books', list)
   .post('/api/book/:isbn/reserve', reserve)
   .post('/api/book/:isbn/decline', decline)
   .delete('/api/user/:sha/books', deleteBooks)
+  .get('/api/test', test)
   .all('*', async (ctx) => {
     await send(ctx, 'client/build/index.html');
   });
@@ -192,6 +197,11 @@ async function create(ctx) {
     ctx.status = 400;
     ctx.body = { message: 'No book metadata' };
   }
+}
+
+async function test(ctx) {
+  ctx.status = 200;
+  ctx.body = { message: 'Ok' };
 }
 
 async function resizeAndUpload(fileStream, fileName, mimeType) {
