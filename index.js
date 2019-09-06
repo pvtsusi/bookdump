@@ -49,6 +49,8 @@ if (fs.existsSync(envOverride)) {
 const requiredEnvVars = [
   'AWS_ACCESS_KEY_ID',
   'AWS_SECRET_ACCESS_KEY',
+  'BUCKET',
+  'BUCKET_REGION',
   'ADMIN_NAME',
   'ADMIN_PASS',
   'APP_SECRET',
@@ -61,7 +63,7 @@ for (const envVar of requiredEnvVars) {
     process.exit(1);
   }
 }
-const { ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
+const { BUCKET, BUCKET_REGION, ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET } = process.env;
 
 const app = new Koa();
 onerror(app);
@@ -334,8 +336,8 @@ function verifyToken(token) {
 
 function upload(name, mimeType, resolve, reject) {
   const pass = new stream.PassThrough();
-  const params = { Bucket: 'bookdump', ACL: 'public-read' };
-  const s3 = new AWS.S3({ params, region: 'eu-north-1' });
+  const params = { Bucket: BUCKET, ACL: 'public-read' };
+  const s3 = new AWS.S3({ params, region: BUCKET_REGION });
   s3.upload({ Body: pass, Key: name, ContentType: mimeType }, (err, result) => {
     if (err) {
       return reject(err);
