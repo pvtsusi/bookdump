@@ -119,8 +119,8 @@ const Cover = withWidth()(props => {
         <CardMedia
           component="img"
           className={classes.cover}
-          srcSet={`${coverUrl(cover, 270)}, ${coverUrl(cover, 540)} 2x`}
-          src={coverUrl(cover, 540)}
+          srcSet={`${coverUrl(cover, 270)}, ${coverUrl(cover, 540)} 2x, ${coverUrl(cover, 810)} 3x`}
+          src={coverUrl(cover, 810)}
           title={title}
           style={style}/>
       </Grid>

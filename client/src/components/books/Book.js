@@ -72,7 +72,7 @@ class Book extends React.Component {
             this.props.book.cover &&
             <Paper>
               <ListItemAvatar className={this.classes.cover}>
-                <Avatar srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x`}/>
+                <Avatar srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x, ${cover(this.props.book.cover, 120)} 3x`}/>
               </ListItemAvatar>
             </Paper>
           }

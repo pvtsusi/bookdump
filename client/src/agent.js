@@ -11,15 +11,14 @@ async function sessionToken() {
   }
 }
 
-class ResponseError {
+class ResponseError extends Error {
   constructor(message, status) {
+    super(message)
     this.name = 'ResponseError';
     this.status = status;
     this.message = this.statusText = message;
   }
 }
-
-ResponseError.prototype = Object.create(Error.prototype);
 
 const resBody = async res => {
   if (!res.ok) {

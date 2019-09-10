@@ -209,7 +209,7 @@ async function test(ctx) {
 async function resizeAndUpload(fileStream, fileName, mimeType) {
   const resizer = sharp();
   const promises = [];
-  for (const dim of [540, 270, 80, 40]) {
+  for (const dim of [810, 540, 270, 120, 80, 40]) {
     promises.push(new Promise((resolve, reject) =>
       resizer.clone().resize(dim, dim, { fit: sharp.fit.inside })
         .pipe(upload(resizedName(fileName, `${dim}`), mimeType, resolve, reject))));

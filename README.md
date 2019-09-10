@@ -108,7 +108,7 @@ up in bookdump with a dummy ISBN and a nondescript title and author.
 Then in Bookdump:
 
 1. Log in with your admin credentials at `/admin`
-   (e.g. [http://localhost:5000/admin](http://localhost:5000/admin).
+   (e.g. [http://localhost:5000/admin](http://localhost:5000/admin)).
 2. Click on the added book in the list
 3. Click on the title and author to edit them, submit by pressing enter.
 
@@ -119,7 +119,7 @@ books they want at their leisure. They won't see each others' names or what
 other people have reserved.
 
 You can later check out in `/admin`
-(e.g. [http://localhost:5000/admin](http://localhost:5000/admin) to see who
+(e.g. [http://localhost:5000/admin](http://localhost:5000/admin)) to see who
 has reserved what books.
 
 Deployment
