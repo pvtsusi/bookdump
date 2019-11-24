@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageSnackbar } from './MessageSnackbar';
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
 const MSG = 'test message';
 const KEY = 'testSnackbar';

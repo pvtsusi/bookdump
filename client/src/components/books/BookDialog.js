@@ -158,7 +158,7 @@ class BookDialog extends React.Component {
                   </CardContent>
                   <div className={classes.actionsContainer}>
                     <CardActions className={classes.actions}>
-                      <Button onClick={this.props.deselectBook}>
+                      <Button onClick={this.props.deselectBook} data-testid="bookDialogCloseButton">
                         Close
                       </Button>
                       <ReserveButton book={this.props.book}/>
@@ -178,4 +178,6 @@ BookDialog.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(BookDialog));
+const styled = withStyles(styles)(BookDialog);
+export { styled as BookDialog };
+export default connect(mapStateToProps, mapDispatchToProps)(styled);
