@@ -59,4 +59,6 @@ MessageSnackbar.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MessageSnackbar));
+const styled = withStyles(styles)(MessageSnackbar);
+export { styled as MessageSnackbar };
+export default connect(mapStateToProps, mapDispatchToProps)(styled);
