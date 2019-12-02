@@ -88,4 +88,6 @@ Books.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Books));
+const styled = withStyles(styles)(Books);
+export { styled as Books };
+export default connect(mapStateToProps, mapDispatchToProps)(styled);

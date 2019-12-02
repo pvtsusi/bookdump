@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageSnackbar } from './MessageSnackbar';
+import Snackbar from '@material-ui/core/Snackbar';
 import { mount } from 'enzyme';
 
 const MSG = 'test message';
@@ -26,7 +27,7 @@ describe('when shown', () => {
   describe('when its SnackBar#onClose() is called', () => {
 
     beforeEach(() =>
-      wrapper.find('Snackbar').props().onClose());
+      wrapper.find(Snackbar).invoke('onClose')());
 
     it('calls onClosed()', () =>
       expect(onClose).toHaveBeenCalled());

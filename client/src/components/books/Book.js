@@ -72,7 +72,7 @@ class Book extends React.Component {
             this.props.book.cover &&
             <Paper>
               <ListItemAvatar className={this.classes.cover}>
-                <Avatar srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x, ${cover(this.props.book.cover, 120)} 3x`}/>
+                <Avatar src={cover(this.props.book.cover, 120)} srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x, ${cover(this.props.book.cover, 120)} 3x`}/>
               </ListItemAvatar>
             </Paper>
           }
@@ -94,4 +94,6 @@ Book.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, () => ({}))(Book));
+const styled = withStyles(styles)(Book);
+export { styled as Book };
+export default connect(mapStateToProps, () => ({}))(styled);

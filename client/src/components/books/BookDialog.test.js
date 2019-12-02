@@ -1,4 +1,5 @@
 import React from 'react';
+import DialogContent from '@material-ui/core/DialogContent';
 import { BookDialog } from './BookDialog';
 import { mount } from 'enzyme';
 
@@ -6,7 +7,7 @@ jest.mock('./BookField', () => {
   return {
     __esModule: true,
     default: (props) => {
-      return <div>{props.children}</div>;
+      return <div data-field={props.field} data-editing={props.editing}>{props.children}</div>;
     }
   };
 });
@@ -14,8 +15,8 @@ jest.mock('./BookField', () => {
 jest.mock('./ReserveButton', () => {
   return {
     __esModule: true,
-    default: () => {
-      return <div></div>;
+    default: (props) => {
+      return <div id="mockReserveButton" data-book={props.book}>mockReserveButton</div>;
     }
   };
 });
@@ -23,8 +24,13 @@ jest.mock('./ReserveButton', () => {
 jest.mock('./ReservedBanner', () => {
   return {
     __esModule: true,
-    default: () => {
-      return <div></div>;
+    default: (props) => {
+      return <div
+        id="mockReservedBanner"
+        data-isbn={props.isbn}
+        data-reserver={props.reserver}>
+        mockReservedBanner
+      </div>;
     }
   };
 });
@@ -32,7 +38,7 @@ jest.mock('./ReservedBanner', () => {
 jest.mock('../../cover.mjs', () => {
   return {
     __esModule: true,
-    default: (url, sizeSuffix) => `${sizeSuffix}.png`
+    default: (url, sizeSuffix) => `mock_cover_${sizeSuffix}.png`
   };
 });
 
@@ -44,8 +50,10 @@ const book = {
   language: 'deu',
   isbn: '9783423261449',
   recommended: true,
-  height: 540,
-  width: 405
+  height: 100,
+  width: 100,
+  reserver: 'deadbeef',
+  reserverName: 'Reserver'
 };
 
 describe('when a book is selected', () => {
@@ -58,19 +66,119 @@ describe('when a book is selected', () => {
       deselectBook={deselectBook}/>);
   });
 
+  it('renders the DialogContent', () =>
+    expect(wrapper.exists(DialogContent)).toBeTruthy());
+
   it('renders the book title', () =>
     expect(wrapper.text()).toContain(book.title));
 
   it('renders the book author', () =>
     expect(wrapper.text()).toContain(book.author));
 
+  it('passes the selected book to the reserve button', () =>
+    expect(wrapper.exists({ id: 'mockReserveButton', 'data-book': book })).toBeTruthy());
+
+  it('passes the book ISBN to the reserved banner', () =>
+    expect(wrapper.exists({ id: 'mockReservedBanner', 'data-isbn': book.isbn })).toBeTruthy());
+
+  it('passes the book reserver name to the reserved banner', () =>
+    expect(wrapper.exists({ id: 'mockReservedBanner', 'data-reserver': book.reserverName })).toBeTruthy());
+
+  it('renders the cover image', () =>
+    expect(wrapper.exists('img[src="mock_cover_810.png"]')).toBeTruthy());
+
   describe('when the dialog is closed', () => {
+    beforeEach(() =>
+      wrapper.find({ 'data-testid': 'bookDialogCloseButton' }).simulate('click'));
+
+    it('deselects the book', () =>
+      expect(deselectBook).toHaveBeenCalled());
+  });
+
+  describe('when title field is edited', () => {
     beforeEach(() => {
-      wrapper.find('[data-testid="bookDialogCloseButton"]').simulate('click');
+      state = { editing: 'title' };
+      wrapper = mount(<BookDialog
+        editing={state.editing}
+        book={book}/>);
     });
 
-    it('deselects the book', () => {
-      expect(deselectBook).toHaveBeenCalled();
+    it('renders the title field with true editing prop', () =>
+      expect(wrapper.exists({ 'data-field': 'title', 'data-editing': true })).toBeTruthy());
+
+    it('renders the author field with false editing prop', () =>
+      expect(wrapper.exists({ 'data-field': 'author', 'data-editing': false })).toBeTruthy());
+  });
+
+  describe('when author field is edited', () => {
+    beforeEach(() => {
+      state = { editing: 'author' };
+      wrapper = mount(<BookDialog
+        editing={state.editing}
+        book={book}/>);
+    });
+
+    it('renders the title field with false editing prop', () =>
+      expect(wrapper.exists({ 'data-field': 'title', 'data-editing': false })).toBeTruthy());
+
+    it('renders the author field with true editing prop', () =>
+      expect(wrapper.exists({ 'data-field': 'author', 'data-editing': true })).toBeTruthy());
+  });
+
+  describe('when there is no cover image', () => {
+    beforeEach(() => {
+      state = {};
+      const { cover, ...bookWithoutCover } = book;
+      wrapper = mount(<BookDialog
+        editing={state.editing}
+        book={bookWithoutCover}/>);
+    });
+
+    it('does not render a cover image', () =>
+      expect(wrapper.exists('img')).toBeFalsy());
+  });
+
+  describe('when the cover image is tall', () => {
+    beforeEach(() => {
+      state = {};
+      const tallBook = { ...book, height: 200 };
+      wrapper = mount(<BookDialog
+        editing={state.editing}
+        book={tallBook}/>);
+    });
+
+    it('adjusts the left margin', () => {
+      const offset = -68; // Half of (max edge length 270 / height 200 * width 100)
+      expect(wrapper.exists({ src: 'mock_cover_810.png', style: { marginLeft: offset } })).toBeTruthy();
+    });
+  });
+
+  describe('when the cover image is wide', () => {
+    beforeEach(() => {
+      state = {};
+      const wideBook = { ...book, width: 200 };
+      wrapper = mount(<BookDialog
+        editing={state.editing}
+        book={wideBook}/>);
+    });
+
+    it('adjusts the top margin', () => {
+      const offset = -68; // Half of (max edge length 270 / width 200 * height 100)
+      expect(wrapper.exists({ src: 'mock_cover_810.png', style: { marginTop: offset } })).toBeTruthy();
     });
   });
 });
+
+describe('when no book is selected', () => {
+  beforeEach(() => {
+    state = {};
+    wrapper = mount(<BookDialog
+      editing={state.editing}
+      book={null}/>);
+  });
+
+  it('DialogContent is not rendered', () =>
+    expect(wrapper.exists(DialogContent)).toBeFalsy());
+});
+
+

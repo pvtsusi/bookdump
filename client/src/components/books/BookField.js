@@ -19,7 +19,7 @@ const mapDispatchToProps = dispatch =>
     }, dispatch
   );
 
-class BookField extends React.Component {
+export class BookField extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
