@@ -1,20 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { declineBook, deselectBook, reserveBook } from '../../reducers/books';
+import { declineBook, reserveBook } from '../../reducers/books';
 import Button from '../Button';
 import LoginDialog from '../sessions/LoginDialog';
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      deselectBook,
       reserveBook,
       declineBook
     }, dispatch
   );
 
-class ReserveButton extends React.Component {
+export class ReserveButton extends React.Component {
   render() {
     if (!this.props.book) {
       return null;
