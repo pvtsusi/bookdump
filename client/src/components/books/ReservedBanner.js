@@ -79,4 +79,6 @@ ReservedBanner.propTypes = {
   reserver: PropTypes.string
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ReservedBanner));
+const styled = withStyles(styles)(ReservedBanner);
+export { styled as ReservedBanner };
+export default connect(mapStateToProps, mapDispatchToProps)(styled);
