@@ -16,7 +16,7 @@ const mapDispatchToProps = dispatch =>
     }, dispatch
   );
 
-class TooSlowSnackbar extends React.Component {
+export class TooSlowSnackbar extends React.Component {
   render() {
     return (
       <MessageSnackbar
