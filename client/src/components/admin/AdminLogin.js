@@ -94,7 +94,13 @@ class AdminLogin extends React.Component {
                 autoComplete="current-password"/>
             </Grid>
             <Grid item sm={11} xs={10}>
-              <Button variant="contained" type="submit" fullWidth>Log in</Button>
+              <Button
+                variant="contained"
+                type="submit"
+                disabled={this.props.loading}
+                fullWidth>
+                Log in
+              </Button>
             </Grid>
           </Grid>
         </form>
@@ -107,4 +113,6 @@ AdminLogin.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AdminLogin));
+const styled = withStyles(styles)(AdminLogin);
+export { styled as AdminLogin };
+export default connect(mapStateToProps, mapDispatchToProps)(styled);
