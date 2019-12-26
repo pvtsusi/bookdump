@@ -57,7 +57,7 @@ class AdminLogin extends React.Component {
 
     return (
       <form onSubmit={this.onSubmit} noValidate autoComplete="off">
-        <Grid container spacing={16}>
+        <Grid container spacing={2}>
           <Grid item sm={12}>
             <Typography component="h5" variant="h5">
               Log in as admin

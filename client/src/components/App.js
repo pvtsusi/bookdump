@@ -2,22 +2,18 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { ConnectedRouter } from 'connected-react-router';
-import * as PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import openSocket from 'socket.io-client';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
-import { isValidSession, SESSION_VALIDATED } from '../reducers/socket';
-import { LOGGED_OUT, logout } from '../reducers/user';
 import themes from '../themes';
 import AdminView from './admin/AdminView';
 import Books from './books/Books';
+import TooSlowSnackbar from './books/TooSlowSnackbar';
 import MessageSnackbar from './MessageSnackbar';
 import ModalProgress from './ModalProgress';
-import TooSlowSnackbar from './books/TooSlowSnackbar';
 import TopBar from './TopBar';
 
 const styles = theme => ({
@@ -37,86 +33,43 @@ const styles = theme => ({
     }
   },
   paper: {
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing(2)
   }
 });
 
-const mapStateToProps = ({ progress, session }) => ({
-  loading: progress.loading,
-  admin: session.authenticated && session.user && session.user.admin,
-  userSha: session.user && session.user.sha
-});
+function App(props) {
+  const classes = props.classes;
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      isValidSession,
-      sessionValidated: () => dispatch({ type: SESSION_VALIDATED }),
-      loggedOut: () => dispatch({ type: LOGGED_OUT }),
-      dispatchActionFromServer: (action) => dispatch(action),
-      logout: logout
-    }, dispatch
-  );
+  const loading = useSelector(state => state.progress.loading);
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.classes = props.classes;
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-    this.socket = openSocket('/');
-
-    this.socket.on('session_validated', data => {
-      if (!data.valid) {
-        this.props.logout(this.props.admin);
-        this.props.loggedOut();
-      }
-      this.props.sessionValidated();
-    });
-
-    this.socket.on('dispatch', action => {
-      if (!action.origin || !this.props.userSha || action.origin !== this.props.userSha) {
-        this.props.dispatchActionFromServer(action);
-      }
-    });
-  }
-
-  componentDidMount() {
-    setInterval(() => this.props.isValidSession({ socket: this.socket }), 5000);
-  }
-
-  render() {
-    return (
-      <MuiThemeProvider theme={themes.normal}>
-        <CssBaseline/>
-        <ModalProgress show={this.props.loading}/>
-        <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
-        <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
-        <TooSlowSnackbar/>
-        <div className={this.classes.root}>
-          <TopBar/>
-          <Grid container justify="center">
-            <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
-              <Grid item xs={12} sm={10}>
-                <Paper className={this.classes.paper}>
-                  <ConnectedRouter history={this.props.history}>
-                    <Switch>
-                      <Route exact path="/" component={Books}/>
-                      <Route exact path="/admin" component={AdminView}/>
-                    </Switch>
-                  </ConnectedRouter>
-                </Paper>
-              </Grid>
+  return (
+    <MuiThemeProvider theme={prefersDarkMode ? themes.dark : themes.normal}>
+      <CssBaseline/>
+      <ModalProgress show={loading}/>
+      <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
+      <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
+      <TooSlowSnackbar/>
+      <div className={classes.root}>
+        <TopBar/>
+        <Grid container justify="center">
+          <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
+            <Grid item xs={12} sm={10}>
+              <Paper className={classes.paper}>
+                <ConnectedRouter history={props.history}>
+                  <Switch>
+                    <Route exact path="/" component={Books}/>
+                    <Route exact path="/admin" component={AdminView}/>
+                  </Switch>
+                </ConnectedRouter>
+              </Paper>
             </Grid>
           </Grid>
-        </div>
-      </MuiThemeProvider>
-    );
-  }
+        </Grid>
+      </div>
+    </MuiThemeProvider>
+  );
 }
 
-App.propTypes = {
-  history: PropTypes.object,
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(App));
+export default withStyles(styles)(App);

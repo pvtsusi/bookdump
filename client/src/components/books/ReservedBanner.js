@@ -13,7 +13,7 @@ import themes from '../../themes';
 
 const styles = theme => ({
   root: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
     justifyContent: 'flex-start',
     [theme.breakpoints.down('xs')]: {
       position: 'absolute',
@@ -21,7 +21,7 @@ const styles = theme => ({
     }
   },
   message: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     display: 'flex',
     flexWrap: 'nowrap',
     whiteSpace: 'nowrap',

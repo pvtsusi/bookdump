@@ -24,7 +24,7 @@ const styles = theme => ({
   },
   image: {
     height: 50,
-    paddingRight: theme.spacing.unit * 2
+    paddingRight: theme.spacing(2)
   }
 });
 

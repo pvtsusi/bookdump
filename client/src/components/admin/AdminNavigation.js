@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 
 const styles = theme => ({
   actions: {
-    paddingRight: theme.spacing.unit * 2
+    paddingRight: theme.spacing(2)
   }
 });
 

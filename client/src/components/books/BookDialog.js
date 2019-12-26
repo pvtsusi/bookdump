@@ -32,8 +32,8 @@ const styles = theme => ({
       marginBottom: 0
     },
     [theme.breakpoints.up('sm')]: {
-      marginTop: theme.spacing.unit * 2,
-      marginBottom: theme.spacing.unit * 8
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(8)
     }
   },
   card: {
@@ -74,8 +74,8 @@ const styles = theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingRight: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(2)
   },
   title: {
     [theme.breakpoints.down('xs')]: {

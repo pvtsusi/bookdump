@@ -32,7 +32,7 @@ const styles = theme => ({
     minWidth: 0
   },
   listItemText: {
-    paddingLeft: theme.spacing.unit * 2
+    paddingLeft: theme.spacing(2)
   }
 });
 

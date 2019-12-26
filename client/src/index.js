@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { sessionService } from 'redux-react-session';
 import App from './components/App';
+import WebSocketManager from './components/WebSocketManager';
 import configureStore, { history } from './configureStore';
 import * as serviceWorker from './serviceWorker';
 
@@ -14,6 +15,7 @@ initSessionService(store);
 
 ReactDOM.render((
   <Provider store={store}>
+    <WebSocketManager/>
     <App history={history}/>
   </Provider>
 ), document.getElementById('root'));

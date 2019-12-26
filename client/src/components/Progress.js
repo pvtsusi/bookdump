@@ -6,7 +6,7 @@ import React from 'react';
 
 const styles = (theme) => ({
   progress: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
     color: '#2a2a2a'
   }
 });

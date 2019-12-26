@@ -12,7 +12,7 @@ import Button from '../Button';
 
 const styles = theme => ({
   actions: {
-    paddingRight: theme.spacing.unit * 2
+    paddingRight: theme.spacing(2)
   }
 });
 
@@ -38,7 +38,7 @@ class MarkDeliveredDialog extends React.Component {
   render() {
     return (
       <Dialog
-        open={this.props.confirmingDelivery}
+        open={!!this.props.confirmingDelivery}
         onClose={this.props.cancelMarkDelivered}>
         <DialogTitle>
           Confirm all these books delivered?

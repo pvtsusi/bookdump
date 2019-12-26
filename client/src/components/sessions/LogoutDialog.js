@@ -12,7 +12,7 @@ import Button from '../Button';
 
 const styles = theme => ({
   actions: {
-    paddingRight: theme.spacing.unit * 2
+    paddingRight: theme.spacing(2)
   },
   content: {
     color: theme.palette.text.primary

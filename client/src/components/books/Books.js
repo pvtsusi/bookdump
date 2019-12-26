@@ -16,7 +16,7 @@ const styles = theme => ({
     fontWeight: 600
   },
   list: {
-    paddingBottom: theme.spacing.unit * 5
+    paddingBottom: theme.spacing(5)
   }
 });
 

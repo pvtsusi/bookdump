@@ -15,10 +15,10 @@ import LogoutDialog from './LogoutDialog';
 
 const styles = (theme) => ({
   root: {
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   message: {
-    marginBottom: theme.spacing.unit
+    marginBottom: theme.spacing(1)
   }
 });
 

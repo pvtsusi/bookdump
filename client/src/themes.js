@@ -27,6 +27,30 @@ export default {
     }
   }),
 
+
+  dark: createMuiTheme({
+    breakpoints,
+    palette: {
+      type: 'dark',
+      primary: {
+        main: '#4f63ff',
+      }
+    },
+    typography: {
+      useNextVariants: true,
+      fontFamily: [
+        'PT Sans',
+        'Arial',
+        'Helvetica',
+        'sans-serif'
+      ].join(','),
+      fontWeightLight: 400,
+      fontWeightRegular: 500,
+      fontWeightMedium: 600,
+      fontWeightBold: 800,
+    }
+  }),
+
   narrow: createMuiTheme({
     breakpoints,
     typography: {
