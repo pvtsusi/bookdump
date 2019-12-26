@@ -1,4 +1,3 @@
-import grey from '@material-ui/core/colors/grey';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
@@ -9,11 +8,11 @@ import { bindActionCreators } from 'redux';
 import { CLEAR_SNACKBAR } from '../reducers/snackbar';
 import themes from '../themes';
 
-const styles = () => ({
+const styles = theme => ({
   message: {
     justifyContent: 'center',
-    backgroundColor: grey[50],
-    color: 'black'
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary
   }
 });
 
@@ -56,7 +55,8 @@ class MessageSnackbar extends React.Component {
 }
 
 MessageSnackbar.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  snackbarKey: PropTypes.string
 };
 
 const styled = withStyles(styles)(MessageSnackbar);

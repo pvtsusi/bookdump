@@ -86,32 +86,30 @@ class App extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <MuiThemeProvider theme={themes.normal}>
         <CssBaseline/>
-        <MuiThemeProvider theme={themes.normal}>
-          <ModalProgress show={this.props.loading}/>
-          <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
-          <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
-          <TooSlowSnackbar/>
-          <div className={this.classes.root}>
-            <TopBar/>
-            <Grid container justify="center">
-              <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
-                <Grid item xs={12} sm={10}>
-                  <Paper className={this.classes.paper}>
-                    <ConnectedRouter history={this.props.history}>
-                      <Switch>
-                        <Route exact path="/" component={Books}/>
-                        <Route exact path="/admin" component={AdminView}/>
-                      </Switch>
-                    </ConnectedRouter>
-                  </Paper>
-                </Grid>
+        <ModalProgress show={this.props.loading}/>
+        <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
+        <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
+        <TooSlowSnackbar/>
+        <div className={this.classes.root}>
+          <TopBar/>
+          <Grid container justify="center">
+            <Grid container spacing={24} alignItems="center" justify="center" className={this.classes.grid}>
+              <Grid item xs={12} sm={10}>
+                <Paper className={this.classes.paper}>
+                  <ConnectedRouter history={this.props.history}>
+                    <Switch>
+                      <Route exact path="/" component={Books}/>
+                      <Route exact path="/admin" component={AdminView}/>
+                    </Switch>
+                  </ConnectedRouter>
+                </Paper>
               </Grid>
             </Grid>
-          </div>
-        </MuiThemeProvider>
-      </React.Fragment>
+          </Grid>
+        </div>
+      </MuiThemeProvider>
     );
   }
 }

@@ -1,4 +1,3 @@
-import { MuiThemeProvider } from '@material-ui/core';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton/IconButton';
@@ -14,7 +13,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../../reducers/books';
-import themes from '../../themes';
 import AdminLogin from './AdminLogin';
 import MarkDeliveredDialog from './MarkDeliveredDialog';
 
@@ -74,7 +72,7 @@ class AdminView extends React.Component {
 
     if (this.props.books) {
       return (
-          <MuiThemeProvider theme={themes.narrow}>
+          <React.Fragment>
             <MarkDeliveredDialog/>
             <List subheader={<li/>}>
               {
@@ -114,7 +112,7 @@ class AdminView extends React.Component {
                 })
               }
             </List>
-          </MuiThemeProvider>
+          </React.Fragment>
       );
     }
     return null;

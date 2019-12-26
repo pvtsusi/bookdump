@@ -15,15 +15,24 @@ import { connect } from 'react-redux';
 import cover from '../../cover.mjs';
 import themes from '../../themes';
 
-const styles = () => ({
+const styles = theme => ({
   cover: {
     borderRadius: 0
+  },
+  secondary: {
+    color: theme.palette.text.secondary
   },
   reserved: {
     color: 'green'
   },
   recommended: {
     color: 'gold'
+  },
+  avatarRoot: {
+    minWidth: 0
+  },
+  listItemText: {
+    paddingLeft: theme.spacing.unit * 2
   }
 });
 
@@ -70,14 +79,21 @@ class Book extends React.Component {
         <ListItem onClick={this.onSelect}>
           {
             this.props.book.cover &&
-            <Paper>
-              <ListItemAvatar className={this.classes.cover}>
-                <Avatar src={cover(this.props.book.cover, 120)} srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x, ${cover(this.props.book.cover, 120)} 3x`}/>
+            <Paper square={true}>
+              <ListItemAvatar classes={{ root: this.classes.avatarRoot }}>
+                <Avatar
+                  className={this.classes.cover}
+                  src={cover(this.props.book.cover, 120)}
+                  srcSet={`${cover(this.props.book.cover, 40)}, ${cover(this.props.book.cover, 80)} 2x, ${cover(this.props.book.cover, 120)} 3x`}/>
               </ListItemAvatar>
             </Paper>
           }
           <MuiThemeProvider theme={themes.vollkorn}>
-            <ListItemText inset primary={this.props.book.title} secondary={this.props.book.author}/>
+            <ListItemText
+              inset
+              classes={{ root: this.classes.listItemText, secondary: this.classes.secondary }}
+              primary={this.props.book.title}
+              secondary={this.props.book.author}/>
           </MuiThemeProvider>
           <BookIcon
             book={this.props.book}

@@ -24,7 +24,8 @@ const styles = theme => ({
     padding: theme.spacing.unit,
     display: 'flex',
     flexWrap: 'nowrap',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    backgroundColor: theme.palette.background.default
   },
   reserved: {
     color: 'green'
@@ -60,7 +61,7 @@ class ReservedBanner extends React.Component {
           timeout={doTransition ? 500 : 0}
           onEntered={() => doTransition && this.props.transitioned(this.props.isbn)}
           onExited={() => doTransition && this.props.transitioned(this.props.isbn)}>
-          <Paper className={this.classes.message}>
+          <Paper className={this.classes.message} elevation={3}>
             <ReservedIcon className={this.classes.reserved}/>
             <MuiThemeProvider theme={themes.narrow}>
               <Typography variant="body1" component="h5">

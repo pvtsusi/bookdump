@@ -1,4 +1,4 @@
-import { MuiThemeProvider, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
@@ -9,7 +9,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { CANCEL_LOGIN, CLEAR_LOGIN_ERROR, LOGIN_ERROR, login } from '../../reducers/user';
-import themes from '../../themes';
 import Button from '../Button';
 
 const styles = theme => ({
@@ -63,35 +62,33 @@ class LoginDialog extends React.Component {
         open={this.props.loggingIn}
         onClose={this.props.cancelLogin}>
         <form onSubmit={this.onSubmit} noValidate autoComplete="off">
-          <MuiThemeProvider theme={themes.narrow}>
-            <DialogTitle>
-              Who are you?
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Give me your name so that I know whom to give this to.
-              </DialogContentText>
-              <TextField
-                error={!!(errors && errors.name)}
-                id="name-input"
-                label="Your name"
-                onChange={this.onChange}
-                helperText={errors && errors.name}
-                className={this.classes.textField}
-                margin="none"
-                autoComplete="name"
-                fullWidth
-                autoFocus/>
-            </DialogContent>
-            <DialogActions className={this.classes.actions}>
-              <Button onClick={this.props.cancelLogin}>
-                Never mind
-              </Button>
-              <Button onClick={() => this.props.login(this.state.name, this.props.onSuccess)}>
-                Submit
-              </Button>
-            </DialogActions>
-          </MuiThemeProvider>
+          <DialogTitle>
+            Who are you?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Give me your name so that I know whom to give this to.
+            </DialogContentText>
+            <TextField
+              error={!!(errors && errors.name)}
+              id="name-input"
+              label="Your name"
+              onChange={this.onChange}
+              helperText={errors && errors.name}
+              className={this.classes.textField}
+              margin="none"
+              autoComplete="name"
+              fullWidth
+              autoFocus/>
+          </DialogContent>
+          <DialogActions className={this.classes.actions}>
+            <Button onClick={this.props.cancelLogin}>
+              Never mind
+            </Button>
+            <Button onClick={() => this.props.login(this.state.name, this.props.onSuccess)}>
+              Submit
+            </Button>
+          </DialogActions>
         </form>
       </Dialog>
     );

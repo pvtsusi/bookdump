@@ -1,6 +1,6 @@
 import Button from '../Button';
 import Grid from '@material-ui/core/Grid';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography/Typography';
 import * as PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { CLEAR_LOGIN_ERROR, login, LOGIN_ERROR } from '../../reducers/user';
-import themes from '../../themes';
 
 const styles = () => ({
   textField: {
@@ -57,54 +56,52 @@ class AdminLogin extends React.Component {
     const { classes, errors } = this.props;
 
     return (
-      <MuiThemeProvider theme={themes.narrow}>
-        <form onSubmit={this.onSubmit} noValidate autoComplete="off">
-          <Grid container spacing={16}>
-            <Grid item sm={12}>
-              <Typography component="h5" variant="h5">
-                Log in as admin
-              </Typography>
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextField
-                error={!!(errors && errors.name)}
-                id="admin-name-input"
-                label="Name"
-                onChange={this.onChange('name')}
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-                helperText={errors && errors.name}
-                disabled={this.props.loading}
-                autoFocus
-                autoComplete="username"/>
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <TextField
-                error={!!(errors && errors.pass)}
-                id="admin-password-input"
-                label="Password"
-                onChange={this.onChange('pass')}
-                className={classes.textField}
-                type="password"
-                margin="normal"
-                variant="outlined"
-                helperText={errors && errors.pass}
-                disabled={this.props.loading}
-                autoComplete="current-password"/>
-            </Grid>
-            <Grid item sm={11} xs={10}>
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={this.props.loading}
-                fullWidth>
-                Log in
-              </Button>
-            </Grid>
+      <form onSubmit={this.onSubmit} noValidate autoComplete="off">
+        <Grid container spacing={16}>
+          <Grid item sm={12}>
+            <Typography component="h5" variant="h5">
+              Log in as admin
+            </Typography>
           </Grid>
-        </form>
-      </MuiThemeProvider>
+          <Grid item sm={6} xs={12}>
+            <TextField
+              error={!!(errors && errors.name)}
+              id="admin-name-input"
+              label="Name"
+              onChange={this.onChange('name')}
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+              helperText={errors && errors.name}
+              disabled={this.props.loading}
+              autoFocus
+              autoComplete="username"/>
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <TextField
+              error={!!(errors && errors.pass)}
+              id="admin-password-input"
+              label="Password"
+              onChange={this.onChange('pass')}
+              className={classes.textField}
+              type="password"
+              margin="normal"
+              variant="outlined"
+              helperText={errors && errors.pass}
+              disabled={this.props.loading}
+              autoComplete="current-password"/>
+          </Grid>
+          <Grid item sm={11} xs={10}>
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={this.props.loading}
+              fullWidth>
+              Log in
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
     );
   }
 }

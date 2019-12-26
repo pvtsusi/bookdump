@@ -85,7 +85,8 @@ const styles = theme => ({
   author: {
     [theme.breakpoints.down('xs')]: {
       fontSize: '0.9rem'
-    }
+    },
+    color: theme.palette.text.secondary
   }
 });
 
@@ -110,7 +111,7 @@ const Cover = withWidth()(props => {
     const shorterEdge = Math.min(coverWidth, coverHeight);
     const scale = EDGE / longerEdge;
     const shorterScaled = scale * shorterEdge;
-    const diff = parseInt((EDGE - shorterScaled) / 2) + 1;
+    const diff = parseInt(`${(EDGE - shorterScaled) / 2}`) + 1;
     const margin = coverWidth < coverHeight ? { marginLeft: -diff } : { marginTop: -diff };
     const style = width === 'xs' ? {} : margin;
 
