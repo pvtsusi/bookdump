@@ -1,8 +1,21 @@
 import React from 'react';
-import { BookField } from './BookField';
+import BookField from './BookField';
 import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
-let state, wrapper, editBook, updateBook;
+const mockStore = configureMockStore([thunk]);
+
+jest.mock('../../reducers/books', () => {
+  return {
+    __esModule: true,
+    editBook: (field) => ({ type: 'mockEditBook', field }),
+    updateBook: (book, field, value) => ({ type: 'mockUpdateBook', book, field, value }),
+  };
+});
+
+let store, wrapper;
 const KEY = 'mockField';
 const CONTENT = 'mockContent';
 const book = {
@@ -11,35 +24,34 @@ const book = {
 
 describe('when the user is not an admin', () => {
   beforeEach(() => {
-    state = { admin: false };
-    editBook = jest.fn();
+    store = mockStore({
+      session: {}
+    });
     wrapper = mount(
-      <BookField field={KEY} book={book} editing={null} admin={state.admin} editBook={editBook}>
-        {CONTENT}
-      </BookField>);
+      <Provider store={store}>
+        <BookField field={KEY} book={book} editing={null}>
+          {CONTENT}
+        </BookField>
+      </Provider>
+    );
   });
 
   it('renders the content', () =>
     expect(wrapper.text()).toEqual(CONTENT));
-
-  describe('clicking the field', () => {
-    beforeEach(() =>
-      wrapper.find(BookField).simulate('click'));
-
-    it('does not call editBook()', () =>
-      expect(editBook).not.toBeCalled());
-  });
-
 });
 
 describe('when the user is an admin', () => {
   beforeEach(() => {
-    state = { admin: true };
-    editBook = jest.fn();
+    store = mockStore({
+      session: { authenticated: true, user: { admin: true }}
+    });
     wrapper = mount(
-      <BookField field={KEY} book={book} editing={null} admin={state.admin} editBook={editBook}>
-        {CONTENT}
-      </BookField>);
+      <Provider store={store}>
+        <BookField field={KEY} book={book} editing={null}>
+          {CONTENT}
+        </BookField>
+      </Provider>
+    );
   });
 
   it('renders the content', () =>
@@ -50,18 +62,25 @@ describe('when the user is an admin', () => {
       wrapper.find(BookField).simulate('click'));
 
     it('calls editBook() with the field key', () =>
-      expect(editBook).toHaveBeenCalledWith(KEY));
+      expect(store.getActions()).toEqual([{
+        type: 'mockEditBook',
+        field: KEY
+      }]));
   });
 });
 
 describe('when editing the field', () => {
   beforeEach(() => {
-    state = { admin: true };
-    updateBook = jest.fn();
+    store = mockStore({
+      session: { authenticated: true, user: { admin: true }}
+    });
     wrapper = mount(
-      <BookField field={KEY} book={book} editing={true} admin={state.admin} updateBook={updateBook}>
-        {CONTENT}
-      </BookField>);
+      <Provider store={store}>
+        <BookField field={KEY} book={book} editing={true}>
+          {CONTENT}
+        </BookField>
+      </Provider>
+    );
   });
 
   it('renders the book field value as input helper', () =>
@@ -73,8 +92,12 @@ describe('when editing the field', () => {
       wrapper.find('form').simulate('submit');
     });
 
-    it('calls updateBook() with updated value and reference to the book and field', () => {
-      expect(updateBook).toBeCalledWith(book, KEY, 'new value')
-    });
+    it('calls updateBook() with updated value and reference to the book and field', () =>
+      expect(store.getActions()).toEqual([{
+        type: 'mockUpdateBook',
+        book,
+        field: KEY,
+        value: 'new value'
+      }]));
   });
 });
