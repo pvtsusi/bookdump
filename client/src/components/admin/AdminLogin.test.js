@@ -1,11 +1,25 @@
-import React from 'react';
-import { AdminLogin } from './AdminLogin';
-import Button from '../Button';
 import { mount } from 'enzyme';
+import React from 'react';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import Button from '../Button';
+import AdminLogin from './AdminLogin';
 
-let state, wrapper, clearErrors, setError, login;
-const nameSelector = 'TextField#admin-name-input';
-const passSelector = 'TextField#admin-password-input[type="password"]';
+jest.mock('../../reducers/user', () => {
+  return {
+    __esModule: true,
+    setError: (field, message) => ({ type: 'mockSetError', field, message }),
+    login: (user, pass, history) => ({ type: 'mockLogin', user, pass, history }),
+    CLEAR_LOGIN_ERROR: 'mockClearError'
+  };
+});
+
+const mockStore = configureMockStore([thunk]);
+
+let store, wrapper;
+const nameSelector = 'ForwardRef(TextField)#admin-name-input';
+const passSelector = 'ForwardRef(TextField)#admin-password-input[type="password"]';
 const name = 'Username';
 const pass = 'Password';
 const nameError = 'Bad name?';
@@ -14,11 +28,15 @@ const history = 'mockHistory';
 
 describe('with no errors', () => {
   beforeEach(() => {
-    state = {};
-    clearErrors = jest.fn();
-    setError = jest.fn();
-    login = jest.fn();
-    wrapper = mount(<AdminLogin history={history} login={login} setError={setError} clearErrors={clearErrors}/>);
+    store = mockStore({
+      progress: { loading: false },
+      user: { errors: {} }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <AdminLogin history={history}/>
+      </Provider>
+    );
   });
 
   it('renders the label text', () =>
@@ -47,22 +65,16 @@ describe('with no errors', () => {
     beforeEach(() =>
       wrapper.find(nameSelector).find('input').simulate('change', { target: { value: name } }));
 
-    it('calls clearErrors()', () =>
-      expect(clearErrors).toHaveBeenCalled());
-
-    it('sets state property name', () =>
-      expect(wrapper.find('AdminLogin').state().name).toEqual(name));
+    it('dispatches error clearing', () =>
+      expect(store.getActions()).toEqual([{ type: 'mockClearError' }]));
   });
 
   describe('when changing the Password field', () => {
     beforeEach(() =>
       wrapper.find(passSelector).find('input').simulate('change', { target: { value: pass } }));
 
-    it('calls clearErrors()', () =>
-      expect(clearErrors).toHaveBeenCalled());
-
-    it('sets state property pass', () =>
-      expect(wrapper.find('AdminLogin').state().pass).toEqual(pass));
+    it('dispatches error clearing', () =>
+      expect(store.getActions()).toEqual([{ type: 'mockClearError' }]));
   });
 
   describe('when submitting empty form', () => {
@@ -70,13 +82,25 @@ describe('with no errors', () => {
       wrapper.find('form').simulate('submit'));
 
     it('sets empty field error for both Name and Password fields', () => {
-      expect(setError).toHaveBeenCalledTimes(2);
-      expect(setError).toHaveBeenNthCalledWith(1, 'name', 'Name cannot be empty');
-      expect(setError).toHaveBeenNthCalledWith(2, 'pass', 'Pass cannot be empty');
+      expect(store.getActions()).toContainEqual({
+        type: 'mockSetError',
+        field: 'name',
+        message: 'Name cannot be empty'
+      });
+      expect(store.getActions()).toContainEqual({
+        type: 'mockSetError',
+        field: 'pass',
+        message: 'Password cannot be empty'
+      });
     });
 
-    it('calls login() with empty name and empty password', () =>
-      expect(login).toHaveBeenCalledWith('', '', history));
+    it('dispatches login with empty name and empty password', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockLogin',
+        user: '',
+        pass: '',
+        history: 'mockHistory'
+      }));
   });
 
   describe('when submitting name but empty password', () => {
@@ -85,13 +109,20 @@ describe('with no errors', () => {
       wrapper.find('form').simulate('submit');
     });
 
-    it('sets empty field error for Password field', () => {
-      expect(setError).toHaveBeenCalledTimes(1);
-      expect(setError).toHaveBeenCalledWith('pass', 'Pass cannot be empty');
-    });
+    it('sets empty field error for Password field', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockSetError',
+        field: 'pass',
+        message: 'Password cannot be empty'
+      }));
 
-    it('calls login() with empty password', () =>
-      expect(login).toHaveBeenCalledWith(name, '', history));
+    it('dispatches login with empty password', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockLogin',
+        user: name,
+        pass: '',
+        history
+      }));
   });
 
   describe('when submitting password but empty name', () => {
@@ -100,13 +131,20 @@ describe('with no errors', () => {
       wrapper.find('form').simulate('submit');
     });
 
-    it('sets empty field error for Name field', () => {
-      expect(setError).toHaveBeenCalledTimes(1);
-      expect(setError).toHaveBeenCalledWith('name', 'Name cannot be empty');
-    });
+    it('sets empty field error for Name field', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockSetError',
+        field: 'name',
+        message: 'Name cannot be empty'
+      }));
 
-    it('calls login() with empty name', () =>
-      expect(login).toHaveBeenCalledWith('', pass, history));
+    it('dispatches login with empty name', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockLogin',
+        user: '',
+        pass: pass,
+        history
+      }));
   });
 
   describe('when submitting with both name and password', () => {
@@ -117,18 +155,30 @@ describe('with no errors', () => {
     });
 
     it('does not set an error', () => {
-      expect(setError).not.toHaveBeenCalled();
+      expect(store.getActions().find(action => action.type === 'mockSetError')).toBeFalsy();
     });
 
-    it('calls login() with the name end the password', () =>
-      expect(login).toHaveBeenCalledWith(name, pass, history));
+    it('dispatches login with the name end the password', () =>
+      expect(store.getActions()).toContainEqual({
+        type: 'mockLogin',
+        user: name,
+        pass,
+        history
+      }));
   });
 });
 
 describe('when loading is in progress', () => {
   beforeEach(() => {
-    state = { loading: true };
-    wrapper = mount(<AdminLogin loading={state.loading}/>);
+    const store = mockStore({
+      progress: { loading: true },
+      user: { errors: {} }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <AdminLogin history={history}/>
+      </Provider>
+    );
   });
 
   it('renders the Log in button in disabled state', () =>
@@ -143,8 +193,15 @@ describe('when loading is in progress', () => {
 
 describe('with errors for password', () => {
   beforeEach(() => {
-    state = { errors: { pass: passError } };
-    wrapper = mount(<AdminLogin errors={state.errors}/>);
+    const store = mockStore({
+      progress: { loading: false },
+      user: { errors: { pass: passError } }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <AdminLogin history={history}/>
+      </Provider>
+    );
   });
 
   it('renders the error in the Password field helper text', () =>
@@ -156,8 +213,15 @@ describe('with errors for password', () => {
 
 describe('with errors for name', () => {
   beforeEach(() => {
-    state = { errors: { name: nameError } };
-    wrapper = mount(<AdminLogin errors={state.errors}/>);
+    const store = mockStore({
+      progress: { loading: false },
+      user: { errors: { name: nameError } }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <AdminLogin history={history}/>
+      </Provider>
+    );
   });
 
   it('renders the error in the Name field helper text', () =>

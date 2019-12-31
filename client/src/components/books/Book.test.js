@@ -5,7 +5,7 @@ import Star from '@material-ui/icons/Star';
 import React from 'react';
 import Book from './Book';
 import { mount } from 'enzyme';
-import {Provider} from 'react-redux'
+import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
@@ -131,7 +131,7 @@ describe('a reserved book', () => {
 
   beforeEach(() => {
     const store = mockStore({
-      session: { user: { name: 'Someone Else' }}
+      session: { user: { name: 'Someone Else' } }
     });
     wrapper = mount(
       <Provider store={store}>
@@ -149,7 +149,7 @@ describe('a reserved book', () => {
   describe('reserved to the current user', () => {
     beforeEach(() => {
       const store = mockStore({
-        session: { user: { name: reserverName }}
+        session: { user: { name: reserverName } }
       });
       wrapper = mount(
         <Provider store={store}>

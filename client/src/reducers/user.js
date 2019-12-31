@@ -90,3 +90,5 @@ export const logout = (admin) => async dispatch => {
     dispatch({ type: LOADED });
   }
 };
+
+export const setError = (field, message) => dispatch =>  dispatch({ type: LOGIN_ERROR, field, message });

@@ -1,15 +1,13 @@
-import Button from '../Button';
 import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography/Typography';
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { CLEAR_LOGIN_ERROR, login, LOGIN_ERROR } from '../../reducers/user';
+import React, { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CLEAR_LOGIN_ERROR, login, setError } from '../../reducers/user';
+import Button from '../Button';
 
-const styles = () => ({
+const useStyles = makeStyles(() => ({
   textField: {
     width: '80%'
   },
@@ -19,97 +17,83 @@ const styles = () => ({
     height: 0,
     overflow: 'none'
   }
-});
+}));
 
-const mapStateToProps = ({ user, progress }) => ({
-  errors: user.errors,
-  loading: progress.loading
-});
+export default function AdminLogin(props) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const errors = useSelector(state => state.user.errors);
+  const loading = useSelector(state => state.progress.loading);
+  const [name, setName] = useState('');
+  const [pass, setPass] = useState('');
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({
-    login,
-    setError: (field, message) => dispatch({ type: LOGIN_ERROR, field, message }),
-    clearErrors: () => dispatch => dispatch({ type: CLEAR_LOGIN_ERROR })
-  }, dispatch);
+  const onChangeName = useCallback(event => {
+    dispatch({ type: CLEAR_LOGIN_ERROR });
+    setName(event.target.value);
+  }, [dispatch]);
 
-class AdminLogin extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      pass: ''
-    };
-    this.onChange = (field) => event => {
-      this.props.clearErrors();
-      this.setState({ [field]: event.target.value });
-    };
-    this.onSubmit = event => {
-      event.preventDefault();
-      ['Name', 'Pass'].forEach(field =>
-        this.state[field.toLowerCase()] || this.props.setError(field.toLowerCase(), `${field} cannot be empty`));
-      this.props.login(this.state.name, this.state.pass, this.props.history);
-    };
-  }
+  const onChangePass = useCallback(event => {
+    dispatch({ type: CLEAR_LOGIN_ERROR });
+    setPass(event.target.value);
+  }, [dispatch]);
 
-  render() {
-    const { classes, errors } = this.props;
+  const onSubmit = useCallback(event => {
+    event.preventDefault();
+    if (!name) {
+      dispatch(setError('name', 'Name cannot be empty'));
+    }
+    if (!pass) {
+      dispatch(setError('pass', 'Password cannot be empty'));
+    }
+    dispatch(login(name, pass, props.history));
+  }, [dispatch, name, pass, props.history]);
 
-    return (
-      <form onSubmit={this.onSubmit} noValidate autoComplete="off">
-        <Grid container spacing={2}>
-          <Grid item sm={12}>
-            <Typography component="h5" variant="h5">
-              Log in as admin
-            </Typography>
-          </Grid>
-          <Grid item sm={6} xs={12}>
-            <TextField
-              error={!!(errors && errors.name)}
-              id="admin-name-input"
-              label="Name"
-              onChange={this.onChange('name')}
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-              helperText={errors && errors.name}
-              disabled={this.props.loading}
-              autoFocus
-              autoComplete="username"/>
-          </Grid>
-          <Grid item sm={6} xs={12}>
-            <TextField
-              error={!!(errors && errors.pass)}
-              id="admin-password-input"
-              label="Password"
-              onChange={this.onChange('pass')}
-              className={classes.textField}
-              type="password"
-              margin="normal"
-              variant="outlined"
-              helperText={errors && errors.pass}
-              disabled={this.props.loading}
-              autoComplete="current-password"/>
-          </Grid>
-          <Grid item sm={11} xs={10}>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={this.props.loading}
-              fullWidth>
-              Log in
-            </Button>
-          </Grid>
+  return (
+    <form onSubmit={onSubmit} noValidate autoComplete="off">
+      <Grid container spacing={2}>
+        <Grid item sm={12}>
+          <Typography component="h5" variant="h5">
+            Log in as admin
+          </Typography>
         </Grid>
-      </form>
-    );
-  }
+        <Grid item sm={6} xs={12}>
+          <TextField
+            error={!!(errors && errors.name)}
+            id="admin-name-input"
+            label="Name"
+            onChange={onChangeName}
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+            helperText={errors && errors.name}
+            disabled={loading}
+            autoFocus
+            autoComplete="username"/>
+        </Grid>
+        <Grid item sm={6} xs={12}>
+          <TextField
+            error={!!(errors && errors.pass)}
+            id="admin-password-input"
+            label="Password"
+            onChange={onChangePass}
+            className={classes.textField}
+            type="password"
+            margin="normal"
+            variant="outlined"
+            helperText={errors && errors.pass}
+            disabled={loading}
+            autoComplete="current-password"/>
+        </Grid>
+        <Grid item sm={11} xs={10}>
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={loading}
+            fullWidth>
+            Log in
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
+  );
 }
-
-AdminLogin.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-const styled = withStyles(styles)(AdminLogin);
-export { styled as AdminLogin };
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
