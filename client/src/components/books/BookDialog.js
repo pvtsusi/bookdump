@@ -1,28 +1,26 @@
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid/Grid';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import withWidth from '@material-ui/core/withWidth';
-import * as PropTypes from 'prop-types';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import coverUrl from '../../cover.mjs';
 import { deselectBook } from '../../reducers/books';
-import BookField from './BookField';
 import Button from '../Button';
+import BookField from './BookField';
 import ReserveButton from './ReserveButton';
 import ReservedBanner from './ReservedBanner';
 
 const EDGE_XS = 180;
 const EDGE = 270;
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   dialog: {
     padding: '0!important'
   },
@@ -88,21 +86,12 @@ const styles = theme => ({
     },
     color: theme.palette.text.secondary
   }
-});
+}));
 
-const mapStateToProps = ({ books }) => ({
-  editing: books.editing
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      deselectBook
-    }, dispatch
-  );
-
-const Cover = withWidth()(props => {
-  const { book, width, classes } = props;
+function Cover(props) {
+  const theme = useTheme();
+  const matchesXs = useMediaQuery(theme.breakpoints.down('xs'));
+  const { book, classes } = props;
   if (book && book.cover) {
 
     const { cover, title, width: coverWidth, height: coverHeight } = book;
@@ -113,7 +102,7 @@ const Cover = withWidth()(props => {
     const shorterScaled = scale * shorterEdge;
     const diff = parseInt(`${(EDGE - shorterScaled) / 2}`) + 1;
     const margin = coverWidth < coverHeight ? { marginLeft: -diff } : { marginTop: -diff };
-    const style = width === 'xs' ? {} : margin;
+    const style = matchesXs ? {} : margin;
 
     return (
       <Grid className={classes.coverContainer} item xs={12} sm={6}>
@@ -128,57 +117,52 @@ const Cover = withWidth()(props => {
     );
   }
   return null;
-});
-
-class BookDialog extends React.Component {
-
-  render() {
-    const { classes, editing } = this.props;
-    return (
-      <Dialog open={!!this.props.book} onClose={this.props.deselectBook} maxWidth="sm" classes={{paper: classes.dialogPaper}}>
-        <DialogContent className={classes.dialog}>
-          <Card className={classes.card}>
-            <Grid container>
-              <Cover book={this.props.book} classes={classes}/>
-              <Grid item xs={12} sm={6}>
-                <div className={classes.metadata}>
-                  <CardContent className={classes.content}>
-                    <BookField field="title" book={this.props.book} editing={editing === 'title'}>
-                      <Typography className={classes.title} variant="h5" component="h5">
-                        {this.props.book ? this.props.book.title : ''}
-                      </Typography>
-                    </BookField>
-                    <BookField field="author" book={this.props.book} editing={editing === 'author'}>
-                      <Typography className={classes.author} variant="subtitle1" color="textSecondary">
-                        {this.props.book ? this.props.book.author : ''}
-                      </Typography>
-                    </BookField>
-                    <ReservedBanner
-                      isbn={this.props.book && this.props.book.isbn}
-                      reserver={this.props.book ? this.props.book.reserverName : null}/>
-                  </CardContent>
-                  <div className={classes.actionsContainer}>
-                    <CardActions className={classes.actions}>
-                      <Button onClick={this.props.deselectBook} data-testid="bookDialogCloseButton">
-                        Close
-                      </Button>
-                      <ReserveButton book={this.props.book}/>
-                    </CardActions>
-                  </div>
-                </div>
-              </Grid>
-            </Grid>
-          </Card>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 }
 
-BookDialog.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-const styled = withStyles(styles)(BookDialog);
-export { styled as BookDialog };
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default function BookDialog(props) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const editing = useSelector(state => state.books.editing);
+  return (
+    <Dialog
+      open={!!props.book}
+      onClose={() => dispatch(deselectBook())}
+      maxWidth="sm"
+      classes={{ paper: classes.dialogPaper }}>
+      <DialogContent className={classes.dialog}>
+        <Card className={classes.card}>
+          <Grid container>
+            <Cover book={props.book} classes={classes}/>
+            <Grid item xs={12} sm={6}>
+              <div className={classes.metadata}>
+                <CardContent className={classes.content}>
+                  <BookField field="title" book={props.book} editing={editing === 'title'}>
+                    <Typography className={classes.title} variant="h5" component="h5">
+                      {props.book ? props.book.title : ''}
+                    </Typography>
+                  </BookField>
+                  <BookField field="author" book={props.book} editing={editing === 'author'}>
+                    <Typography className={classes.author} variant="subtitle1" color="textSecondary">
+                      {props.book ? props.book.author : ''}
+                    </Typography>
+                  </BookField>
+                  <ReservedBanner
+                    isbn={props.book && props.book.isbn}
+                    reserver={props.book ? props.book.reserverName : null}/>
+                </CardContent>
+                <div className={classes.actionsContainer}>
+                  <CardActions className={classes.actions}>
+                    <Button onClick={() => dispatch(deselectBook())} data-testid="bookDialogCloseButton">
+                      Close
+                    </Button>
+                    <ReserveButton book={props.book}/>
+                  </CardActions>
+                </div>
+              </div>
+            </Grid>
+          </Grid>
+        </Card>
+      </DialogContent>
+    </Dialog>
+  );
+}

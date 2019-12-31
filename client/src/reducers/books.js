@@ -8,10 +8,10 @@ export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
 export const CONFIRM_MARK_DELIVERED = 'CONFIRM_MARK_DELIVERED';
 export const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
+export const DESELECT_BOOK = 'DESELECT_BOOK';
 const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
 const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
 const SELECT_BOOK = 'SELECT_BOOK';
-const DESELECT_BOOK = 'DESELECT_BOOK';
 const EDIT_BOOK = 'EDIT_BOOK';
 const UPDATE_BOOK = 'UPDATE_BOOK';
 const RESERVE_BOOK = 'RESERVE_BOOK';
@@ -203,9 +203,9 @@ export const selectBook = (book) => {
   };
 };
 
-export const deselectBook = (book) => {
+export const deselectBook = () => {
   return async dispatch => {
-    dispatch({ type: DESELECT_BOOK, book });
+    dispatch({ type: DESELECT_BOOK });
   };
 };
 

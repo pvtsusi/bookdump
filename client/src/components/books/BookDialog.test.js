@@ -1,7 +1,13 @@
-import React from 'react';
 import DialogContent from '@material-ui/core/DialogContent';
-import { BookDialog } from './BookDialog';
 import { mount } from 'enzyme';
+import React from 'react';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { DESELECT_BOOK } from '../../reducers/books';
+import BookDialog from './BookDialog';
+
+const mockStore = configureMockStore([thunk]);
 
 jest.mock('./BookField', () => {
   return {
@@ -42,7 +48,8 @@ jest.mock('../../cover.mjs', () => {
   };
 });
 
-let state, wrapper, deselectBook;
+let wrapper, store;
+
 const book = {
   cover: 'https://example.org/cover.png',
   title: 'Das Fenster',
@@ -58,12 +65,14 @@ const book = {
 
 describe('when a book is selected', () => {
   beforeEach(() => {
-    state = {};
-    deselectBook = jest.fn();
-    wrapper = mount(<BookDialog
-      editing={state.editing}
-      book={book}
-      deselectBook={deselectBook}/>);
+    store = mockStore({
+      books: {}
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <BookDialog book={book}/>
+      </Provider>
+    );
   });
 
   it('renders the DialogContent', () =>
@@ -92,15 +101,19 @@ describe('when a book is selected', () => {
       wrapper.find({ 'data-testid': 'bookDialogCloseButton' }).simulate('click'));
 
     it('deselects the book', () =>
-      expect(deselectBook).toHaveBeenCalled());
+      expect(store.getActions()).toEqual([{type: DESELECT_BOOK}]));
   });
 
   describe('when title field is edited', () => {
     beforeEach(() => {
-      state = { editing: 'title' };
-      wrapper = mount(<BookDialog
-        editing={state.editing}
-        book={book}/>);
+      store = mockStore({
+        books: { editing: 'title' }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <BookDialog book={book}/>
+        </Provider>
+      );
     });
 
     it('renders the title field with true editing prop', () =>
@@ -112,10 +125,14 @@ describe('when a book is selected', () => {
 
   describe('when author field is edited', () => {
     beforeEach(() => {
-      state = { editing: 'author' };
-      wrapper = mount(<BookDialog
-        editing={state.editing}
-        book={book}/>);
+      store = mockStore({
+        books: { editing: 'author' }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <BookDialog book={book}/>
+        </Provider>
+      );
     });
 
     it('renders the title field with false editing prop', () =>
@@ -127,11 +144,15 @@ describe('when a book is selected', () => {
 
   describe('when there is no cover image', () => {
     beforeEach(() => {
-      state = {};
       const { cover, ...bookWithoutCover } = book;
-      wrapper = mount(<BookDialog
-        editing={state.editing}
-        book={bookWithoutCover}/>);
+      store = mockStore({
+        books: {}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <BookDialog book={bookWithoutCover}/>
+        </Provider>
+      );
     });
 
     it('does not render a cover image', () =>
@@ -140,11 +161,15 @@ describe('when a book is selected', () => {
 
   describe('when the cover image is tall', () => {
     beforeEach(() => {
-      state = {};
       const tallBook = { ...book, height: 200 };
-      wrapper = mount(<BookDialog
-        editing={state.editing}
-        book={tallBook}/>);
+      store = mockStore({
+        books: {}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <BookDialog book={tallBook}/>
+        </Provider>
+      );
     });
 
     it('adjusts the left margin', () => {
@@ -155,11 +180,15 @@ describe('when a book is selected', () => {
 
   describe('when the cover image is wide', () => {
     beforeEach(() => {
-      state = {};
       const wideBook = { ...book, width: 200 };
-      wrapper = mount(<BookDialog
-        editing={state.editing}
-        book={wideBook}/>);
+      store = mockStore({
+        books: {}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <BookDialog book={wideBook}/>
+        </Provider>
+      );
     });
 
     it('adjusts the top margin', () => {
@@ -171,10 +200,14 @@ describe('when a book is selected', () => {
 
 describe('when no book is selected', () => {
   beforeEach(() => {
-    state = {};
-    wrapper = mount(<BookDialog
-      editing={state.editing}
-      book={null}/>);
+    store = mockStore({
+      books: {}
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <BookDialog book={null}/>
+      </Provider>
+    );
   });
 
   it('DialogContent is not rendered', () =>

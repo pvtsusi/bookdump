@@ -170,7 +170,7 @@ describe('with no errors', () => {
 
 describe('when loading is in progress', () => {
   beforeEach(() => {
-    const store = mockStore({
+    store = mockStore({
       progress: { loading: true },
       user: { errors: {} }
     });
@@ -193,7 +193,7 @@ describe('when loading is in progress', () => {
 
 describe('with errors for password', () => {
   beforeEach(() => {
-    const store = mockStore({
+    store = mockStore({
       progress: { loading: false },
       user: { errors: { pass: passError } }
     });
@@ -213,7 +213,7 @@ describe('with errors for password', () => {
 
 describe('with errors for name', () => {
   beforeEach(() => {
-    const store = mockStore({
+    store = mockStore({
       progress: { loading: false },
       user: { errors: { name: nameError } }
     });
