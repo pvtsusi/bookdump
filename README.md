@@ -2,6 +2,8 @@
 Bookdump 
 ========
 
+![CI](https://travis-ci.org/pvtsusi/bookdump.svg?branch=master)
+
 I made this web app to list out the books we wanted to get rid of. People we
 knew reserved from the list what they wanted. The end result was that we got
 a summary of what stack of books to deliver to whom. (And got rid of the
@@ -150,7 +152,7 @@ Here's the things I used the first time in practise:
 
 ### TODO
 
-I'd like to try out how writing tests for React & Redux feels like.
+More tests I guess?
 
 License
 -------
