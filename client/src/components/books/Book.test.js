@@ -3,8 +3,13 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import HowToVote from '@material-ui/icons/HowToVote';
 import Star from '@material-ui/icons/Star';
 import React from 'react';
-import { Book } from './Book';
+import Book from './Book';
 import { mount } from 'enzyme';
+import {Provider} from 'react-redux'
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+
+const mockStore = configureMockStore([thunk]);
 
 jest.mock('../../cover.mjs', () => {
   return {
@@ -13,7 +18,7 @@ jest.mock('../../cover.mjs', () => {
   };
 });
 
-let state, wrapper, onSelect;
+let wrapper, onSelect;
 const book = {
   cover: 'https://example.org/cover.png',
   title: 'Das Fenster',
@@ -24,9 +29,15 @@ const book = {
 
 describe('not recommended book that is not reserved', () => {
   beforeEach(() => {
-    state = {};
     onSelect = jest.fn();
-    wrapper = mount(<Book book={book} key={book.isbn} userName={state.userName} onSelect={onSelect}/>);
+    const store = mockStore({
+      session: {}
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Book book={book} key={book.isbn} onSelect={onSelect}/>
+      </Provider>
+    );
   });
 
   it('renders the book title', () =>
@@ -52,9 +63,15 @@ describe('not recommended book that is not reserved', () => {
 
 describe('a book without cover', () => {
   beforeEach(() => {
-    state = {};
+    const store = mockStore({
+      session: {}
+    });
     const { cover, ...bookWithoutCover } = book;
-    wrapper = mount(<Book book={bookWithoutCover} key={book.isbn} userName={state.userName}/>);
+    wrapper = mount(
+      <Provider store={store}>
+        <Book book={bookWithoutCover} key={bookWithoutCover.isbn}/>
+      </Provider>
+    );
   });
 
   it('renders without the cover thumbnail', () =>
@@ -67,15 +84,21 @@ describe('a recommended book', () => {
 
   describe('that is not reserved', () => {
     beforeEach(() => {
-      state = {};
-      wrapper = mount(<Book book={recommendedBook} key={book.isbn} userName={state.userName}/>);
+      const store = mockStore({
+        session: {}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <Book book={recommendedBook} key={recommendedBook.isbn}/>
+        </Provider>
+      );
     });
 
     it('renders the recommended icon', () =>
       expect(wrapper.exists(Star)).toBeTruthy());
 
     it('renders the recommended tooltip', () =>
-      expect(wrapper.exists('Tooltip[title="Recommended"]')).toBeTruthy());
+      expect(wrapper.exists('ForwardRef(Tooltip)[title="Recommended"]')).toBeTruthy());
 
     it('does not render the reserved icon', () =>
       expect(wrapper.exists(HowToVote)).toBeFalsy());
@@ -83,9 +106,15 @@ describe('a recommended book', () => {
 
   describe('that is reserved', () => {
     beforeEach(() => {
-      state = {};
       const recommendedAndReservedBook = { ...recommendedBook, reserverName: 'A Reserver' };
-      wrapper = mount(<Book book={recommendedAndReservedBook} key={book.isbn} userName={state.userName}/>);
+      const store = mockStore({
+        session: {}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <Book book={recommendedAndReservedBook} key={recommendedAndReservedBook.isbn}/>
+        </Provider>
+      );
     });
 
     it('does not render the recommended icon', () =>
@@ -101,23 +130,36 @@ describe('a reserved book', () => {
   const reservedBook = { ...book, reserverName: reserverName };
 
   beforeEach(() => {
-    state = { userName: 'Someone Else' };
-    wrapper = mount(<Book book={reservedBook} key={book.isbn}/>);
+    const store = mockStore({
+      session: { user: { name: 'Someone Else' }}
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Book book={reservedBook} key={reservedBook.isbn}/>
+      </Provider>
+    );
   });
 
   it('renders the reserved icon', () =>
     expect(wrapper.exists(HowToVote)).toBeTruthy());
 
   it('renders a tooltip showing the reserver name', () =>
-    expect(wrapper.exists(`Tooltip[title="Reserved for ${reserverName}"]`)).toBeTruthy());
+    expect(wrapper.exists(`ForwardRef(Tooltip)[title="Reserved for ${reserverName}"]`)).toBeTruthy());
 
   describe('reserved to the current user', () => {
     beforeEach(() => {
-      state = { userName: reserverName };
-      wrapper = mount(<Book book={reservedBook} key={book.isbn} userName={state.userName}/>);
+      const store = mockStore({
+        session: { user: { name: reserverName }}
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <Book book={reservedBook} key={reservedBook.isbn}/>
+        </Provider>
+      );
     });
 
     it('renders a tooltip showing the reserver to be the current user', () =>
-      expect(wrapper.exists('Tooltip[title="Reserved for you"]')).toBeTruthy());
+      expect(wrapper.exists('ForwardRef(Tooltip)[title="Reserved for you"]')).toBeTruthy());
   });
 });
+
