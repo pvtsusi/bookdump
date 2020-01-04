@@ -1,8 +1,14 @@
 import React from 'react';
-import { TooSlowSnackbar } from './TooSlowSnackbar';
+import { CONFIRM_TOO_SLOW } from '../../reducers/books';
+import TooSlowSnackbar from './TooSlowSnackbar';
 import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
-let state, wrapper, confirmTooSlow;
+const mockStore = configureMockStore([thunk]);
+
+let store, wrapper;
 
 jest.mock('../MessageSnackbar', () => {
   return {
@@ -15,10 +21,14 @@ jest.mock('../MessageSnackbar', () => {
 
 describe('when shown', () => {
   beforeEach(() => {
-    state = { tooSlow: true };
-    confirmTooSlow = jest.fn();
+    store = mockStore({
+      books: { tooSlow: true }
+    });
     wrapper = mount(
-      <TooSlowSnackbar confirmTooSlow={confirmTooSlow} tooSlow={state.tooSlow}/>);
+      <Provider store={store}>
+        <TooSlowSnackbar/>
+      </Provider>
+    );
   });
 
   it('shows the message', () =>
@@ -29,16 +39,21 @@ describe('when shown', () => {
     beforeEach(() =>
       wrapper.find(TooSlowSnackbar).simulate('close'));
 
-    it('calls confirmTooSlow()', () =>
-      expect(confirmTooSlow).toHaveBeenCalled());
+    it('dispatches confirmation for the too-slow snackbar', () =>
+      expect(store.getActions()).toEqual([{ type: CONFIRM_TOO_SLOW }]));
   });
 });
 
 describe('when not shown', () => {
   beforeEach(() => {
-    state = {};
+    store = mockStore({
+      books: {}
+    });
     wrapper = mount(
-      <TooSlowSnackbar tooSlow={state.tooSlow}/>);
+      <Provider store={store}>
+        <TooSlowSnackbar/>
+      </Provider>
+    );
   });
 
   it('does not show the message', () => {

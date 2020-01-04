@@ -1,31 +1,17 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CONFIRM_TOO_SLOW } from '../../reducers/books';
 import { SNACKBAR_TOO_SLOW } from '../../reducers/snackbar';
 import MessageSnackbar from '../MessageSnackbar';
 
-const mapStateToProps = ({ books }) => ({
-  tooSlow: books.tooSlow
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      confirmTooSlow: () => dispatch => dispatch({ type: CONFIRM_TOO_SLOW })
-    }, dispatch
-  );
-
-export class TooSlowSnackbar extends React.Component {
-  render() {
+export default function TooSlowSnackbar() {
+  const dispatch = useDispatch();
+  const tooSlow = useSelector(state => state.books.tooSlow);
     return (
       <MessageSnackbar
-        open={this.props.tooSlow}
-        onClose={() => this.props.confirmTooSlow()}
+        open={tooSlow}
+        onClose={() => dispatch({ type: CONFIRM_TOO_SLOW })}
         snackbarKey={SNACKBAR_TOO_SLOW}
         message="Sorry, someone was quicker than you." />
     );
-  }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(TooSlowSnackbar);
