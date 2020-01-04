@@ -1,26 +1,34 @@
 import Zoom from '@material-ui/core/Zoom/Zoom';
 import React from 'react';
-import { ReservedBanner } from './ReservedBanner';
+import { FINISH_RESERVATION } from '../../reducers/books';
+import ReservedBanner from './ReservedBanner';
 import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 
-let state, wrapper, transitioned;
+const mockStore = configureMockStore([thunk]);
+
+let store, wrapper, currentUser;
 const book = { isbn: 'isbn' };
 const userName = 'Reserver Name';
 
 describe('when reserved for current user', () => {
-  beforeEach(() =>
-    state = { userName: userName });
+  beforeEach(() => {
+    currentUser = userName;
+  });
 
   describe('when the reservation exists', () => {
     beforeEach(() => {
-      state.reservations = { [book.isbn]: 'exists' };
-      transitioned = jest.fn();
-      wrapper = mount(<ReservedBanner
-        reservations={state.reservations}
-        userName={state.userName}
-        isbn={book.isbn}
-        reserver={userName}
-        transitioned={transitioned}/>);
+      store = mockStore({
+        session: { user: { name: currentUser } },
+        books: { reservations: { [book.isbn]: 'exists' } }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <ReservedBanner isbn={book.isbn} reserver={userName}/>
+        </Provider>
+      );
     });
 
     it('renders a message that the reservation is for the current user', () =>
@@ -32,14 +40,15 @@ describe('when reserved for current user', () => {
 
   describe('when the reservation is being set up', () => {
     beforeEach(() => {
-      state.reservations = { [book.isbn]: 'coming' };
-      transitioned = jest.fn();
-      wrapper = mount(<ReservedBanner
-        reservations={state.reservations}
-        userName={state.userName}
-        isbn={book.isbn}
-        reserver={userName}
-        transitioned={transitioned}/>);
+      store = mockStore({
+        session: { user: { name: currentUser } },
+        books: { reservations: { [book.isbn]: 'coming' } }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <ReservedBanner isbn={book.isbn} reserver={userName}/>
+        </Provider>
+      );
     });
 
     it('animates the banner in', () =>
@@ -50,20 +59,21 @@ describe('when reserved for current user', () => {
         wrapper.find(Zoom).invoke('onEntered')());
 
       it('calls transitioned() with the book isbn', () =>
-        expect(transitioned).toHaveBeenCalledWith(book.isbn));
+        expect(store.getActions()).toEqual([{ type: FINISH_RESERVATION, isbn: book.isbn }]));
     });
   });
 
   describe('when the reservation is being declined', () => {
     beforeEach(() => {
-      state.reservations = { [book.isbn]: 'going' };
-      transitioned = jest.fn();
-      wrapper = mount(<ReservedBanner
-        reservations={state.reservations}
-        userName={state.userName}
-        isbn={book.isbn}
-        reserver={userName}
-        transitioned={transitioned}/>);
+      store = mockStore({
+        session: { user: { name: currentUser } },
+        books: { reservations: { [book.isbn]: 'going' } }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <ReservedBanner isbn={book.isbn} reserver={userName}/>
+        </Provider>
+      );
     });
 
     it('animates the banner out', () =>
@@ -74,19 +84,22 @@ describe('when reserved for current user', () => {
         wrapper.find(Zoom).invoke('onExited')());
 
       it('calls transitioned() with the book isbn', () =>
-        expect(transitioned).toHaveBeenCalledWith(book.isbn));
+        expect(store.getActions()).toEqual([{ type: FINISH_RESERVATION, isbn: book.isbn }]));
     });
   });
 
   describe('when reserved for someone else', () => {
     const otherReserver = 'Someone Else';
     beforeEach(() => {
-      state = { userName: userName, reservations: { [book.isbn]: 'exists' } };
-      wrapper = mount(<ReservedBanner
-        reservations={state.reservations}
-        userName={state.userName}
-        isbn={book.isbn}
-        reserver={otherReserver}/>);
+      store = mockStore({
+        session: { user: { name: currentUser } },
+        books: { reservations: { [book.isbn]: 'exists' } }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <ReservedBanner isbn={book.isbn} reserver={otherReserver}/>
+        </Provider>
+      );
     });
 
     it('renders a message that the reservation is for the reserver', () =>
