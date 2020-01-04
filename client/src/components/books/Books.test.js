@@ -1,7 +1,21 @@
 import React from 'react';
-import { Books } from './Books';
+import Books from './Books';
 import Progress from '../Progress';
 import { mount } from 'enzyme';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+
+const mockStore = configureMockStore([thunk]);
+
+jest.mock('../../reducers/books', () => {
+  // noinspection JSUnusedGlobalSymbols
+  return {
+    __esModule: true,
+    getBooks: () => ({ type: 'mockGetBooks' }),
+    selectBook: (book) => ({ type: 'mockSelectBook', book })
+  };
+});
 
 jest.mock('./Book', () => {
   return {
@@ -21,23 +35,26 @@ jest.mock('./BookDialog', () => {
   };
 });
 
-let state, wrapper, getBooks, selectBook;
+let store, wrapper;
 const book1 = { isbn: 'isbn1' };
 const book2 = { isbn: 'isbn2' };
-const books = [ book1, book2 ];
+const books = [book1, book2];
 const error = 'This is an error.';
 
 describe('with books', () => {
   beforeEach(() => {
-    state = { books: books };
-    getBooks = jest.fn();
-    selectBook = jest.fn();
-    wrapper = mount(<Books books={state.books} getBooks={getBooks} selectBook={selectBook}/>);
+    store = mockStore({
+      books: { books }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Books/>
+      </Provider>
+    );
   });
 
-  it('calls getBooks() on mount', () => {
-    expect(getBooks).toBeCalled();
-  });
+  it('dispatches getBooks on mount', () =>
+    expect(store.getActions()).toEqual([{ type: 'mockGetBooks' }]));
 
   it('renders a list of the books', () => {
     expect(wrapper.exists(`ul [data-key="${book1.isbn}"]`)).toBeTruthy();
@@ -49,17 +66,18 @@ describe('with books', () => {
 
   describe('when a book has been selected', () => {
     beforeEach(() => {
-      state = { books: books, selected: book2.isbn };
-      getBooks = jest.fn();
-      selectBook = jest.fn();
-      wrapper = mount(<Books books={state.books}
-                             selected={state.selected}
-                             getBooks={getBooks}
-                             selectBook={selectBook}/>);
+      store = mockStore({
+        books: { books, selected: book2.isbn }
+      });
+      wrapper = mount(
+        <Provider store={store}>
+          <Books/>
+        </Provider>
+      );
     });
 
     it('the selected book is passed to the dialog', () => {
-      expect(wrapper.exists({ id: 'mockBookDialog', 'data-book': book2 })).toBeTruthy()
+      expect(wrapper.exists({ id: 'mockBookDialog', 'data-book': book2 })).toBeTruthy();
     });
   });
 
@@ -67,16 +85,21 @@ describe('with books', () => {
     beforeEach(() =>
       wrapper.find(`div[data-key="${book2.isbn}"]`).invoke('onSelect')());
 
-    it('calls selectBook() with the selected book object', () =>
-      expect(selectBook).toHaveBeenCalledWith(book2));
+    it('dispatches selectBook with the selected book object', () =>
+      expect(store.getActions()).toContainEqual({ type: 'mockSelectBook', book: book2 }));
   });
 });
 
 describe('with empty books list', () => {
   beforeEach(() => {
-    state = { books: [] };
-    getBooks = jest.fn();
-    wrapper = mount(<Books books={state.books} getBooks={getBooks}/>);
+    store = mockStore({
+      books: { books: [] }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Books/>
+      </Provider>
+    );
   });
 
   it('renders a "No books" message', () =>
@@ -85,9 +108,14 @@ describe('with empty books list', () => {
 
 describe('with an error', () => {
   beforeEach(() => {
-    state = { books: [], error: error };
-    getBooks = jest.fn();
-    wrapper = mount(<Books books={state.books} error={state.error} getBooks={getBooks}/>);
+    store = mockStore({
+      books: { books, error }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Books/>
+      </Provider>
+    );
   });
 
   it('renders the error message', () =>
@@ -101,9 +129,14 @@ describe('with an error', () => {
 
 describe('with books list being still null', () => {
   beforeEach(() => {
-    state = { books: null };
-    getBooks = jest.fn();
-    wrapper = mount(<Books books={state.books} getBooks={getBooks}/>);
+    store = mockStore({
+      books: { books: null }
+    });
+    wrapper = mount(
+      <Provider store={store}>
+        <Books/>
+      </Provider>
+    );
   });
 
   it('renders a progress spinner', () =>

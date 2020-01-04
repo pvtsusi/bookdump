@@ -1,13 +1,14 @@
-import React from 'react';
-import BookField from './BookField';
 import { mount } from 'enzyme';
+import React from 'react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import BookField from './BookField';
 
 const mockStore = configureMockStore([thunk]);
 
 jest.mock('../../reducers/books', () => {
+  // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
     editBook: (field) => ({ type: 'mockEditBook', field }),

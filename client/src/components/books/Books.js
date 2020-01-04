@@ -1,16 +1,14 @@
 import List from '@material-ui/core/List';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { getBooks, selectBook } from '../../reducers/books';
+import Progress from '../Progress';
 import Book from './Book';
 import BookDialog from './BookDialog';
-import Progress from '../Progress';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   notification: {
     textAlign: 'center',
     fontWeight: 600
@@ -18,76 +16,53 @@ const styles = theme => ({
   list: {
     paddingBottom: theme.spacing(5)
   }
-});
+}));
 
-const mapStateToProps = ({ books }) => ({
-  books: books.books,
-  selected: books.selected,
-  error: books.error
-});
+export default function Books() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const books = useSelector(state => state.books.books);
+  const selected = useSelector(state => state.books.selected);
+  const error = useSelector(state => state.books.error);
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      getBooks,
-      selectBook
-    }, dispatch
-  );
+  useEffect(() => {
+    dispatch(getBooks());
+  }, [dispatch]);
 
-class Books extends React.Component {
-  constructor(props) {
-    super(props);
-    this.classes = props.classes;
-  }
-
-  componentWillMount() {
-    this.props.getBooks();
-  }
-
-  render() {
-    if (this.props.error) {
-      return (
-        <Typography className={this.classes.notification}>
-          Error: {this.props.error}
-        </Typography>
-      );
-    }
-
-    if (!this.props.books) {
-      return (
-        <Progress className={this.classes.notification}/>
-      );
-    }
-
-    if (this.props.books.length === 0) {
-      return (
-        <Typography className={this.classes.notification}>
-          No books
-        </Typography>
-      );
-    }
-
+  if (error) {
     return (
-      <React.Fragment>
-        <List className={this.classes.list}>
-          {
-            this.props.books.map(book => {
-              return (
-                <Book book={book} key={book.isbn} onSelect={() => this.props.selectBook(book)}/>
-              );
-            })
-          }
-        </List>
-        <BookDialog book={this.props.books.find(book => book.isbn === this.props.selected)}/>
-      </React.Fragment>
+      <Typography className={classes.notification}>
+        Error: {error}
+      </Typography>
     );
   }
+
+  if (!books) {
+    return (
+      <Progress className={classes.notification}/>
+    );
+  }
+
+  if (books.length === 0) {
+    return (
+      <Typography className={classes.notification}>
+        No books
+      </Typography>
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <List className={classes.list}>
+        {
+          books.map(book => {
+            return (
+              <Book book={book} key={book.isbn} onSelect={() => dispatch(selectBook(book))}/>
+            );
+          })
+        }
+      </List>
+      <BookDialog book={books.find(book => book.isbn === selected)}/>
+    </React.Fragment>
+  );
 }
-
-Books.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-const styled = withStyles(styles)(Books);
-export { styled as Books };
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
