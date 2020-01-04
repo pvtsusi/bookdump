@@ -1,12 +1,27 @@
-import React from 'react';
-import { ReserveButton } from './ReserveButton';
-import Button from '../Button';
 import { mount } from 'enzyme';
+import React from 'react';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import Button from '../Button';
+import ReserveButton from './ReserveButton';
 
-let state, wrapper, reserveBook, declineBook;
+const mockStore = configureMockStore([thunk]);
+
+let store, wrapper;
 const book = { isbn: 'isbn' };
 const reserverName = 'Reserver Name';
 const reservedBook = { ...book, reserverName };
+
+jest.mock('../../reducers/books', () => {
+  // noinspection JSUnusedGlobalSymbols
+  return {
+    __esModule: true,
+    reserveBook: (book) => ({ type: 'mockReserveBook', book }),
+    declineBook: (book) => ({ type: 'mockDeclineBook', book })
+  };
+});
+
 function MockLoginDialog() {
   return <div/>;
 }
@@ -22,9 +37,12 @@ jest.mock('../sessions/LoginDialog', () => {
 
 describe('with no reservation', () => {
   beforeEach(() => {
-    state = { book: book };
-    reserveBook = jest.fn();
-    wrapper = mount(<ReserveButton book={state.book} reserveBook={reserveBook}/>);
+    store = mockStore();
+    wrapper = mount(
+      <Provider store={store}>
+        <ReserveButton book={book}/>
+      </Provider>
+    );
   });
 
   it('renders the reservation button', () =>
@@ -35,7 +53,7 @@ describe('with no reservation', () => {
       wrapper.find(Button).simulate('click'));
 
     it('tries to reserve the book', () =>
-      expect(reserveBook).toBeCalledWith(book));
+      expect(store.getActions()).toEqual([{ type: 'mockReserveBook', book }]));
   });
 
   describe('when login succeeds', () => {
@@ -43,15 +61,18 @@ describe('with no reservation', () => {
       wrapper.find(MockLoginDialog).invoke('onSuccess')());
 
     it('tries to reserve the book', () =>
-      expect(reserveBook).toBeCalledWith(book));
+      expect(store.getActions()).toEqual([{ type: 'mockReserveBook', book }]));
   });
 });
 
 describe('with reservation', () => {
   beforeEach(() => {
-    state = { book: reservedBook };
-    declineBook = jest.fn();
-    wrapper = mount(<ReserveButton book={state.book} declineBook={declineBook}/>);
+    store = mockStore();
+    wrapper = mount(
+      <Provider store={store}>
+        <ReserveButton book={reservedBook}/>
+      </Provider>
+    );
   });
 
   it('renders the decline reservation button', () =>
@@ -61,15 +82,20 @@ describe('with reservation', () => {
     beforeEach(() =>
       wrapper.find(Button).simulate('click'));
 
-    it('declines the reservation', () =>
-      expect(declineBook).toBeCalledWith(reservedBook));
+    it('declines the reservation', () => {
+      const expectedBook = { ...book, reserverName };
+      expect(store.getActions()).toEqual([{ type: 'mockDeclineBook', book: expectedBook }]);
+    });
   });
 });
 
 describe('with no book selected', () => {
   beforeEach(() => {
-    state = {};
-    wrapper = mount(<ReserveButton book={state.book}/>);
+    wrapper = mount(
+      <Provider store={store}>
+        <ReserveButton book={null}/>
+      </Provider>
+    );
   });
 
   it('will not render anything', () =>
