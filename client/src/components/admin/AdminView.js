@@ -1,128 +1,101 @@
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton/IconButton';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Tooltip from '@material-ui/core/Tooltip/Tooltip';
 import Typography from '@material-ui/core/Typography/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../../reducers/books';
 import AdminLogin from './AdminLogin';
 import MarkDeliveredDialog from './MarkDeliveredDialog';
 
+export default function AdminView() {
+  const dispatch = useDispatch();
+  const admin = useSelector(state => state.session.authenticated && state.session.user && state.session.user.admin);
+  const books = useSelector(state => state.books.booksByReserver);
+  const error = useSelector(state => state.books.error);
+  const [declined, setDeclined] = useState({});
 
-const mapStateToProps = ({ session, books }) => ({
-  admin: session.authenticated && session.user && session.user.admin,
-  books: books.booksByReserver,
-  error: books.error
-});
+  const decline = useCallback(book => {
+    dispatch(declineBook(book));
+    setDeclined({ ...declined, [book.isbn]: true });
+  }, [dispatch, declined]);
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      getBooks,
-      declineBook,
-      confirmMarkDelivered: (reserver) => dispatch => dispatch({ type: CONFIRM_MARK_DELIVERED, reserver })
-    }, dispatch
-  );
+  useEffect(() => {
+    dispatch(getBooks());
+  }, [dispatch, admin]);
 
-class AdminView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      declined: {}
-    };
-    this.decline = (book) => {
-      this.props.declineBook(book);
-      this.setState({ declined: { ...this.state.declined, [book.isbn]: true } });
-    };
+  if (!admin) {
+    return (
+      <AdminLogin/>
+    );
   }
 
-  componentWillMount() {
-    this.props.getBooks();
+  if (error) {
+    return (
+      <Typography>
+        Error: {error}
+      </Typography>
+    );
   }
 
-  render() {
-    if (!this.props.admin) {
-      return (
-        <AdminLogin history={this.props.history}/>
-      );
-    }
-    if (this.props.error) {
-      return (
-        <Typography>
-          Error: {this.props.error}
-        </Typography>
-      );
-    }
+  if (books && Object.keys(books).length === 0) {
+    return (
+      <Typography>
+        No reserved books
+      </Typography>
+    );
+  }
 
-    if (this.props.books && Object.keys(this.props.books).length === 0) {
-      return (
-        <Typography>
-          No reserved books
-        </Typography>
-      );
-    }
-
-    if (this.props.books) {
-      return (
-          <React.Fragment>
-            <MarkDeliveredDialog/>
-            <List subheader={<li/>}>
-              {
-                Object.keys(this.props.books).map(reserver => {
-                  const reserverName = this.props.books[reserver][0].reserverName;
-                  return (
-                    <li key={reserver}>
-                      <ul style={{ listStyle: 'none' }}>
-                        <ListSubheader>
-                          <Typography variant="h6">
-                            {reserverName}
-                            <Tooltip title="Mark all delivered" aria-label="Mark all delivered">
-                              <IconButton onClick={() => this.props.confirmMarkDelivered(reserver)} color="primary">
-                                <DoneIcon/>
+  if (books) {
+    return (
+      <React.Fragment>
+        <MarkDeliveredDialog/>
+        <List subheader={<li/>} data-testid="reserversList">
+          {
+            Object.keys(books).map(reserver => {
+              const reserverName = books[reserver][0].reserverName;
+              return (
+                <li key={reserver} data-key={reserver}>
+                  <ul style={{ listStyle: 'none' }}>
+                    <ListSubheader>
+                      <Typography variant="h6">
+                        {reserverName}
+                        <Tooltip title="Mark all delivered" aria-label="Mark all delivered">
+                          <IconButton onClick={() => dispatch({ type: CONFIRM_MARK_DELIVERED, reserver })}
+                                      color="primary">
+                            <DoneIcon/>
+                          </IconButton>
+                        </Tooltip>
+                      </Typography>
+                    </ListSubheader>
+                    {
+                      books[reserver].filter(book => !declined[book.isbn]).map(book => (
+                        <ListItem key={book.isbn} data-key={book.isbn}>
+                          <ListItemText inset primary={book.title} secondary={book.author}/>
+                          <ListItemSecondaryAction>
+                            <Tooltip title="Cancel reservation" aria-label="Cancel reservation">
+                              <IconButton onClick={() => decline(book)} color="secondary">
+                                <CloseIcon/>
                               </IconButton>
                             </Tooltip>
-                          </Typography>
-                        </ListSubheader>
-                        {
-                          this.props.books[reserver]
-                            .filter(book => !this.state.declined[book.isbn]).map(book => (
-                            <ListItem key={book.isbn}>
-                              <ListItemText inset primary={book.title} secondary={book.author}/>
-                              <ListItemSecondaryAction>
-                                <Tooltip title="Cancel reservation" aria-label="Cancel reservation">
-                                  <IconButton onClick={() => this.decline(book)} color="secondary">
-                                    <CloseIcon/>
-                                  </IconButton>
-                                </Tooltip>
-                              </ListItemSecondaryAction>
-                            </ListItem>
-                          ))
-                        }
-                      </ul>
-                    </li>
-                  );
-                })
-              }
-            </List>
-          </React.Fragment>
-      );
-    }
-    return null;
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))
+                    }
+                  </ul>
+                </li>
+              );
+            })
+          }
+        </List>
+      </React.Fragment>
+    );
   }
+  return null;
 }
-
-AdminView.propTypes = {
-  books: PropTypes.objectOf(
-    PropTypes.arrayOf(
-      PropTypes.shape({ reserverName: PropTypes.string })))
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdminView);
