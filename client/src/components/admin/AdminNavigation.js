@@ -1,48 +1,31 @@
-import { withStyles } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import AdminIcon from '@material-ui/icons/Assignment';
 import HomeIcon from '@material-ui/icons/Home';
-import { push } from 'connected-react-router';
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
 
-const styles = theme => ({
-  actions: {
-    paddingRight: theme.spacing(2)
+export default function AdminNavigation() {
+  const location = useLocation();
+  const admin = useSelector(state => state.session.authenticated && state.session.user && state.session.user.admin);
+  if (!admin) {
+    return null;
   }
-});
-
-const mapStateToProps = ({ session, router }) => ({
-  path: router.location.pathname,
-  admin: session.authenticated && session.user && session.user.admin
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({
-    goToAdmin: () => () => dispatch(push('/admin')),
-    goToHome: () => () => dispatch(push('/'))
-  }, dispatch);
-
-class AdminNavigation extends React.Component {
-  render() {
-    if (!this.props.admin) {
-      return null;
-    }
-    if (this.props.path === '/admin') {
-      return (
-        <IconButton onClick={this.props.goToHome}>
+  if (location.pathname === '/admin') {
+    return (
+      <Link to="/">
+        <IconButton>
           <HomeIcon fontSize="large"/>
         </IconButton>
-      );
-    } else {
-      return (
-        <IconButton onClick={this.props.goToAdmin}>
+      </Link>
+    );
+  } else {
+    return (
+      <Link to="/admin">
+        <IconButton>
           <AdminIcon fontSize="large"/>
         </IconButton>
-      );
-    }
+      </Link>
+    );
   }
 }
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AdminNavigation));

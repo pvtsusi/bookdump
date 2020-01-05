@@ -1,11 +1,8 @@
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
-import { push } from 'connected-react-router';
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import themes from '../themes';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import themes from '../themes';
 
 
 const books_1x = require('../images/books_1x.svg');
@@ -13,56 +10,57 @@ const books_2x = require('../images/books_2x.svg');
 
 const rootStyle = {
   display: 'flex',
-  flexGrow: 1
+  flexGrow: 1,
 };
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: rootStyle,
   anchor: {
     ...rootStyle,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    color: theme.palette.text.primary,
+    textDecoration: 'none'
   },
   image: {
     height: 50,
     paddingRight: theme.spacing(2)
   }
-});
+}));
 
-const mapStateToProps = ({ router }) => ({
-  path: router.location.pathname
-});
+function LogoContent() {
+  const classes = useStyles();
+  return (
+    <React.Fragment>
+      <img className={classes.image}
+           srcSet={`${books_1x}, ${books_2x} 2x`}
+           src={books_1x}
+           alt=""/>
+      <MuiThemeProvider theme={themes.narrow}>
+        <Typography className={classes.title} variant="h4" color="inherit">
+          Bookdump
+        </Typography>
+      </MuiThemeProvider>
+    </React.Fragment>
+  );
+}
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({
-    goHome: () => () => dispatch(push('/'))
-  }, dispatch);
-
-class Logo extends React.Component {
-  render() {
-    const { classes } = this.props;
-
+export default function Logo() {
+  const classes = useStyles();
+  const location = useLocation();
+  if (location.pathname === '/') {
     return (
-      <div className={this.props.path !== '/' ? classes.anchor : classes.root}
-           onClick={this.props.path !== '/' ? this.props.goHome : () => {}}>
-        <img className={classes.image}
-             srcSet={`${books_1x}, ${books_2x} 2x`}
-             src={books_1x}
-             alt=""/>
-        <MuiThemeProvider theme={themes.narrow}>
-          <Typography className={classes.title} variant="h4" color="inherit">
-            Bookdump
-          </Typography>
-        </MuiThemeProvider>
+      <div className={classes.root}>
+        <LogoContent/>
       </div>
+    );
+  } else {
+    return (
+      <Link to="/" className={classes.anchor}>
+        <LogoContent/>
+      </Link>
     );
   }
 }
-
-Logo.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Logo));
 
 
 

@@ -1,4 +1,3 @@
-import { connectRouter } from 'connected-react-router';
 import { combineReducers } from 'redux';
 import { sessionReducer } from 'redux-react-session';
 import books from './books';
@@ -7,8 +6,7 @@ import socket from './socket';
 import snackbar from './snackbar';
 import user from './user';
 
-export default (history) => combineReducers({
-  router: connectRouter(history),
+export default () => combineReducers({
   books,
   socket,
   progress,

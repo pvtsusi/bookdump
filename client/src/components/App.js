@@ -3,10 +3,9 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { ConnectedRouter } from 'connected-react-router';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import themes from '../themes';
 import AdminView from './admin/AdminView';
@@ -52,21 +51,21 @@ function App(props) {
       <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
       <TooSlowSnackbar/>
       <div className={classes.root}>
-        <TopBar/>
-        <Grid container justify="center">
-          <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
-            <Grid item xs={12} sm={10}>
-              <Paper className={classes.paper}>
-                <ConnectedRouter history={props.history}>
+        <Router>
+          <TopBar/>
+          <Grid container justify="center">
+            <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
+              <Grid item xs={12} sm={10}>
+                <Paper className={classes.paper}>
                   <Switch>
                     <Route exact path="/" component={Books}/>
                     <Route exact path="/admin" component={AdminView}/>
                   </Switch>
-                </ConnectedRouter>
-              </Paper>
+                </Paper>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </Router>
       </div>
     </MuiThemeProvider>
   );
