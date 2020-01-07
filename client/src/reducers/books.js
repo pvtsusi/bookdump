@@ -7,8 +7,8 @@ import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions.mjs';
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
 export const CONFIRM_MARK_DELIVERED = 'CONFIRM_MARK_DELIVERED';
-export const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
 export const DESELECT_BOOK = 'DESELECT_BOOK';
+const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
 const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
 const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
 const SELECT_BOOK = 'SELECT_BOOK';
@@ -265,3 +265,5 @@ export const markDelivered = (reserver) => {
     dispatch({ type: DELETE_BOOK, reserver });
   };
 };
+
+export const cancelMarkDelivered = () => dispatch => dispatch({ type: CANCEL_MARK_DELIVERED });

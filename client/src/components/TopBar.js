@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import * as PropTypes from 'prop-types';
 import React from 'react';
-import 'typeface-pt-sans-narrow';
 import AdminNavigation from './admin/AdminNavigation';
 import Logo from './Logo';
 import SessionPopover from './sessions/SessionPopover';
