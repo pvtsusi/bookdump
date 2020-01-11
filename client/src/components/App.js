@@ -5,15 +5,14 @@ import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import themes from '../themes';
-import AdminView from './admin/AdminView';
-import Books from './books/Books';
 import TooSlowSnackbar from './books/TooSlowSnackbar';
 import MessageSnackbar from './MessageSnackbar';
 import ModalProgress from './ModalProgress';
 import TopBar from './TopBar';
+
 
 const styles = theme => ({
   root: {
@@ -51,21 +50,16 @@ function App(props) {
       <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
       <TooSlowSnackbar/>
       <div className={classes.root}>
-        <Router>
-          <TopBar/>
-          <Grid container justify="center">
-            <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
-              <Grid item xs={12} sm={10}>
-                <Paper className={classes.paper}>
-                  <Switch>
-                    <Route exact path="/" component={Books}/>
-                    <Route exact path="/admin" component={AdminView}/>
-                  </Switch>
-                </Paper>
-              </Grid>
+        <TopBar/>
+        <Grid container justify="center">
+          <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
+            <Grid item xs={12} sm={10}>
+              <Paper className={classes.paper}>
+                {renderRoutes(props.route.routes)}
+              </Paper>
             </Grid>
           </Grid>
-        </Router>
+        </Grid>
       </div>
     </MuiThemeProvider>
   );
