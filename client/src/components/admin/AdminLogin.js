@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography/Typography';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CLEAR_LOGIN_ERROR, login, setError } from '../../reducers/user';
+import { clearErrors, login, setError } from '../../reducers/user';
 import Button from '../Button';
 
 const useStyles = makeStyles(() => ({
@@ -28,12 +28,12 @@ export default function AdminLogin(props) {
   const [pass, setPass] = useState('');
 
   const onChangeName = useCallback(event => {
-    dispatch({ type: CLEAR_LOGIN_ERROR });
+    dispatch(clearErrors());
     setName(event.target.value);
   }, [dispatch]);
 
   const onChangePass = useCallback(event => {
-    dispatch({ type: CLEAR_LOGIN_ERROR });
+    dispatch(clearErrors());
     setPass(event.target.value);
   }, [dispatch]);
 
@@ -45,8 +45,8 @@ export default function AdminLogin(props) {
     if (!pass) {
       dispatch(setError('pass', 'Password cannot be empty'));
     }
-    dispatch(login(name, pass, props.history));
-  }, [dispatch, name, pass, props.history]);
+    dispatch(login(name, pass));
+  }, [dispatch, name, pass]);
 
   return (
     <form onSubmit={onSubmit} noValidate autoComplete="off">

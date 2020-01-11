@@ -7,12 +7,12 @@ import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from './snackbar';
 const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
 
 export const LOG_IN = 'LOG_IN';
-export const LOGIN_ERROR = 'LOGIN_ERROR';
-export const CLEAR_LOGIN_ERROR = 'CLEAR_LOGIN_ERROR';
 export const CANCEL_LOGOUT = 'CANCEL_LOGOUT';
 export const LOG_OUT = 'LOG_OUT';
 export const LOGGED_OUT = 'LOGGED_OUT';
-export const CANCEL_LOGIN = 'CANCEL_LOGIN';
+const LOGIN_ERROR = 'LOGIN_ERROR';
+const CLEAR_LOGIN_ERROR = 'CLEAR_LOGIN_ERROR';
+const CANCEL_LOGIN = 'CANCEL_LOGIN';
 const LOGGED_IN = 'LOGGED_IN';
 
 const initialState = {
@@ -48,18 +48,14 @@ export default (state = initialState, action) => {
   }
 }
 
-export const login = (loginName, loginPass, history, onSuccess) => async dispatch => {
+export const login = (loginName, loginPass, onSuccess) => async dispatch => {
   dispatch({ type: LOADING });
   try {
     const response = await agent.Session.login(loginName, loginPass);
     const { token, name, sha, admin } = response;
     await saveSession({ token });
     await saveUser({ name, admin, sha });
-    if (admin && history) {
-      history.push('/');
-    } else {
-      dispatch({ type: LOGGED_IN });
-    }
+    dispatch({ type: LOGGED_IN });
     if (onSuccess) {
       onSuccess();
     }
@@ -73,6 +69,8 @@ export const login = (loginName, loginPass, history, onSuccess) => async dispatc
     dispatch({ type: LOADED });
   }
 };
+
+export const cancelLogin = () => dispatch => dispatch({ type: CANCEL_LOGIN });
 
 export const logout = (admin) => async dispatch => {
   dispatch({ type: LOADING });
@@ -92,3 +90,4 @@ export const logout = (admin) => async dispatch => {
 };
 
 export const setError = (field, message) => dispatch =>  dispatch({ type: LOGIN_ERROR, field, message });
+export const clearErrors = () => dispatch => dispatch({ type: CLEAR_LOGIN_ERROR });
