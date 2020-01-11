@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import coverUrl from '../../cover.mjs';
+import coverUrl from '../../cover';
 import { deselectBook } from '../../reducers/books';
 import Button from '../Button';
 import BookField from './BookField';

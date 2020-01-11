@@ -2,7 +2,7 @@ import agent from '../agent';
 import { LOADED, LOADING } from './progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from './snackbar';
 import { LOG_IN } from './user';
-import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions.mjs';
+import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions';
 
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';

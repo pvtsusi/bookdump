@@ -11,7 +11,7 @@ import thunk from 'redux-thunk';
 
 const mockStore = configureMockStore([thunk]);
 
-jest.mock('../../cover.mjs', () => {
+jest.mock('../../cover', () => {
   return {
     __esModule: true,
     default: (url, sizeSuffix) => `mock_cover_${sizeSuffix}.png`

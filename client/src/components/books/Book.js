@@ -11,7 +11,7 @@ import ReservedIcon from '@material-ui/icons/HowToVote';
 import StarIcon from '@material-ui/icons/Star';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import cover from '../../cover.mjs';
+import cover from '../../cover';
 import themes from '../../themes';
 
 const useStyles = makeStyles(theme => ({

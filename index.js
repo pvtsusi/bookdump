@@ -21,10 +21,11 @@ import sharp from 'sharp';
 import socketIo from 'socket.io';
 import stream from 'stream';
 import { fileURLToPath } from 'url';
+import configureStore from './client/src/configureStore.js';
 import db from './db.js';
 import searchFromAll from './library.js';
-import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions.mjs';
-import resizedName from './client/src/cover.mjs';
+import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions';
+import resizedName from './client/src/cover';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -117,6 +118,7 @@ router.get('/api/books', list)
   .get('/api/test', test)
   .get('/api/migrate', migrate)
   .all('*', async (ctx) => {
+    const store = configureStore();
     await send(ctx, 'client/build/index.html');
   });
 

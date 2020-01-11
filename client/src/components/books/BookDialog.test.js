@@ -41,7 +41,7 @@ jest.mock('./ReservedBanner', () => {
   };
 });
 
-jest.mock('../../cover.mjs', () => {
+jest.mock('../../cover', () => {
   return {
     __esModule: true,
     default: (url, sizeSuffix) => `mock_cover_${sizeSuffix}.png`
