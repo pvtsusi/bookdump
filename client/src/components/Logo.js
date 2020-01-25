@@ -5,8 +5,8 @@ import { Link, useLocation } from 'react-router-dom';
 import themes from '../themes';
 
 
-const books_1x = require('../images/books_1x.svg');
-const books_2x = require('../images/books_2x.svg');
+const books_1x = require('../images/books_1x.svg').default;
+const books_2x = require('../images/books_2x.svg').default;
 
 const rootStyle = {
   display: 'flex',
