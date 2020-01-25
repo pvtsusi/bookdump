@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import cors from '@koa/cors';
 import AWS from 'aws-sdk';
 import crypto from 'crypto';
@@ -26,9 +27,10 @@ import db from './db.js';
 import searchFromAll from './library.js';
 import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions';
 import resizedName from './client/src/cover';
+import routes from './client/src/routes';
+import renderer from './renderer';
+import { matchRoutes } from 'react-router-config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const router = Router();
 const sslify = koaSslify.default;
@@ -37,7 +39,7 @@ const resolver = koaSslify.xForwardedProtoResolver;
 const PORT = process.env.PORT || 5000;
 const ADMIN_TOKEN_EXPIRATION = '1h';
 
-const envOverride = `${__dirname}/.env`;
+const envOverride = '.env';
 if (fs.existsSync(envOverride)) {
   const rows = fs.readFileSync(envOverride).toString().split('\n');
   rows.forEach(row => {
@@ -75,7 +77,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser());
-app.use(staticFiles(`${__dirname}/client/build`));
+app.use(staticFiles('client/build', { index: false }));
 
 app.use(async (ctx, next) => {
   const token = parseToken(ctx);
@@ -119,7 +121,15 @@ router.get('/api/books', list)
   .get('/api/migrate', migrate)
   .all('*', async (ctx) => {
     const store = configureStore();
-    await send(ctx, 'client/build/index.html');
+    const matchedRoutes = matchRoutes(routes, ctx.request.path);
+    const renderContext = {};
+    const content = renderer(ctx.request, store, renderContext);
+
+    if (renderContext.notFound) {
+      ctx.status = 404;
+    }
+    ctx.body = content;
+    // await send(ctx, 'client/build/index.html');
   });
 
 app.use(router.routes());

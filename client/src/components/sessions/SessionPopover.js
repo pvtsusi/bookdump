@@ -42,16 +42,18 @@ class SessionPopover extends React.Component {
     };
   }
 
-  handleOpen = (event) =>
+  handleOpen(event) {
     this.setState({ anchorEl: event.target });
+  }
 
-  handleClose = () =>
+  handleClose() {
     this.setState({ anchorEl: null });
+  }
 
-  startLoggingOut = () => {
+  startLoggingOut() {
     this.handleClose();
     this.props.startLoggingOut();
-  };
+  }
 
   render() {
     if (!this.props.signedIn) {
