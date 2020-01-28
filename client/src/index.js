@@ -22,9 +22,12 @@ initSessionService(store);
 
 function Main() {
   useEffect(() => {
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
+    const modes = ['light', 'dark'];
+    for (const mode of modes) {
+      const jssStyles = document.querySelector( `#jss-server-side-${mode}`);
+      if (jssStyles) {
+        jssStyles.parentElement.removeChild(jssStyles);
+      }
     }
   }, []);
 

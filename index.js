@@ -17,6 +17,7 @@ import Router from 'koa-router';
 import send from 'koa-send';
 import koaSslify from 'koa-sslify';
 import staticFiles from 'koa-static';
+import compress from 'koa-compress';
 import path from 'path';
 import sharp from 'sharp';
 import socketIo from 'socket.io';
@@ -80,6 +81,7 @@ onerror(app);
 if (process.env.NODE_ENV === 'production') {
   app.use(sslify({ resolver }));
 }
+app.use(compress());
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser());
