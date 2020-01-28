@@ -29,6 +29,7 @@ import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedAct
 import resizedName from './client/src/cover';
 import routes from './client/src/routes';
 import renderer from './renderer';
+import jsBundleName from './jsBundle';
 import { matchRoutes } from 'react-router-config';
 
 
@@ -38,6 +39,11 @@ const resolver = koaSslify.xForwardedProtoResolver;
 
 const PORT = process.env.PORT || 5000;
 const ADMIN_TOKEN_EXPIRATION = '1h';
+
+const jsBundlePromise = jsBundleName().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 
 const envOverride = '.env';
 if (fs.existsSync(envOverride)) {
@@ -77,7 +83,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser());
-app.use(staticFiles('client/build', { index: false }));
+app.use(staticFiles('build/static', { index: false }));
 
 app.use(async (ctx, next) => {
   const token = parseToken(ctx);
@@ -122,8 +128,14 @@ router.get('/api/books', list)
   .all('*', async (ctx) => {
     const store = configureStore();
     const matchedRoutes = matchRoutes(routes, ctx.request.path);
+
+    // FIXME: loadData functions per route?
+    const books = await db.retrieveBooks();
+    store.dispatch({type: 'BOOKS_VIEW_LOADED', books});
+
     const renderContext = {};
-    const content = renderer(ctx.request, store, renderContext);
+    const jsBundle = await jsBundlePromise;
+    const content = renderer(ctx.request, store, jsBundle, renderContext);
 
     if (renderContext.notFound) {
       ctx.status = 404;

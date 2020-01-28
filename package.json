@@ -7,6 +7,7 @@
   },
   "private": true,
   "scripts": {
+    "client": "rm -f build/static/js/bundle.*.js && webpack --config webpack.client.js",
     "start": "webpack --config webpack.server.js && node -r esm build/bundle.js",
     "heroku-postbuild": "cd client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"

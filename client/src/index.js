@@ -1,4 +1,6 @@
-import React from 'react';
+import '@babel/polyfill';
+
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
@@ -11,18 +13,32 @@ import * as serviceWorker from './serviceWorker';
 
 const { initSessionService } = sessionService;
 
-const store = configureStore();
+const preloadedState = window.__PRELOADED_STATE__;
+delete window.__PRELOADED_STATE__;
+
+const store = configureStore(preloadedState);
 
 initSessionService(store);
 
-ReactDOM.render((
-  <Provider store={store}>
-    <WebSocketManager/>
-    <BrowserRouter>
-      {renderRoutes(routes)}
-    </BrowserRouter>
-  </Provider>
-), document.getElementById('root'));
+function Main() {
+  useEffect(() => {
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
+  return (
+    <Provider store={store}>
+      <WebSocketManager/>
+      <BrowserRouter>
+        {renderRoutes(routes)}
+      </BrowserRouter>
+    </Provider>
+  );
+}
+
+ReactDOM.hydrate(<Main />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

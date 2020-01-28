@@ -5,11 +5,10 @@ import { Provider } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { ServerStyleSheets } from '@material-ui/core/styles';
 
-// import serialize from 'serialize-javascript';
-// import { Helmet } from 'react-helmet';
+import serialize from 'serialize-javascript';
 import routes from './client/src/routes';
 
-export default (request, store, renderContext) => {
+export default (request, store, jsBundle, renderContext) => {
   const sheets = new ServerStyleSheets();
   const content = ReactDomServer.renderToString(
     sheets.collect(
@@ -48,6 +47,10 @@ export default (request, store, renderContext) => {
               <div id="root" style="z-index: 0; -webkit-transform:translateZ(0); overflow-y: scroll; height: 100vh; -webkit-overflow-scrolling: touch;">
                 ${content}
               </div>
+              <script>
+                window.__PRELOADED_STATE__ = ${serialize(store.getState())}
+              </script>
+              <script src="${jsBundle}"></script>
             </body>
           </html>`;
 };
