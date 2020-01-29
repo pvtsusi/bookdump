@@ -12,7 +12,9 @@ const config = {
   },
   devtool: 'inline-source-map',
   plugins: [
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['**/*', '!bundle.js*']
+    })
   ]
 };
 
