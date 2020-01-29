@@ -4,7 +4,9 @@ const staticDir = 'build/static';
 const dir = 'js';
 const re = /^bundle\.[0-9a-f]{8}\.js$/;
 
-export default async function name() {
+let currentName = null;
+
+function resolve() {
   return new Promise((resolve, reject) => {
     fs.readdir(`${staticDir}/${dir}`, (err, files) => {
       if (err) {
@@ -17,4 +19,11 @@ export default async function name() {
       resolve(`${dir}/${match}`);
     });
   });
+}
+
+export default async function name() {
+  if (!currentName) {
+    currentName = resolve();
+  }
+  return currentName;
 }

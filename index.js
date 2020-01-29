@@ -14,15 +14,12 @@ import basicAuth from 'koa-basic-auth';
 import mount from 'koa-mount';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
-import send from 'koa-send';
 import koaSslify from 'koa-sslify';
 import staticFiles from 'koa-static';
 import compress from 'koa-compress';
-import path from 'path';
 import sharp from 'sharp';
 import socketIo from 'socket.io';
 import stream from 'stream';
-import { fileURLToPath } from 'url';
 import configureStore from './client/src/configureStore.js';
 import db from './db.js';
 import searchFromAll from './library.js';
@@ -143,7 +140,6 @@ router.get('/api/books', list)
       ctx.status = 404;
     }
     ctx.body = content;
-    // await send(ctx, 'client/build/index.html');
   });
 
 app.use(router.routes());
