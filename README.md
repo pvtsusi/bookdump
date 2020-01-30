@@ -34,15 +34,9 @@ You'll need
 
 ### Setup
 
-Install the dependencies for the backend
+Install the dependencies
 
     npm install
-
-and for the front-end client
-
-    cd client
-    npm install
-    cd ..
 
 Set up a configuration either as environment variables or into the file
 `.env` in format `ENVIRONMENT_VAR=value` per each line. The environment
@@ -65,17 +59,12 @@ Start up Redis server
 
     redis-server
 
-Start the backend (by default in port 5000) in another terminal
+Start the dev environment server
 
-    npm start
+    npm run dev
 
-Start the front-end in another terminal
-
-    cd client
-    npm start
-
-A browser is probably launched and navigates to
-[http://localhost:3000](http://localhost:3000)
+Navigate your browser to 
+[http://localhost:5000](http://localhost:5000)
 
 How to use
 ----------
