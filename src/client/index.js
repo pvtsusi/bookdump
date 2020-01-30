@@ -18,7 +18,7 @@ delete window.__PRELOADED_STATE__;
 
 const store = configureStore(preloadedState);
 
-initSessionService(store);
+initSessionService(store, { driver: 'COOKIES' });
 
 function Main() {
   useEffect(() => {

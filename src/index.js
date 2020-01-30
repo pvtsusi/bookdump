@@ -25,12 +25,11 @@ import db from './db.js';
 import searchFromAll from './library.js';
 import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/reducers/sharedActions';
 import resizedName from './client/cover';
-import routes from './client/routes';
 import renderer from './renderer';
 import jsBundleName from './jsBundle';
-import { matchRoutes } from 'react-router-config';
+import { sessionService } from 'redux-react-session';
 
-
+const { initServerSession, loadSession } = sessionService;
 const router = Router();
 const sslify = koaSslify.default;
 const resolver = koaSslify.xForwardedProtoResolver;
@@ -86,29 +85,29 @@ app.use(mount('/static', staticFiles(`${__dirname}/static`, { index: false })));
 app.use(mount('/', staticFiles(`${__dirname}/root`, { index: false })));
 
 app.use(async (ctx, next) => {
-  const token = parseToken(ctx);
-  if (token) {
-    try {
-      ctx.state.user = await verifyToken(token);
-      ctx.state.user.sha = userSha(ctx.state.user.name, token, ctx.state.user.admin);
-    } catch (err) {
-      ctx.state.authError = err;
-      if (err.name === 'TokenExpiredError') {
-        ctx.state.expired = true;
-        ctx.set('Token-Expired', 'true');
+  ctx.store = configureStore();
+  try {
+    await initServerSession(ctx.store, ctx.request);
+    const session = await loadSession();
+    if (session.token) {
+      try {
+        ctx.state.user = await verifyToken(session.token);
+        ctx.state.user.sha = userSha(ctx.state.user.name, session.token, ctx.state.user.admin);
+      } catch (err) {
+        ctx.state.authError = err;
+        if (err.name === 'TokenExpiredError') {
+          ctx.state.expired = true;
+          ctx.set('Token-Expired', 'true');
+        }
       }
+    }
+  } catch (sessionErr) {
+    if (sessionErr !== 'Session not found') {
+      throw sessionErr;
     }
   }
   return next();
 });
-
-function parseToken(ctx) {
-  const auth = ctx.header && ctx.header.authorization || '';
-  if (!auth.toLowerCase().startsWith('bearer ')) {
-    return null;
-  }
-  return auth.substr('bearer '.length);
-}
 
 app.use(mount('/api/test', basicAuth({ name: ADMIN_NAME, pass: ADMIN_PASS })));
 app.use(mount('/api/migrate', basicAuth({ name: ADMIN_NAME, pass: ADMIN_PASS })));
@@ -126,16 +125,14 @@ router.get('/api/books', list)
   .get('/api/test', test)
   .get('/api/migrate', migrate)
   .all('*', async (ctx) => {
-    const store = configureStore();
-    const matchedRoutes = matchRoutes(routes, ctx.request.path);
-
-    // FIXME: loadData functions per route?
-    const books = await db.retrieveBooks();
-    store.dispatch({type: 'BOOKS_VIEW_LOADED', books});
+    const sha = ctx.state.user && ctx.state.user.sha;
+    const admin = ctx.state.user && ctx.state.user.admin;
+    const books = await db.retrieveBooks(sha, admin);
+    ctx.store.dispatch({type: 'BOOKS_VIEW_LOADED', books});
 
     const renderContext = {};
     const jsBundle = await jsBundlePromise;
-    const content = renderer(ctx.request, store, jsBundle, renderContext);
+    const content = renderer(ctx.request, ctx.store, jsBundle, renderContext);
 
     if (renderContext.notFound) {
       ctx.status = 404;

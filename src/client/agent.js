@@ -2,15 +2,6 @@ import { sessionService } from 'redux-react-session';
 
 const { loadSession } = sessionService;
 
-async function sessionToken() {
-  try {
-    const session = await loadSession();
-    return session.token;
-  } catch {
-    return null;
-  }
-}
-
 class ResponseError extends Error {
   constructor(message, status) {
     super(message)
@@ -28,15 +19,12 @@ const resBody = async res => {
 };
 
 async function reqOpts(method, body = null) {
-  const token = await sessionToken();
-  const auth = token ? { Authorization: `Bearer ${token}` } : {};
   const jsonBody = body ? { body: JSON.stringify(body) } : {};
   return {
     method,
     ...jsonBody,
     headers: {
       'Content-Type': 'application/json',
-      ...auth
     }
   };
 }
