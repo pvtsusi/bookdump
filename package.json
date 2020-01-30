@@ -12,8 +12,8 @@
     "build-client": "webpack --config webpack.client.js",
     "dev:build-client": "webpack --config webpack.client.js --watch",
     "dev:build-server": "webpack --config webpack.server.js --watch",
-    "dev:run": "nodemon --watch build --exec \"node -r esm build/bundle.js\"",
-    "start": "node -r esm build/bundle.js",
+    "dev:run": "nodemon --watch build build/bundle.js",
+    "start": "node build/bundle.js",
     "heroku-postbuild": "cd client && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,7 +26,6 @@
     "aws-sdk": "^2.431.0",
     "debug": "^2.6.3",
     "dotenv": "^6.2.0",
-    "esm": "^3.2.25",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-async-busboy": "^1.0.1",
