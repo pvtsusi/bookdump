@@ -11,10 +11,10 @@ import routes from './client/routes';
 export default (request, store, jsBundle, renderContext) => {
   const sheets = new ServerStyleSheets();
   const css = {};
-  let content = '';
+  const content = {};
 
   ['light', 'dark'].forEach((mode) => {
-    content = ReactDomServer.renderToString(
+    content[mode] = ReactDomServer.renderToString(
       sheets.collect(
         <Provider store={store}>
           <StaticRouter location={request.path} context={renderContext}>
@@ -50,7 +50,7 @@ export default (request, store, jsBundle, renderContext) => {
             </head>
             <body style="overflow: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0;">
               <noscript>You need to enable JavaScript to run this app.</noscript>
-              <div id="root" style="z-index: 0; -webkit-transform:translateZ(0); overflow-y: scroll; height: 100vh; -webkit-overflow-scrolling: touch;">${content}</div>
+              <div id="root" style="z-index: 0; -webkit-transform:translateZ(0); overflow-y: scroll; height: 100vh; -webkit-overflow-scrolling: touch;">${content.light}</div>
               <script>
                 window.__PRELOADED_STATE__ = ${serialize(store.getState())}
               </script>

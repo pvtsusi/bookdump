@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade/Fade';
 import Grid from '@material-ui/core/Grid/Grid';

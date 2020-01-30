@@ -1,6 +1,7 @@
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import withStyles from '@material-ui/core/styles/withStyles';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';

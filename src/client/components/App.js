@@ -1,7 +1,8 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import withStyles from '@material-ui/core/styles/withStyles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
 import { useSelector } from 'react-redux';

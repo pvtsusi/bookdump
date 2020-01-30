@@ -1,7 +1,7 @@
 import Grid from '@material-ui/core/Grid/Grid';
 import IconButton from '@material-ui/core/IconButton/IconButton';
 import Popover from '@material-ui/core/Popover/Popover';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
 import * as PropTypes from 'prop-types';

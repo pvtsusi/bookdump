@@ -1,5 +1,5 @@
 import AppBar from '@material-ui/core/AppBar';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Toolbar from '@material-ui/core/Toolbar';
 import * as PropTypes from 'prop-types';
 import React from 'react';

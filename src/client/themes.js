@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import 'typeface-pt-sans';
 import 'typeface-pt-sans-narrow';
 import 'typeface-vollkorn';
