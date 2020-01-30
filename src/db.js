@@ -1,7 +1,5 @@
 import fs from 'fs';
-import path from 'path';
 import Redis from 'redis';
-import { fileURLToPath } from 'url';
 
 const REDIS_DB = 1;
 const BOOK_PREFIX = 'isbn:';
@@ -39,7 +37,7 @@ const scripts = {
   delete: null
 };
 for (const scriptName of Object.keys(scripts)) {
-  const script = fs.readFileSync(`redis/${scriptName}.lua`).toString();
+  const script = fs.readFileSync(`${__dirname}/redis/${scriptName}.lua`).toString();
   scripts[scriptName] = loadScript(script);
 }
 

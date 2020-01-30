@@ -1,6 +1,5 @@
 import fs from 'fs';
 
-const buildDir = 'build';
 const dir = 'static/js';
 const re = /^bundle\.[0-9a-f]{8}\.js$/;
 
@@ -8,7 +7,7 @@ let currentName = null;
 
 function resolve() {
   return new Promise((resolve, reject) => {
-    fs.readdir(`${buildDir}/${dir}`, (err, files) => {
+    fs.readdir(`${__dirname}/${dir}`, (err, files) => {
       if (err) {
         return reject(err);
       }

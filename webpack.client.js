@@ -5,7 +5,7 @@ const baseConfig = require('./webpack.base');
 
 const config = {
   mode: 'development',
-  entry: './client/src/index.js',
+  entry: './src/client/index.js',
   output: {
     filename: 'static/js/bundle.[contenthash:8].js',
     path: path.resolve(__dirname, 'build')
@@ -13,7 +13,7 @@ const config = {
   devtool: 'inline-source-map',
   plugins: [
     new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: ['**/*', '!bundle.js*', '!root', '!root/*']
+      cleanOnceBeforeBuildPatterns: ['**/*', '!bundle.js*', '!root', '!root/*', '!redis', '!redis/*']
     })
   ]
 };

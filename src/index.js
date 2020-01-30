@@ -20,12 +20,12 @@ import compress from 'koa-compress';
 import sharp from 'sharp';
 import socketIo from 'socket.io';
 import stream from 'stream';
-import configureStore from './client/src/configureStore.js';
+import configureStore from './client/configureStore.js';
 import db from './db.js';
 import searchFromAll from './library.js';
-import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/src/reducers/sharedActions';
-import resizedName from './client/src/cover';
-import routes from './client/src/routes';
+import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './client/reducers/sharedActions';
+import resizedName from './client/cover';
+import routes from './client/routes';
 import renderer from './renderer';
 import jsBundleName from './jsBundle';
 import { matchRoutes } from 'react-router-config';
@@ -82,8 +82,8 @@ app.use(compress());
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser());
-app.use(mount('/static', staticFiles('build/static', { index: false })));
-app.use(mount('/', staticFiles('build/root', { index: false })));
+app.use(mount('/static', staticFiles(`${__dirname}/static`, { index: false })));
+app.use(mount('/', staticFiles(`${__dirname}/root`, { index: false })));
 
 app.use(async (ctx, next) => {
   const token = parseToken(ctx);
