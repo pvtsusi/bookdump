@@ -82,7 +82,8 @@ app.use(compress());
 app.use(json({}));
 app.use(cors());
 app.use(bodyParser());
-app.use(staticFiles('build/static', { index: false }));
+app.use(mount('/static', staticFiles('build/static', { index: false })));
+app.use(mount('/', staticFiles('build/root', { index: false })));
 
 app.use(async (ctx, next) => {
   const token = parseToken(ctx);

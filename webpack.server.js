@@ -1,6 +1,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const webpackNodeExternals = require('webpack-node-externals');
+const CopyPlugin = require('copy-webpack-plugin');
 const baseConfig = require('./webpack.base.js');
 
 const config = {
@@ -23,7 +24,12 @@ const config = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build')
-  }
+  },
+  plugins: [
+    new CopyPlugin([
+      { from: 'client/public', to: 'root' }
+    ]),
+  ]
 };
 
 module.exports = merge(baseConfig, config);
