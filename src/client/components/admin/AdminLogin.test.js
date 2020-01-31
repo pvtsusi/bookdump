@@ -10,8 +10,8 @@ jest.mock('../../reducers/user', () => {
   return {
     __esModule: true,
     setError: (field, message) => ({ type: 'mockSetError', field, message }),
-    login: (user, pass, history) => ({ type: 'mockLogin', user, pass, history }),
-    CLEAR_LOGIN_ERROR: 'mockClearError'
+    login: (user, pass) => ({ type: 'mockLogin', user, pass }),
+    clearErrors: () => ({ type: 'mockClearErrors' })
   };
 });
 
@@ -24,7 +24,6 @@ const name = 'Username';
 const pass = 'Password';
 const nameError = 'Bad name?';
 const passError = 'Invalid password!';
-const history = 'mockHistory';
 
 describe('with no errors', () => {
   beforeEach(() => {
@@ -34,7 +33,7 @@ describe('with no errors', () => {
     });
     wrapper = mount(
       <Provider store={store}>
-        <AdminLogin history={history}/>
+        <AdminLogin/>
       </Provider>
     );
   });
@@ -66,7 +65,7 @@ describe('with no errors', () => {
       wrapper.find(nameSelector).find('input').simulate('change', { target: { value: name } }));
 
     it('dispatches error clearing', () =>
-      expect(store.getActions()).toEqual([{ type: 'mockClearError' }]));
+      expect(store.getActions()).toEqual([{ type: 'mockClearErrors' }]));
   });
 
   describe('when changing the Password field', () => {
@@ -74,7 +73,7 @@ describe('with no errors', () => {
       wrapper.find(passSelector).find('input').simulate('change', { target: { value: pass } }));
 
     it('dispatches error clearing', () =>
-      expect(store.getActions()).toEqual([{ type: 'mockClearError' }]));
+      expect(store.getActions()).toEqual([{ type: 'mockClearErrors' }]));
   });
 
   describe('when submitting empty form', () => {
@@ -98,8 +97,7 @@ describe('with no errors', () => {
       expect(store.getActions()).toContainEqual({
         type: 'mockLogin',
         user: '',
-        pass: '',
-        history: 'mockHistory'
+        pass: ''
       }));
   });
 
@@ -120,8 +118,7 @@ describe('with no errors', () => {
       expect(store.getActions()).toContainEqual({
         type: 'mockLogin',
         user: name,
-        pass: '',
-        history
+        pass: ''
       }));
   });
 
@@ -142,8 +139,7 @@ describe('with no errors', () => {
       expect(store.getActions()).toContainEqual({
         type: 'mockLogin',
         user: '',
-        pass: pass,
-        history
+        pass: pass
       }));
   });
 
@@ -162,8 +158,7 @@ describe('with no errors', () => {
       expect(store.getActions()).toContainEqual({
         type: 'mockLogin',
         user: name,
-        pass,
-        history
+        pass
       }));
   });
 });
@@ -176,7 +171,7 @@ describe('when loading is in progress', () => {
     });
     wrapper = mount(
       <Provider store={store}>
-        <AdminLogin history={history}/>
+        <AdminLogin/>
       </Provider>
     );
   });
@@ -199,7 +194,7 @@ describe('with errors for password', () => {
     });
     wrapper = mount(
       <Provider store={store}>
-        <AdminLogin history={history}/>
+        <AdminLogin/>
       </Provider>
     );
   });
@@ -219,7 +214,7 @@ describe('with errors for name', () => {
     });
     wrapper = mount(
       <Provider store={store}>
-        <AdminLogin history={history}/>
+        <AdminLogin/>
       </Provider>
     );
   });

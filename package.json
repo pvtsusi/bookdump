@@ -16,7 +16,7 @@
     "dev:run": "nodemon --watch build build/bundle.js",
     "start": "node build/bundle.js",
     "heroku-postbuild": "npm install && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Petteri Susi <susi@iki.fi>",
   "dependencies": {
@@ -44,6 +44,7 @@
     "koa-sslify": "^4.0.3",
     "koa-static": "^5.0.0",
     "koa-views": "^6.1.5",
+    "madge": "^3.7.0",
     "pug": "^2.0.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -72,24 +73,81 @@
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.1.0",
     "babel-loader": "^8.0.6",
     "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.6.1",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.4.2",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "eslint": "^4.12.1",
     "file-loader": "^5.0.2",
+    "identity-obj-proxy": "^3.0.0",
     "isomorphic-style-loader": "^5.1.0",
+    "jest": "^25.1.0",
+    "jest-environment-jsdom-fourteen": "^1.0.1",
     "nodemon": "^1.19.4",
     "npm-run-all": "^4.1.5",
     "postcss-flexbugs-fixes": "^4.1.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
+    "react-app-polyfill": "^1.0.6",
+    "react-test-renderer": "^16.12.0",
+    "redux-mock-store": "^1.5.4",
     "terser-webpack-plugin": "^2.3.4",
+    "utf-8-validate": "^5.0.2",
     "webpack-cli": "^3.3.10"
   },
   "optionalDependencies": {
     "fsevents": "^2.1.2"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.js",
+      "<rootDir>/src/**/*.test.js"
+    ],
+    "testEnvironment": "jest-environment-jsdom-fourteen",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [],
+    "moduleNameMapper": {
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ]
   }
 }
