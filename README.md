@@ -1,4 +1,4 @@
-![Bookdump logo](client/public/android-chrome-192x192.png)
+![Bookdump logo](src/public/android-chrome-192x192.png)
 Bookdump 
 ========
 
