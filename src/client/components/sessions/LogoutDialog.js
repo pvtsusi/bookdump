@@ -1,4 +1,4 @@
-import withStyles from '@material-ui/core/styles/withStyles';
+import { withStyles } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';

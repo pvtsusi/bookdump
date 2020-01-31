@@ -1,5 +1,4 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';

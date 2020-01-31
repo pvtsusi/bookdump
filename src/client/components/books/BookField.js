@@ -1,5 +1,5 @@
 import CardActionArea from '@material-ui/core/CardActionArea';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField/TextField';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
-import withStyles from '@material-ui/core/styles/withStyles';
+import { withStyles } from '@material-ui/core/styles';
 import * as PropTypes from 'prop-types';
 import React from 'react';
 
