@@ -1,5 +1,5 @@
-![Bookdump logo](src/public/android-chrome-192x192.png)
-Bookdump 
+
+Bookdump ![Bookdump logo](src/public/android-chrome-192x192.png)
 ========
 
 ![CI](https://travis-ci.org/pvtsusi/bookdump.svg?branch=master)
