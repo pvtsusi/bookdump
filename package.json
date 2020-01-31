@@ -58,7 +58,7 @@
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "serialize-javascript": "^2.1.2",
-    "sharp": "^0.23.0",
+    "sharp": "^0.23.4",
     "socket.io": "^2.2.0",
     "typeface-pt-sans": "0.0.72",
     "typeface-pt-sans-narrow": "0.0.71",

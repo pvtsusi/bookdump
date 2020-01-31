@@ -29,7 +29,7 @@ export default (request, store, jsBundle, renderContext) => {
           <html lang="en">
             <head>
               <meta charset="utf-8" />
-              <style id="jss-server-side-light" media="(not prefers-color-scheme: dark)">${css.light}</style>
+              <style id="jss-server-side-light">${css.light}</style>
               <style id="jss-server-side-dark" media="(prefers-color-scheme: dark)">${css.dark}</style>
               <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
               <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
