@@ -1,12 +1,11 @@
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade/Fade';
 import Grid from '@material-ui/core/Grid/Grid';
-import * as PropTypes from 'prop-types';
 import React from 'react';
 import Progress from './Progress';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   backdrop: {
     zIndex: theme.zIndex.modal + 10
   },
@@ -15,23 +14,33 @@ const styles = theme => ({
     minHeight: '100vh',
     position: 'fixed'
   }
-});
+}));
 
-class ModalProgress extends React.Component {
-  constructor(props) {
-    super(props);
-    this.classes = props.classes;
-  }
+export default function ModalProgress(props) {
+  const classes = useStyles();
 
-  render() {
-    if (this.props.show) {
+  if (props.show) {
+    if (props.noFade) {
       return (
         <React.Fragment>
-          <Fade in style={{ transitionDelay: this.props.show ? '600ms' : '0ms' }} unmountOnExit>
-            <Backdrop open={this.props.show} className={this.classes.backdrop}/>
+          <Backdrop open={props.show} classes={{ root: classes.backdrop }}/>
+          <Grid container spacing={0} alignItems="center" justify="center"
+                classes={{ root: classes.container }}>
+            <Grid item xs={3}>
+              <Progress/>
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Fade in style={{ transitionDelay: props.show ? '600ms' : '0ms' }} unmountOnExit>
+            <Backdrop open={props.show} classes={{ root: classes.backdrop }}/>
           </Fade>
-          <Fade in style={{ transitionDelay: this.props.show ? '500ms' : '0ms' }} unmountOnExit>
-            <Grid container spacing={0} alignItems="center" justify="center" className={this.classes.container}>
+          <Fade in style={{ transitionDelay: props.show ? '500ms' : '0ms' }} unmountOnExit>
+            <Grid container spacing={0} alignItems="center" justify="center"
+                  classes={{ root: classes.container }}>
               <Grid item xs={3}>
                 <Progress/>
               </Grid>
@@ -40,12 +49,6 @@ class ModalProgress extends React.Component {
         </React.Fragment>
       );
     }
-    return null;
   }
+  return null;
 }
-
-ModalProgress.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(ModalProgress);

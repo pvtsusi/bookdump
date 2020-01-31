@@ -51,7 +51,6 @@ function App(props) {
       <TooSlowSnackbar/>
       <div className={classes.root}>
         <TopBar/>
-        {props.herp}
         <Grid container justify="center">
           <Grid container spacing={2} alignItems="center" justify="center" className={classes.grid}>
             <Grid item xs={12} sm={10}>
