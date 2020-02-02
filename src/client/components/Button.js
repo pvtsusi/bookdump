@@ -8,7 +8,6 @@ function Button(props) {
       disableRipple={props.disableRipple}
       onClick={props.onClick}
       color={props.color || 'primary'}
-      mini={props.mini}
       fullWidth={props.fullWidth}
       variant={props.variant || 'text'}>
       {props.children}

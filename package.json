@@ -85,6 +85,7 @@
     "css-loader": "^3.4.2",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
+    "enzyme-to-json": "^3.4.4",
     "eslint": "^4.12.1",
     "file-loader": "^5.0.2",
     "identity-obj-proxy": "^3.0.0",
@@ -149,6 +150,7 @@
       "web.jsx",
       "jsx",
       "node"
-    ]
+    ],
+    "snapshotSerializers": ["enzyme-to-json/serializer"]
   }
 }
