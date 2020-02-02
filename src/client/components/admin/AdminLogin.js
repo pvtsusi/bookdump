@@ -19,7 +19,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-export default function AdminLogin(props) {
+export default function AdminLogin() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const errors = useSelector(state => state.user.errors);

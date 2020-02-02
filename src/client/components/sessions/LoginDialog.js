@@ -21,6 +21,7 @@ export default function LoginDialog(props) {
   const dispatch = useDispatch();
   const loggingIn = useSelector(state => state.user.loggingIn);
   const errors = useSelector(state => state.user.errors);
+  const loading = useSelector(state => state.progress.loading);
   const [name, setName] = useState('');
 
   const onChange = useCallback(event => {
@@ -55,6 +56,7 @@ export default function LoginDialog(props) {
             label="Your name"
             onChange={onChange}
             helperText={errors && errors.name}
+            disabled={loading}
             className={classes.textField}
             margin="none"
             autoComplete="name"
@@ -62,10 +64,10 @@ export default function LoginDialog(props) {
             autoFocus/>
         </DialogContent>
         <DialogActions className={classes.actions}>
-          <Button onClick={() => dispatch(cancelLogin())}>
+          <Button id="cancel-login" onClick={() => dispatch(cancelLogin())}>
             Never mind
           </Button>
-          <Button type="submit">
+          <Button type="submit" disabled={loading}>
             Submit
           </Button>
         </DialogActions>
