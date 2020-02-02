@@ -1,70 +1,51 @@
-import { withStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog/Dialog';
-import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { CANCEL_LOGOUT, logout } from '../../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { cancelLogout, logout } from '../../reducers/user';
 import Button from '../Button';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actions: {
     paddingRight: theme.spacing(2)
   },
   content: {
     color: theme.palette.text.primary
   }
-});
+}));
 
-const mapStateToProps = ({ user, session }) => ({
-  loggingOut: user.loggingOut,
-  admin: session.authenticated && session.user && session.user.admin
-});
+export default function LogoutDialog(props) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const loggingOut = useSelector(state => state.user.loggingOut);
+  const admin = useSelector(state => state.session.authenticated && state.session.user && state.session.user.admin);
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      cancelLoggingOut: () => dispatch => dispatch({ type: CANCEL_LOGOUT }),
-      logout
-    }, dispatch
+  return (
+    <Dialog
+      open={loggingOut}
+      onClose={() => dispatch(cancelLogout())}>
+      <DialogTitle>
+        Are you sure you want to sign out?
+      </DialogTitle>
+      {!admin &&
+      <DialogContent>
+        <DialogContentText classes={{ root: classes.content }}>
+          If you sign out, I will forget you and all about you.
+        </DialogContentText>
+      </DialogContent>
+      }
+      <DialogActions className={classes.actions}>
+        <Button id="cancel-logout-button" onClick={() => dispatch(cancelLogout())}>
+          Never mind
+        </Button>
+        <Button id="logout-button" variant="contained" color="secondary" onClick={() => dispatch(logout(admin))}>
+          Yes, do that
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
-
-
-class LogoutDialog extends React.Component {
-  constructor(props) {
-    super(props);
-    this.classes = props.classes;
-  }
-
-  render() {
-    return (
-      <Dialog
-        open={this.props.loggingOut}
-        onClose={this.props.cancelLoggingOut}>
-        <DialogTitle>
-          Are you sure you want to sign out?
-        </DialogTitle>
-        {!this.props.admin &&
-        <DialogContent>
-          <DialogContentText classes={{ root: this.classes.content }}>
-            If you sign out, I will forget you and all about you.
-          </DialogContentText>
-        </DialogContent>
-        }
-        <DialogActions className={this.classes.actions}>
-          <Button onClick={this.props.cancelLoggingOut}>
-            Never mind
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => this.props.logout(this.props.admin)}>
-            Yes, do that
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
 }
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(LogoutDialog));
