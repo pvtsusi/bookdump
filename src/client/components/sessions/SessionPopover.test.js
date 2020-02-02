@@ -17,7 +17,6 @@ jest.mock('../../reducers/user', () => {
 function MockLogoutDialog() {
   return (<div/>);
 }
-
 jest.mock('./LogoutDialog', () => {
   return {
     __esModule: true,

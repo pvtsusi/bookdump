@@ -1,7 +1,7 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ import ModalProgress from './ModalProgress';
 import TopBar from './TopBar';
 
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
   },
@@ -33,11 +33,10 @@ const styles = theme => ({
   paper: {
     padding: theme.spacing(2)
   }
-});
+}));
 
-function App(props) {
-  const classes = props.classes;
-
+export default function App(props) {
+  const classes = useStyles();
   const loading = useSelector(state => state.progress.loading);
 
   const prefersDarkMode = props.mode === 'dark' || useMediaQuery('(prefers-color-scheme: dark)');
@@ -64,5 +63,3 @@ function App(props) {
     </MuiThemeProvider>
   );
 }
-
-export default withStyles(styles)(App);
