@@ -4,8 +4,22 @@ import ModalProgress from './ModalProgress';
 import { mount } from 'enzyme';
 import Progress from './Progress';
 
-it('contains modal Backdrop as well as Progress', () => {
-  const wrapper = mount(<ModalProgress show={true}/>);
-  expect(wrapper.exists(Backdrop)).toBeTruthy();
-  expect(wrapper.exists(Progress)).toBeTruthy();
+let wrapper;
+
+describe('when shown', () => {
+  beforeEach(() => {
+    wrapper = mount(<ModalProgress show={true}/>);
+  });
+  it('contains modal Backdrop as well as Progress', () => {
+    expect(wrapper.exists(Backdrop)).toBeTruthy();
+    expect(wrapper.exists(Progress)).toBeTruthy();
+  });
+});
+
+describe('when not shown', () => {
+  beforeEach(() => {
+    wrapper = mount(<ModalProgress show={false}/>);
+  });
+  it('does not render anything', () =>
+    expect(wrapper.isEmptyRender()).toBeTruthy());
 });
