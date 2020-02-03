@@ -1,64 +1,40 @@
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles';
-import * as PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { CLEAR_SNACKBAR } from '../reducers/snackbar';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearSnackbar } from '../reducers/snackbar';
 import themes from '../themes';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   message: {
     justifyContent: 'center',
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary
   }
-});
+}));
 
-const mapStateToProps = ({ snackbar }) => ({
-  shown: snackbar
-});
+export default function MessageSnackbar(props) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const shown = useSelector(state => state.snackbar.shown);
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      clearSnackbar: (key) => dispatch => dispatch({ type: CLEAR_SNACKBAR, key })
-    }, dispatch
+  const onClose = useCallback(() => {
+    props.onClose && props.onClose();
+    dispatch(clearSnackbar(props.snackbarKey));
+  }, [props.onClose, dispatch]);
+
+  return (
+    <MuiThemeProvider theme={themes.narrow}>
+      <Snackbar
+        open={props.open || !!shown[props.snackbarKey]}
+        onClose={onClose}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <SnackbarContent
+          message={props.message || shown[props.snackbarKey]}
+          className={classes.message}/>
+      </Snackbar>
+    </MuiThemeProvider>
   );
-
-
-class MessageSnackbar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.classes = props.classes;
-  }
-
-  render() {
-    return (
-      <MuiThemeProvider theme={themes.narrow}>
-        <Snackbar
-          open={this.props.open || !!this.props.shown[this.props.snackbarKey]}
-          onClose={() => {
-            this.props.onClose && this.props.onClose();
-            this.props.clearSnackbar(this.props.snackbarKey);
-          }}
-          autoHideDuration={5000}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-          <SnackbarContent
-            message={this.props.message || this.props.shown[this.props.snackbarKey]}
-            className={this.classes.message}/>
-        </Snackbar>
-      </MuiThemeProvider>
-    );
-  }
 }
-
-MessageSnackbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  snackbarKey: PropTypes.string
-};
-
-const styled = withStyles(styles)(MessageSnackbar);
-export { styled as MessageSnackbar };
-export default connect(mapStateToProps, mapDispatchToProps)(styled);

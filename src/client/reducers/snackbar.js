@@ -1,11 +1,12 @@
 export const SHOW_SNACKBAR = 'SHOW_SNACKBAR';
-export const CLEAR_SNACKBAR = 'CLEAR_SNACKBAR';
 
 export const SNACKBAR_LOGGED_OUT = 'logged-out';
 export const SNACKBAR_TOO_SLOW = 'too-slow';
 export const SNACKBAR_ERROR = 'error';
 
-export default (state = { }, action) => {
+const CLEAR_SNACKBAR = 'CLEAR_SNACKBAR';
+
+export default (state = {}, action) => {
   switch (action.type) {
     case SHOW_SNACKBAR:
       return { ...state, [action.key]: action.message };
@@ -15,3 +16,5 @@ export default (state = { }, action) => {
       return state;
   }
 };
+
+export const clearSnackbar = key => dispatch => dispatch({ type: CLEAR_SNACKBAR, key });
