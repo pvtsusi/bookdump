@@ -79,6 +79,7 @@
     "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bufferutil": "^4.0.1",
+    "camelcase": "^5.3.1",
     "canvas": "^2.6.1",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
@@ -151,6 +152,8 @@
       "jsx",
       "node"
     ],
-    "snapshotSerializers": ["enzyme-to-json/serializer"]
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }

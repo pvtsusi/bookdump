@@ -10,7 +10,7 @@ const books_2x = require('../images/books_2x.svg').default;
 
 const rootStyle = {
   display: 'flex',
-  flexGrow: 1,
+  flexGrow: 1
 };
 
 const useStyles = makeStyles(theme => ({
