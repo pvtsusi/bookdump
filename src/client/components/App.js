@@ -39,7 +39,8 @@ export default function App(props) {
   const classes = useStyles();
   const loading = useSelector(state => state.progress.loading);
 
-  const prefersDarkMode = props.mode === 'dark' || useMediaQuery('(prefers-color-scheme: dark)');
+  const mediaQueryPrefersDark = useMediaQuery('(prefers-color-scheme: dark)');
+  const prefersDarkMode = props.mode === 'dark' || mediaQueryPrefersDark;
 
   return (
     <MuiThemeProvider theme={prefersDarkMode ? themes.dark : themes.normal}>

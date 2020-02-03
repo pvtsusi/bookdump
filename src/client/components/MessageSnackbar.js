@@ -14,25 +14,25 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MessageSnackbar(props) {
+export default function MessageSnackbar({open, snackbarKey, message, onClose}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const shown = useSelector(state => state.snackbar);
 
-  const onClose = useCallback(() => {
-    props.onClose && props.onClose();
-    dispatch(clearSnackbar(props.snackbarKey));
-  }, [props.onClose, dispatch]);
+  const onCloseCallback = useCallback(() => {
+    onClose && onClose();
+    dispatch(clearSnackbar(snackbarKey));
+  }, [onClose, snackbarKey, dispatch]);
 
   return (
     <MuiThemeProvider theme={themes.narrow}>
       <Snackbar
-        open={props.open || !!shown[props.snackbarKey]}
-        onClose={onClose}
+        open={open || !!shown[snackbarKey]}
+        onClose={onCloseCallback}
         autoHideDuration={5000}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
         <SnackbarContent
-          message={props.message || shown[props.snackbarKey]}
+          message={message || shown[snackbarKey]}
           className={classes.message}/>
       </Snackbar>
     </MuiThemeProvider>

@@ -1,5 +1,4 @@
 import '@babel/polyfill';
-import StyleContext from 'isomorphic-style-loader/StyleContext';
 
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';

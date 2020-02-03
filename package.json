@@ -73,6 +73,9 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "acorn": "^7.1.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^25.1.0",
     "babel-loader": "^8.0.6",
@@ -87,7 +90,14 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "enzyme-to-json": "^3.4.4",
-    "eslint": "^4.12.1",
+    "eslint": "^6.8.0",
+    "eslint-config-react-app": "^5.2.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-flowtype": "^3.13.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
     "file-loader": "^5.0.2",
     "identity-obj-proxy": "^3.0.0",
     "isomorphic-style-loader": "^5.1.0",
@@ -100,6 +110,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "react-app-polyfill": "^1.0.6",
+    "react-dev-utils": "^10.1.0",
     "react-test-renderer": "^16.12.0",
     "redux-mock-store": "^1.5.4",
     "terser-webpack-plugin": "^2.3.4",
@@ -155,5 +166,8 @@
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }

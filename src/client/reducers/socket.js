@@ -13,11 +13,13 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case VALIDATE_SESSION:
+      console.log('VALIDATING');
       return {
         ...state,
         isValidatingSession: true
       };
     case SESSION_VALIDATED:
+      console.log('VALIDATED');
       return {
         ...state,
         isValidatingSession: false

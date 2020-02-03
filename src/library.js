@@ -39,9 +39,9 @@ function findFinna(isbn) {
     return results.records.map(record => ({
       language: record.languages && record.languages.length ? record.languages[0] : null,
       author: (record.nonPresenterAuthors &&
-        record.nonPresenterAuthors.find(author =>
-          (author.role && author.role.startsWith('kirjoittaja') || !author.role)) ||
-        { name: null }).name,
+        (record.nonPresenterAuthors.find(author =>
+            ((author.role && author.role.startsWith('kirjoittaja')) || !author.role)) ||
+          { name: null }).name),
       title: record.title
     }));
   }).catch((error) => {

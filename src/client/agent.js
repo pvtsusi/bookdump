@@ -1,7 +1,3 @@
-import { sessionService } from 'redux-react-session';
-
-const { loadSession } = sessionService;
-
 class ResponseError extends Error {
   constructor(message, status) {
     super(message)
