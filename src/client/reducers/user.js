@@ -34,12 +34,10 @@ export default (state = initialState, action) => {
     case CLEAR_LOGIN_ERROR:
       return { ...state, errors: {} };
     case LOG_OUT:
-      console.log('LOG_OUT');
       return { ...state, loggingOut: true };
     case CANCEL_LOGOUT:
       return { ...state, loggingOut: false };
     case LOGGED_OUT:
-      console.log('LOGGING_OUT');
       return { ...state, loggingOut: false };
     case CANCEL_LOGIN:
       return { ...state, loggingIn: false };

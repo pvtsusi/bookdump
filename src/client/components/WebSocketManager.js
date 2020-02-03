@@ -1,56 +1,48 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import openSocket from 'socket.io-client';
 import { isValidSession, sessionValidated } from '../reducers/socket';
 import { loggedOut, logout } from '../reducers/user';
 
-const mapStateToProps = ({ session }) => ({
-  admin: session.authenticated && session.user && session.user.admin,
-  userSha: session.user && session.user.sha
-});
+export default function WebSocketManager() {
+  const dispatch = useDispatch();
+  const admin = useSelector(state => state.session.authenticated && state.session.user && state.session.user.admin);
+  const userSha = useSelector(state => state.session.user && state.session.user.sha);
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      isValidSession,
-      sessionValidated,
-      loggedOut,
-      dispatchActionFromServer: (action) => dispatch(action),
-      logout
-    }, dispatch
-  );
+  const socket = useRef(null);
+  useEffect(() => {
+    if (!socket.current) {
+      socket.current = openSocket('/');
+    }
+  }, []);
 
-class WebSocketManager extends React.Component {
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    setInterval(() =>
+        dispatch(isValidSession({ socket: socket.current })),
+      5000);
+  }, [dispatch]);
 
-    this.socket = openSocket('/');
-
-    this.socket.on('session_validated', data => {
+  useEffect(() => {
+    socket.current.on('session_validated', data => {
       if (!data.valid) {
-        this.props.logout(this.props.admin);
-        this.props.loggedOut();
+        dispatch(logout(admin));
+        dispatch(loggedOut());
       }
-      this.props.sessionValidated();
+      dispatch(sessionValidated());
     });
+    return () => socket.current.off('session_validated');
+  }, [dispatch, admin]);
 
-    this.socket.on('dispatch', action => {
-      if (!action.origin || !this.props.userSha || action.origin !== this.props.userSha) {
-        this.props.dispatchActionFromServer(action);
+  useEffect(() => {
+    socket.current.on('dispatch', action => {
+      if (!action.origin || !userSha || action.origin !== userSha) {
+        dispatch(action);
       }
     });
-  }
+    return () => socket.current.off('dispatch');
+  }, [dispatch, userSha]);
 
-  componentDidMount() {
-    setInterval(() => this.props.isValidSession({ socket: this.socket }), 5000);
-  }
-
-  render() {
-    return (
-      <React.Fragment/>
-    );
-  }
+  return (
+    <React.Fragment/>
+  );
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(WebSocketManager);
