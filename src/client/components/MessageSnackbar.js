@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 export default function MessageSnackbar(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const shown = useSelector(state => state.snackbar.shown);
+  const shown = useSelector(state => state.snackbar);
 
   const onClose = useCallback(() => {
     props.onClose && props.onClose();

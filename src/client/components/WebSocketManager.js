@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import openSocket from 'socket.io-client';
-import { isValidSession, SESSION_VALIDATED } from '../reducers/socket';
-import { LOGGED_OUT, logout } from '../reducers/user';
+import { isValidSession, sessionValidated } from '../reducers/socket';
+import { loggedOut, logout } from '../reducers/user';
 
 const mapStateToProps = ({ session }) => ({
   admin: session.authenticated && session.user && session.user.admin,
@@ -14,10 +14,10 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       isValidSession,
-      sessionValidated: () => dispatch({ type: SESSION_VALIDATED }),
-      loggedOut: () => dispatch({ type: LOGGED_OUT }),
+      sessionValidated,
+      loggedOut,
       dispatchActionFromServer: (action) => dispatch(action),
-      logout: logout
+      logout
     }, dispatch
   );
 

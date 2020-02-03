@@ -24,7 +24,7 @@ describe('when shown', () => {
   beforeEach(() => {
     onClose = jest.fn();
     store = mockStore({
-      snackbar: { shown: { [KEY]: true } }
+      snackbar: { [KEY]: true }
     });
     wrapper = mount(
       <Provider store={store}>
@@ -55,7 +55,7 @@ describe('when shown', () => {
 describe('when not shown with a matching key', () => {
   beforeEach(() => {
     store = mockStore({
-      snackbar: { shown: { someOtherKeyOnly: true } }
+      snackbar: { someOtherKeyOnly: true }
     });
     wrapper = mount(
       <Provider store={store}>

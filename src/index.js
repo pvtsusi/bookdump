@@ -147,10 +147,13 @@ const io = socketIo(server);
 
 function socketService(socket) {
   socket.on('validate_session', async data => {
+    console.log('validate_session');
     try {
       await verifyToken(data.token);
+      console.log('session_validated: true');
       socket.emit('session_validated', { valid: true });
     } catch (err) {
+      console.log('session_validated: false');
       socket.emit('session_validated', { valid: false });
     }
   });

@@ -47,3 +47,5 @@ export const isValidSession = (options) => {
     }
   };
 };
+
+export const sessionValidated = () => dispatch => dispatch({ type: SESSION_VALIDATED });

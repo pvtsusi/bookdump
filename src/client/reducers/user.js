@@ -7,7 +7,7 @@ import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from './snackbar';
 const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
 
 export const LOG_IN = 'LOG_IN';
-export const LOGGED_OUT = 'LOGGED_OUT';
+const LOGGED_OUT = 'LOGGED_OUT';
 const LOG_OUT = 'LOG_OUT';
 const CANCEL_LOGOUT = 'CANCEL_LOGOUT';
 const LOGIN_ERROR = 'LOGIN_ERROR';
@@ -92,6 +92,8 @@ export const logout = (admin) => async dispatch => {
 };
 
 export const cancelLogout = () => dispatch => dispatch({ type: CANCEL_LOGOUT });
+
+export const loggedOut = () => dispatch => dispatch({ type: LOGGED_OUT });
 
 export const setError = (field, message) => dispatch =>  dispatch({ type: LOGIN_ERROR, field, message });
 export const clearErrors = () => dispatch => dispatch({ type: CLEAR_LOGIN_ERROR });
