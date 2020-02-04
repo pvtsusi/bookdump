@@ -6,7 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import Tooltip from '@material-ui/core/Tooltip';
 import ReservedIcon from '@material-ui/icons/HowToVote';
 import StarIcon from '@material-ui/icons/Star';
 import React from 'react';

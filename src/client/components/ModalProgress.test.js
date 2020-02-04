@@ -1,4 +1,4 @@
-import Backdrop from '@material-ui/core/Backdrop/Backdrop';
+import Backdrop from '@material-ui/core/Backdrop';
 import React from 'react';
 import ModalProgress from './ModalProgress';
 import { mount } from 'enzyme';

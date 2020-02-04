@@ -1,8 +1,8 @@
-import Grid from '@material-ui/core/Grid/Grid';
-import IconButton from '@material-ui/core/IconButton/IconButton';
-import Popover from '@material-ui/core/Popover/Popover';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Popover from '@material-ui/core/Popover';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography/Typography';
+import Typography from '@material-ui/core/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog/Dialog';
+import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cancelMarkDelivered, markDelivered } from '../../reducers/books';

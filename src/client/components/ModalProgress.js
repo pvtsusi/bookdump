@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade/Fade';
-import Grid from '@material-ui/core/Grid/Grid';
+import Fade from '@material-ui/core/Fade';
+import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import Progress from './Progress';
 

@@ -1,4 +1,4 @@
-import Zoom from '@material-ui/core/Zoom/Zoom';
+import Zoom from '@material-ui/core/Zoom';
 import React from 'react';
 import { FINISH_RESERVATION } from '../../reducers/books';
 import ReservedBanner from './ReservedBanner';

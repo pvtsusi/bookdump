@@ -1,8 +1,8 @@
 import { makeStyles, MuiThemeProvider } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid/Grid';
-import Paper from '@material-ui/core/Paper/Paper';
-import Typography from '@material-ui/core/Typography/Typography';
-import Zoom from '@material-ui/core/Zoom/Zoom';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Zoom from '@material-ui/core/Zoom';
 import ReservedIcon from '@material-ui/icons/HowToVote';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,6 +1,6 @@
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField/TextField';
+import TextField from '@material-ui/core/TextField';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { editBook, updateBook } from '../../reducers/books';
