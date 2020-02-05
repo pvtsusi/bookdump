@@ -230,10 +230,7 @@ async function test(ctx) {
 }
 
 async function migrate(ctx) {
-  const sha = ctx.state.user && ctx.state.user.sha;
-  const admin = ctx.state.user && ctx.state.user.admin;
-  const books = await db.retrieveBooks(sha, admin);
-
+  const books = await db.retrieveBooks('', true);
   for (const book of books) {
     const originUrl = resizedName(book.cover, 540);
     const baseName = book.cover.substring(book.cover.lastIndexOf('/') + 1);
