@@ -13,7 +13,7 @@ import basicAuth from 'koa-basic-auth';
 import mount from 'koa-mount';
 import onerror from 'koa-onerror';
 import Router from 'koa-router';
-import koaSslify from 'koa-sslify';
+import sslify, { xForwardedProtoResolver } from 'koa-sslify';
 import staticFiles from 'koa-static';
 import compress from 'koa-compress';
 import sharp from 'sharp';
@@ -72,7 +72,7 @@ const { BUCKET, BUCKET_REGION, ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET }
 const app = new Koa();
 onerror(app);
 if (process.env.NODE_ENV === 'production') {
-  app.use(koaSslify({trustProtoHeader: true}));
+  app.use(sslify({ resolver: xForwardedProtoResolver }));
 }
 app.use(compress());
 app.use(json({}));
