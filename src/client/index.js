@@ -9,7 +9,6 @@ import { sessionService } from 'redux-react-session';
 import WebSocketManager from './components/WebSocketManager';
 import configureStore from './configureStore';
 import routes from './routes';
-import * as serviceWorker from './serviceWorker';
 
 const { initSessionService } = sessionService;
 
@@ -42,8 +41,3 @@ function Main() {
 }
 
 ReactDOM.hydrate(<Main />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
