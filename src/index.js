@@ -4,7 +4,6 @@ import AWS from 'aws-sdk';
 import crypto from 'crypto';
 import fs from 'fs';
 import http from 'http';
-import https from 'https';
 import jwt from 'jsonwebtoken';
 import Koa from 'koa';
 import AsyncBusboy from 'koa-async-busboy';
@@ -110,7 +109,6 @@ app.use(async (ctx, next) => {
 });
 
 app.use(mount('/api/test', basicAuth({ name: ADMIN_NAME, pass: ADMIN_PASS })));
-app.use(mount('/api/migrate', basicAuth({ name: ADMIN_NAME, pass: ADMIN_PASS })));
 
 router.get('/api/books', list)
   .get('/api/book/:isbn', view)
@@ -123,7 +121,6 @@ router.get('/api/books', list)
   .post('/api/book/:isbn/decline', decline)
   .delete('/api/user/:sha/books', deleteBooks)
   .get('/api/test', test)
-  .get('/api/migrate', migrate)
   .all('*', async (ctx) => {
     const sha = ctx.state.user && ctx.state.user.sha;
     const admin = ctx.state.user && ctx.state.user.admin;
@@ -227,23 +224,6 @@ async function create(ctx) {
 async function test(ctx) {
   ctx.status = 200;
   ctx.body = { message: 'Ok' };
-}
-
-async function migrate(ctx) {
-  const books = await db.retrieveBooks('', true);
-  for (const book of books) {
-    const originUrl = resizedName(book.cover, 540);
-    const baseName = book.cover.substring(book.cover.lastIndexOf('/') + 1);
-    const inputStream = await download(originUrl);
-    await resizeAndUpload(inputStream, baseName, 'image/png', [810, 120]);
-  }
-
-  ctx.status = 200;
-  ctx.body = { message: 'Ok' };
-}
-
-function download(url) {
-  return new Promise(resolve => https.get(url, res => resolve(res)));
 }
 
 async function resizeAndUpload(fileStream, fileName, mimeType, dims = [810, 540, 270, 120, 80, 40]) {
