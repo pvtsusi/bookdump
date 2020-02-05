@@ -30,8 +30,6 @@ import { sessionService } from 'redux-react-session';
 
 const { initServerSession, loadSession } = sessionService;
 const router = Router();
-const sslify = koaSslify.default;
-const resolver = koaSslify.xForwardedProtoResolver;
 
 const PORT = process.env.PORT || 5000;
 const ADMIN_TOKEN_EXPIRATION = '1h';
@@ -74,7 +72,7 @@ const { BUCKET, BUCKET_REGION, ADMIN_NAME, ADMIN_PASS, APP_SECRET, NAME_SECRET }
 const app = new Koa();
 onerror(app);
 if (process.env.NODE_ENV === 'production') {
-  app.use(sslify({ resolver }));
+  app.use(koaSslify({trustProtoHeader: true}));
 }
 app.use(compress());
 app.use(json({}));
