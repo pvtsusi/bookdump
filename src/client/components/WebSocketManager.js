@@ -14,12 +14,27 @@ export default function WebSocketManager() {
     if (!socket.current) {
       socket.current = openSocket('/');
     }
+    return () => {
+      if (socket.current) {
+        socket.current.close();
+        socket.current = null;
+      }
+    };
   }, []);
 
+  const interval = useRef(0);
   useEffect(() => {
-    setInterval(() =>
-        dispatch(isValidSession({ socket: socket.current })),
-      5000);
+    if (!interval.current) {
+      interval.current = setInterval(() =>
+          dispatch(isValidSession({ socket: socket.current })),
+        5000);
+    }
+    return () => {
+      if (interval.current) {
+        clearInterval(interval.current);
+        interval.current = 0;
+      }
+    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -30,7 +45,11 @@ export default function WebSocketManager() {
       }
       dispatch(sessionValidated());
     });
-    return () => socket.current.off('session_validated');
+    return () => {
+      if (socket.current) {
+        socket.current.off('session_validated');
+      }
+    };
   }, [dispatch, admin]);
 
   useEffect(() => {
@@ -39,7 +58,11 @@ export default function WebSocketManager() {
         dispatch(action);
       }
     });
-    return () => socket.current.off('dispatch');
+    return () => {
+      if (socket.current) {
+        socket.current.off('dispatch');
+      }
+    };
   }, [dispatch, userSha]);
 
   return (
