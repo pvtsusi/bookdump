@@ -2,12 +2,14 @@ import agent from '../agent';
 import { LOADED, LOADING } from './progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from './snackbar';
 import { LOG_IN } from './user';
-import { PATCH_BOOK, ADD_BOOK, HIDE_BOOK } from './sharedActions';
 
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
 export const CONFIRM_MARK_DELIVERED = 'CONFIRM_MARK_DELIVERED';
 export const DESELECT_BOOK = 'DESELECT_BOOK';
+export const PATCH_BOOK = 'PATCH_BOOK';
+export const ADD_BOOK = 'ADD_BOOK';
+export const HIDE_BOOK = 'HIDE_BOOK';
 const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
 const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
 const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
@@ -17,6 +19,7 @@ const UPDATE_BOOK = 'UPDATE_BOOK';
 const RESERVE_BOOK = 'RESERVE_BOOK';
 const DECLINE_BOOK = 'DECLINE_BOOK';
 const DELETE_BOOK = 'DELETE_BOOK';
+
 
 const initialState = {
   selected: null,
