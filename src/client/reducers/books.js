@@ -6,19 +6,19 @@ import { LOG_IN } from './user';
 export const CONFIRM_TOO_SLOW = 'CONFIRM_TOO_SLOW';
 export const FINISH_RESERVATION = 'FINISH_RESERVATION';
 export const CONFIRM_MARK_DELIVERED = 'CONFIRM_MARK_DELIVERED';
+export const SELECT_BOOK = 'SELECT_BOOK';
 export const DESELECT_BOOK = 'DESELECT_BOOK';
 export const PATCH_BOOK = 'PATCH_BOOK';
 export const ADD_BOOK = 'ADD_BOOK';
 export const HIDE_BOOK = 'HIDE_BOOK';
-const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
-const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
-const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
-const SELECT_BOOK = 'SELECT_BOOK';
-const EDIT_BOOK = 'EDIT_BOOK';
-const UPDATE_BOOK = 'UPDATE_BOOK';
-const RESERVE_BOOK = 'RESERVE_BOOK';
-const DECLINE_BOOK = 'DECLINE_BOOK';
-const DELETE_BOOK = 'DELETE_BOOK';
+export const BOOKS_VIEW_LOADED = 'BOOKS_VIEW_LOADED';
+export const BOOKS_VIEW_ERROR = 'BOOKS_VIEW_ERROR';
+export const EDIT_BOOK = 'EDIT_BOOK';
+export const CANCEL_MARK_DELIVERED = 'CANCEL_MARK_DELIVERED';
+export const UPDATE_BOOK = 'UPDATE_BOOK';
+export const RESERVE_BOOK = 'RESERVE_BOOK';
+export const DECLINE_BOOK = 'DECLINE_BOOK';
+export const DELETE_BOOK = 'DELETE_BOOK';
 
 
 const initialState = {
@@ -200,23 +200,9 @@ export const getBooks = () => {
   };
 };
 
-export const selectBook = (book) => {
-  return async dispatch => {
-    dispatch({ type: SELECT_BOOK, book });
-  };
-};
-
-export const deselectBook = () => {
-  return async dispatch => {
-    dispatch({ type: DESELECT_BOOK });
-  };
-};
-
-export const editBook = (field) => {
-  return async dispatch => {
-    dispatch({ type: EDIT_BOOK, field });
-  };
-};
+export const selectBook = (book) => dispatch => dispatch({ type: SELECT_BOOK, book });
+export const deselectBook = () => dispatch => dispatch({ type: DESELECT_BOOK });
+export const editBook = (field) => dispatch => dispatch({ type: EDIT_BOOK, field });
 
 export const updateBook = (book, field, value) => {
   return async dispatch => {
