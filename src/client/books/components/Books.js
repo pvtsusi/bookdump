@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBooks, selectBook } from '../../reducers/books';
-import Progress from '../Progress';
+import Progress from '../../components/Progress';
 import Book from './Book';
 import BookDialog from './BookDialog';
 

@@ -12,7 +12,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import coverUrl from '../../cover';
 import { deselectBook } from '../../reducers/books';
-import Button from '../Button';
+import Button from '../../components/Button';
 import BookField from './BookField';
 import ReserveButton from './ReserveButton';
 import ReservedBanner from './ReservedBanner';

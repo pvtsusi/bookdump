@@ -1,6 +1,6 @@
 import AdminView from './components/admin/AdminView';
 import App from './components/App';
-import Books from './components/books/Books';
+import { Books } from './books';
 
 export default [
   {
