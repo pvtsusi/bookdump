@@ -7,7 +7,7 @@ import MarkDeliveredDialog from './MarkDeliveredDialog';
 
 const mockStore = configureMockStore([thunk]);
 
-jest.mock('../../reducers/books', () => {
+jest.mock('../../books', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,

@@ -3,10 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBooks, selectBook } from '../../reducers/books';
+import { getBooks, selectBook } from '../booksActions';
 import Progress from '../../components/Progress';
 import Book from './Book';
 import BookDialog from './BookDialog';
+import TooSlowSnackbar from './TooSlowSnackbar';
 
 const useStyles = makeStyles(theme => ({
   notification: {
@@ -53,6 +54,7 @@ export default function Books() {
 
   return (
     <React.Fragment>
+      <TooSlowSnackbar/>
       <List className={classes.list}>
         {
           books.map(book => {

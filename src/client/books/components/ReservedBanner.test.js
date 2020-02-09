@@ -1,6 +1,6 @@
 import Zoom from '@material-ui/core/Zoom';
 import React from 'react';
-import { FINISH_RESERVATION } from '../../reducers/books';
+import { FINISH_RESERVATION } from '../booksConstants';
 import ReservedBanner from './ReservedBanner';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';

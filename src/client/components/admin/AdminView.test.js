@@ -7,13 +7,13 @@ import AdminView from './AdminView';
 
 const mockStore = configureMockStore([thunk]);
 
-jest.mock('../../reducers/books', () => {
+jest.mock('../../books', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
     getBooks: () => ({ type: 'mockGetBooks' }),
     declineBook: (book) => ({ type: 'mockDeclineBook', book }),
-    CONFIRM_MARK_DELIVERED: 'mockConfirmDelivered'
+    confirmMarkDelivered: (reserver) => ({ type: 'mockConfirmMarkDelivered', reserver })
   };
 });
 
@@ -92,7 +92,7 @@ describe('as admin', () => {
         listA.find('ForwardRef(Tooltip)[title="Mark all delivered"] button').simulate('click'));
 
       it('dispatches a confirmation for the delivery', () =>
-        expect(store.getActions()).toContainEqual({ type: 'mockConfirmDelivered', reserver: reserverA }));
+        expect(store.getActions()).toContainEqual({ type: 'mockConfirmMarkDelivered', reserver: reserverA }));
     });
   });
 

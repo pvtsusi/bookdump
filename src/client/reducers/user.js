@@ -1,6 +1,6 @@
 import { sessionService } from 'redux-react-session';
 import agent from '../agent';
-import { getBooks } from './books';
+import { getBooks } from '../books/booksActions';
 import { LOADED, LOADING } from './progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from './snackbar';
 

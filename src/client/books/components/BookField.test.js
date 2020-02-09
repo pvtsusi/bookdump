@@ -7,7 +7,7 @@ import BookField from './BookField';
 
 const mockStore = configureMockStore([thunk]);
 
-jest.mock('../../reducers/books', () => {
+jest.mock('../booksActions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,

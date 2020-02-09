@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import themes from '../themes';
-import TooSlowSnackbar from '../books/components/TooSlowSnackbar';
 import MessageSnackbar from './MessageSnackbar';
 import ModalProgress from './ModalProgress';
 import TopBar from './TopBar';
@@ -48,7 +47,6 @@ export default function App(props) {
       <ModalProgress show={loading}/>
       <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
       <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
-      <TooSlowSnackbar/>
       <div className={classes.root}>
         <TopBar/>
         <Grid container justify="center">

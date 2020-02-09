@@ -8,7 +8,7 @@ import thunk from 'redux-thunk';
 
 const mockStore = configureMockStore([thunk]);
 
-jest.mock('../../reducers/books', () => {
+jest.mock('../booksActions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
@@ -31,6 +31,19 @@ jest.mock('./BookDialog', () => {
     __esModule: true,
     default: (props) => {
       return <div id="mockBookDialog" data-book={props.book}/>;
+    }
+  };
+});
+
+function MockSnackbar(props) {
+  return (<div id={props.snackbarKey}/>);
+}
+
+jest.mock('./TooSlowSnackbar', () => {
+  return {
+    __esModule: true,
+    default: () => {
+      return (<MockSnackbar snackbarKey="mockTooSlowSnackbar"/>);
     }
   };
 });
@@ -60,6 +73,9 @@ describe('with books', () => {
     expect(wrapper.exists(`ul [data-key="${book1.isbn}"]`)).toBeTruthy();
     expect(wrapper.exists(`ul [data-key="${book2.isbn}"]`)).toBeTruthy();
   });
+
+  it('includes too-slow snackbar', () =>
+    expect(wrapper.exists('#mockTooSlowSnackbar')).toBeTruthy());
 
   it('renders BookDialog', () =>
     expect(wrapper.exists('#mockBookDialog')).toBeTruthy());

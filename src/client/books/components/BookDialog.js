@@ -11,7 +11,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import coverUrl from '../../cover';
-import { deselectBook } from '../../reducers/books';
+import { deselectBook } from '../booksActions';
 import Button from '../../components/Button';
 import BookField from './BookField';
 import ReserveButton from './ReserveButton';

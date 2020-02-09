@@ -6,7 +6,7 @@ import Zoom from '@material-ui/core/Zoom';
 import ReservedIcon from '@material-ui/icons/HowToVote';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FINISH_RESERVATION } from '../../reducers/books';
+import { FINISH_RESERVATION } from '../booksConstants';
 import themes from '../../themes';
 
 const useStyles = makeStyles(theme => ({

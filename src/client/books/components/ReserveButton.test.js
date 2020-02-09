@@ -13,7 +13,7 @@ const book = { isbn: 'isbn' };
 const reserverName = 'Reserver Name';
 const reservedBook = { ...book, reserverName };
 
-jest.mock('../../reducers/books', () => {
+jest.mock('../booksActions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
@@ -26,7 +26,7 @@ function MockLoginDialog() {
   return <div/>;
 }
 
-jest.mock('../sessions/LoginDialog', () => {
+jest.mock('../../components/sessions/LoginDialog', () => {
   return {
     __esModule: true,
     default: (props) => {

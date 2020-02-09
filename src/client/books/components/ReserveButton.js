@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { declineBook, reserveBook } from '../../reducers/books';
+import { declineBook, reserveBook } from '../booksActions';
 import Button from '../../components/Button';
 import LoginDialog from '../../components/sessions/LoginDialog';
 

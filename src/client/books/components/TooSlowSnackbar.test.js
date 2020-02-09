@@ -1,5 +1,5 @@
 import React from 'react';
-import { CONFIRM_TOO_SLOW } from '../../reducers/books';
+import { CONFIRM_TOO_SLOW } from '../booksConstants';
 import TooSlowSnackbar from './TooSlowSnackbar';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
@@ -10,7 +10,7 @@ const mockStore = configureMockStore([thunk]);
 
 let store, wrapper;
 
-jest.mock('../MessageSnackbar', () => {
+jest.mock('../../components/MessageSnackbar', () => {
   return {
     __esModule: true,
     default: (props) => {

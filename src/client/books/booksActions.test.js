@@ -1,17 +1,26 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
-  BOOKS_VIEW_ERROR,
-  BOOKS_VIEW_LOADED, CANCEL_MARK_DELIVERED, cancelMarkDelivered, DECLINE_BOOK, declineBook, DELETE_BOOK,
-  DESELECT_BOOK,
-  deselectBook, EDIT_BOOK, editBook,
-  getBooks, markDelivered, RESERVE_BOOK, reserveBook,
-  SELECT_BOOK,
-  selectBook, UPDATE_BOOK, updateBook
-} from './books';
-import { LOADED, LOADING } from './progress';
-import { SHOW_SNACKBAR, SNACKBAR_ERROR } from './snackbar';
-import { LOG_IN } from './user';
+  cancelMarkDelivered, confirmMarkDelivered,
+  declineBook,
+  deselectBook,
+  editBook, getBooks,
+  markDelivered,
+  reserveBook, selectBook,
+  updateBook
+} from './booksActions';
+import {
+  BOOKS_VIEW_ERROR, BOOKS_VIEW_LOADED,
+  CANCEL_MARK_DELIVERED, CONFIRM_MARK_DELIVERED,
+  DECLINE_BOOK,
+  DELETE_BOOK, DESELECT_BOOK,
+  EDIT_BOOK,
+  RESERVE_BOOK, SELECT_BOOK,
+  UPDATE_BOOK
+} from './booksConstants';
+import { LOADED, LOADING } from '../reducers/progress';
+import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
+import { LOG_IN } from '../reducers/user';
 
 const mockBook = { isbn: 'isbn1' };
 const mockBooks = ['mockBook1', 'mockBook2'];
@@ -255,12 +264,20 @@ describe('books actions', () => {
     }]);
   });
 
+  it('confirmMarkDelivered() dispatches CONFIRM_MARK_DELIVERED', () => {
+    const reserver = 'reserver sha';
+    store.dispatch(confirmMarkDelivered(reserver));
+    expect(store.getActions()).toEqual([{
+      type: CONFIRM_MARK_DELIVERED,
+      reserver
+    }]);
+  });
+
   it('cancelMarkDelivered() dispatches CANCEL_MARK_DELIVERED', () => {
     store.dispatch(cancelMarkDelivered());
     expect(store.getActions()).toEqual([{
       type: CANCEL_MARK_DELIVERED
     }]);
   });
-
 
 });

@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CONFIRM_MARK_DELIVERED, declineBook, getBooks } from '../../reducers/books';
+import { declineBook, getBooks, confirmMarkDelivered } from '../../books';
 import AdminLogin from './AdminLogin';
 import MarkDeliveredDialog from './MarkDeliveredDialog';
 
@@ -67,7 +67,7 @@ export default function AdminView() {
                       <Typography variant="h6">
                         {reserverName}
                         <Tooltip title="Mark all delivered" aria-label="Mark all delivered">
-                          <IconButton onClick={() => dispatch({ type: CONFIRM_MARK_DELIVERED, reserver })}
+                          <IconButton onClick={() => dispatch(confirmMarkDelivered(reserver))}
                                       color="primary">
                             <DoneIcon/>
                           </IconButton>

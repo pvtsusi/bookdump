@@ -32,14 +32,6 @@ jest.mock('./MessageSnackbar', () => {
     }
   };
 });
-jest.mock('./books/TooSlowSnackbar', () => {
-  return {
-    __esModule: true,
-    default: () => {
-      return (<MockSnackbar snackbarKey="mockTooSlowSnackbar"/>);
-    }
-  };
-});
 
 function MockTopBar() {
   return (<div/>);
@@ -94,9 +86,6 @@ describe('when not loading', () => {
 
     it('includes error snackbar', () =>
       expect(wrapper.exists(`#${SNACKBAR_ERROR}`)).toBeTruthy());
-
-    it('includes too-slow snackbar', () =>
-      expect(wrapper.exists('#mockTooSlowSnackbar')).toBeTruthy());
 
     it('includes the top bar', () =>
       expect(wrapper.exists(MockTopBar)).toBeTruthy());
