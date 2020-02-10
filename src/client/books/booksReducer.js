@@ -16,6 +16,7 @@ import {
   SELECT_BOOK,
   UPDATE_BOOK
 } from './booksConstants';
+import { updateBookField, patchBook } from './booksHelpers';
 
 
 const initialState = {
@@ -28,25 +29,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  const { field, value, patch } = action;
-
-  const updateBookField = (f, v) =>
-    (state.books || []).map((book) => {
-      if (book.isbn === action.book.isbn) {
-        return { ...book, [f]: v };
-      } else {
-        return book;
-      }
-    });
-
-  const patchBook = () =>
-    (state.books || []).map((book) => {
-      if (book.isbn === action.isbn) {
-        return { ...book, ...patch };
-      } else {
-        return book;
-      }
-    });
+  const { field, value } = action;
 
   const deleteReserver = () =>
     (state.books || []).map((book) => {
@@ -137,11 +120,11 @@ export default (state = initialState, action) => {
     case EDIT_BOOK:
       return { ...state, editing: field };
     case UPDATE_BOOK:
-      return { ...state, books: updateBookField(field, value), editing: null };
+      return { ...state, books: updateBookField(state.books, action.book.isbn, field, value), editing: null };
     case RESERVE_BOOK:
       return {
         ...state,
-        books: updateBookField('reserverName', action.name),
+        books: updateBookField(state.books, action.book.isbn, 'reserverName', action.name),
         editing: null,
         reservations: { ...state.reservations, [action.book.isbn]: 'coming' }
       };
@@ -158,7 +141,7 @@ export default (state = initialState, action) => {
         reservations: { ...state.reservations, [action.book.isbn]: 'going' }
       };
     case PATCH_BOOK:
-      return { ...state, books: patchBook() };
+      return { ...state, books: patchBook(state.books, action.isbn, action.patch) };
     case HIDE_BOOK:
       const tooSlow = state.selected === action.isbn;
       return {
