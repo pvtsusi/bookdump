@@ -6,8 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import PersonIcon from '@material-ui/icons/PermIdentity';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { startLoggingOut } from '../../reducers/user';
-import Button from '../Button';
+import { startLoggingOut } from '..';
+import Button from '../../components/Button';
 import LogoutDialog from './LogoutDialog';
 
 

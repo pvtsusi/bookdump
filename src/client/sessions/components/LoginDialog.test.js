@@ -5,7 +5,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import LoginDialog from './LoginDialog';
 
-jest.mock('../../reducers/user', () => {
+jest.mock('..', () => {
   return {
     __esModule: true,
     cancelLogin: () => ({ type: 'mockCancelLogin' }),

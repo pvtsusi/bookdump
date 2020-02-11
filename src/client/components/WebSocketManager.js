@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import openSocket from 'socket.io-client';
 import { isValidSession, sessionValidated } from '../reducers/socket';
-import { loggedOut, logout } from '../reducers/user';
+import { loggedOut, logout } from '../sessions';
 
 export default function WebSocketManager() {
   const dispatch = useDispatch();

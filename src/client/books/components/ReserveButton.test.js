@@ -26,10 +26,10 @@ function MockLoginDialog() {
   return <div/>;
 }
 
-jest.mock('../../components/sessions/LoginDialog', () => {
+jest.mock('../../sessions', () => {
   return {
     __esModule: true,
-    default: (props) => {
+    LoginDialog: (props) => {
       return <MockLoginDialog onSuccess={props.onSuccess}/>;
     }
   };

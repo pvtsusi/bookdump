@@ -7,7 +7,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import SessionPopover from './SessionPopover';
 
-jest.mock('../../reducers/user', () => {
+jest.mock('..', () => {
   return {
     __esModule: true,
     startLoggingOut: () => ({ type: 'mockStartLoggingOut' })
@@ -83,7 +83,7 @@ describe('when a non-admin user is signed in', () => {
   });
 });
 
-describe('when an admin user is signed in', () => {
+describe('when an admin sessions is signed in', () => {
   beforeEach(() => {
     store = mockStore({
       session: { user: { name: userName, admin: true } }

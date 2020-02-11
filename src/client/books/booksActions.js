@@ -1,7 +1,7 @@
 import agent from '../agent';
 import { LOADED, LOADING } from '../reducers/progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
-import { LOG_IN } from '../reducers/user';
+import { LOG_IN } from '../sessions/sessionsConstants';
 import {
   BOOKS_VIEW_ERROR,
   BOOKS_VIEW_LOADED,

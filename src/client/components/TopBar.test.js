@@ -11,19 +11,19 @@ jest.mock('./Logo', () => {
   };
 });
 
-jest.mock('./admin/AdminNavigation', () => {
+jest.mock('../admin', () => {
   return {
     __esModule: true,
-    default: () => {
+    AdminNavigation: () => {
       return (<div id="mockAdminNavigation"/>);
     }
   };
 });
 
-jest.mock('./sessions/SessionPopover', () => {
+jest.mock('../sessions', () => {
   return {
     __esModule: true,
-    default: () => {
+    SessionPopover: () => {
       return (<div id="mockSessionPopover"/>);
     }
   };

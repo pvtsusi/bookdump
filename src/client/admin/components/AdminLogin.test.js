@@ -6,7 +6,7 @@ import thunk from 'redux-thunk';
 import Button from '../../components/Button';
 import AdminLogin from './AdminLogin';
 
-jest.mock('../../reducers/user', () => {
+jest.mock('../../sessions', () => {
   return {
     __esModule: true,
     setError: (field, message) => ({ type: 'mockSetError', field, message }),

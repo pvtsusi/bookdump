@@ -1,5 +1,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import { LOG_IN } from '../sessions/sessionsConstants';
 import {
   cancelMarkDelivered, confirmMarkDelivered,
   declineBook,
@@ -20,7 +21,6 @@ import {
 } from './booksConstants';
 import { LOADED, LOADING } from '../reducers/progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
-import { LOG_IN } from '../reducers/user';
 
 const mockBook = { isbn: 'isbn1' };
 const mockBooks = ['mockBook1', 'mockBook2'];

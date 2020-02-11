@@ -24,7 +24,7 @@ jest.mock('../reducers/socket', () => {
   };
 });
 
-jest.mock('../reducers/user', () => {
+jest.mock('../sessions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,

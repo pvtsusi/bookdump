@@ -1,16 +1,16 @@
 import { combineReducers } from 'redux';
-import { sessionReducer } from 'redux-react-session';
+import { sessionReducer as reduxReactSession } from 'redux-react-session';
 import books from '../books/booksReducer';
 import progress from './progress';
 import socket from './socket';
 import snackbar from './snackbar';
-import user from './user';
+import sessions from '../sessions/sessionsReducer';
 
 export default () => combineReducers({
   books,
   socket,
   progress,
-  user,
+  user: sessions,
   snackbar,
-  session: sessionReducer
+  session: reduxReactSession
 });

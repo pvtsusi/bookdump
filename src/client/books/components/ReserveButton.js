@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { declineBook, reserveBook } from '../booksActions';
 import Button from '../../components/Button';
-import LoginDialog from '../../components/sessions/LoginDialog';
+import { LoginDialog } from '../../sessions';
 
 export default function ReserveButton(props) {
   const dispatch = useDispatch();

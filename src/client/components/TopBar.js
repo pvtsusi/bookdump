@@ -4,7 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import React from 'react';
 import { AdminNavigation } from '../admin';
 import Logo from './Logo';
-import SessionPopover from './sessions/SessionPopover';
+import { SessionPopover } from '../sessions';
 
 const useStyles = makeStyles(() => ({
   root: {
