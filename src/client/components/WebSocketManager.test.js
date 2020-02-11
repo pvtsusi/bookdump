@@ -28,8 +28,7 @@ jest.mock('../sessions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
-    logout: (admin) => ({ type: 'mockLogout', admin }),
-    loggedOut: () => ({ type: 'mockLoggedOut' })
+    logout: (admin) => ({ type: 'mockLogout', admin })
   };
 });
 
@@ -125,13 +124,10 @@ describe('with no session', () => {
     beforeEach(() =>
       mockSocket.receive('session_validated', { valid: false }));
 
-    it('dispatches the logout and logged-out actions', () => {
+    it('dispatches the logout action', () => {
       expect(store.getActions()).toContainEqual({
         type: 'mockLogout',
         admin: undefined
-      });
-      expect(store.getActions()).toContainEqual({
-        type: 'mockLoggedOut'
       });
     });
 

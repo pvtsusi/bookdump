@@ -48,8 +48,9 @@ export const logout = (admin) => async dispatch => {
     }
     await deleteUser();
     await deleteSession();
-    getBooks()(dispatch);
+    dispatch(getBooks());
     dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_LOGGED_OUT, message: 'You have been logged out.' });
+    dispatch(loggedOut());
   } catch (err) {
     dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
   } finally {
