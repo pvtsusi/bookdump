@@ -1,7 +1,7 @@
 import agent from '../agent';
 import { LOADED, LOADING } from '../reducers/progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
-import { LOG_IN } from '../sessions/sessionsConstants';
+import { startLoggingIn } from '../sessions';
 import {
   BOOKS_VIEW_ERROR,
   BOOKS_VIEW_LOADED,
@@ -46,7 +46,7 @@ export const reserveBook = (book) => {
       dispatch({ type: RESERVE_BOOK, book, name });
     } catch (err) {
       if (err.status === 401) {
-        dispatch({ type: LOG_IN, onSuccess: 'reserve', isbn: book.isbn });
+        dispatch(startLoggingIn());
       } else {
         dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }
@@ -63,7 +63,7 @@ export const declineBook = (book) => {
       dispatch({ type: DECLINE_BOOK, book });
     } catch (err) {
       if (err.status === 401) {
-        dispatch({ type: LOG_IN, onSuccess: 'decline', isbn: book.isbn });
+        dispatch(startLoggingIn());
       } else {
         dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }

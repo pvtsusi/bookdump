@@ -27,10 +27,11 @@ function MockLoginDialog() {
 }
 
 jest.mock('../../sessions', () => {
+  // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
-    LoginDialog: (props) => {
-      return <MockLoginDialog onSuccess={props.onSuccess}/>;
+    LoginDialog: () => {
+      return <MockLoginDialog/>;
     }
   };
 });
@@ -51,14 +52,6 @@ describe('with no reservation', () => {
   describe('on button click', () => {
     beforeEach(() =>
       wrapper.find(Button).simulate('click'));
-
-    it('tries to reserve the book', () =>
-      expect(store.getActions()).toEqual([{ type: 'mockReserveBook', book }]));
-  });
-
-  describe('when login succeeds', () => {
-    beforeEach(() =>
-      wrapper.find(MockLoginDialog).invoke('onSuccess')());
 
     it('tries to reserve the book', () =>
       expect(store.getActions()).toEqual([{ type: 'mockReserveBook', book }]));

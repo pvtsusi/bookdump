@@ -34,8 +34,8 @@ export default function LoginDialog(props) {
     if (!name) {
       dispatch(setError('name', 'Don\'t leave this empty'));
     }
-    dispatch(login(name, null, props.onSuccess));
-  }, [dispatch, name, props.onSuccess]);
+    dispatch(login(name, null, props.onSuccess, props.isbn));
+  }, [dispatch, name, props.onSuccess, props.isbn]);
 
   return (
     <Dialog

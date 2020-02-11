@@ -1,6 +1,5 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { LOG_IN } from '../sessions/sessionsConstants';
 import {
   cancelMarkDelivered, confirmMarkDelivered,
   declineBook,
@@ -30,6 +29,13 @@ let mockReserveFn = jest.fn();
 let mockDeclineFn = jest.fn();
 let mockUpdateFn = jest.fn();
 let mockDeleteFn = jest.fn();
+
+jest.mock('../sessions', () => {
+  return {
+    __esModule: true,
+    startLoggingIn: () => ({ type: 'mockStartLoggingIn' })
+  }});
+
 
 jest.mock('../agent', () => {
   return {
@@ -187,29 +193,25 @@ describe('books actions', () => {
       mockError = { status: 401 };
     });
 
-    it('reserveBook() dispatches LOADING, LOG_IN and LOADED', async () => {
+    it('reserveBook() dispatches LOADING, starting logging in and LOADED', async () => {
       await store.dispatch(reserveBook(mockBook));
       expect(mockReserveFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
         type: LOADING
       }, {
-        type: LOG_IN,
-        onSuccess: 'reserve',
-        isbn: mockBook.isbn
+        type: 'mockStartLoggingIn'
       }, {
         type: LOADED
       }]);
     });
 
-    it('declineBook() dispatches LOADING, LOG_IN and LOADED', async () => {
+    it('declineBook() dispatches LOADING, starting logging in and LOADED', async () => {
       await store.dispatch(declineBook(mockBook));
       expect(mockDeclineFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
         type: LOADING
       }, {
-        type: LOG_IN,
-        onSuccess: 'decline',
-        isbn: mockBook.isbn
+        type: 'mockStartLoggingIn'
       }, {
         type: LOADED
       }]);

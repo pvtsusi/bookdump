@@ -21,7 +21,7 @@ export default (state = initialState, action) => {
   const { field, message } = action;
   switch (action.type) {
     case LOG_IN:
-      return { ...state, loggingIn: true };
+      return { ...state, loggingIn: true, onSuccess: action.onSuccess, isbn: action.isbn };
     case LOGIN_ERROR:
       const newErrors = { ...state.errors, [field]: message };
       return { ...state, errors: newErrors };
@@ -34,9 +34,9 @@ export default (state = initialState, action) => {
     case LOGGED_OUT:
       return { ...state, loggingOut: false };
     case CANCEL_LOGIN:
-      return { ...state, loggingIn: false };
+      return { ...state, loggingIn: false, onSuccess: null, isbn: null };
     case LOGGED_IN:
-      return { ...state, loggingIn: false };
+      return { ...state, loggingIn: false, onSuccess: null, isbn: null };
     default:
       return state;
   }

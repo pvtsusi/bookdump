@@ -1,6 +1,6 @@
 import { sessionService } from 'redux-react-session';
 import agent from '../agent';
-import { getBooks } from '../books';
+import { declineBook, getBooks, reserveBook } from '../books';
 import { LOADED, LOADING } from '../reducers/progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import {
@@ -14,8 +14,8 @@ import {
 } from './sessionsConstants';
 
 const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
-export const startLoggingIn = () => dispatch => dispatch({ type: LOG_IN });
-export const login = (loginName, loginPass, onSuccess) => async dispatch => {
+export const startLoggingIn = (onSuccess, isbn) => dispatch => dispatch({ type: LOG_IN, onSuccess, isbn });
+export const login = (loginName, loginPass, onSuccess, isbn) => async dispatch => {
   dispatch({ type: LOADING });
   try {
     const response = await agent.Session.login(loginName, loginPass);
@@ -23,8 +23,10 @@ export const login = (loginName, loginPass, onSuccess) => async dispatch => {
     await saveSession({ token });
     await saveUser({ name, admin, sha });
     dispatch({ type: LOGGED_IN });
-    if (onSuccess) {
-      onSuccess();
+    if (onSuccess === 'reserve') {
+      dispatch(reserveBook({isbn: isbn}));
+    } else if (onSuccess === 'decline') {
+      dispatch(declineBook({isbn: isbn}));
     }
   } catch (err) {
     if (err.status === 401) {

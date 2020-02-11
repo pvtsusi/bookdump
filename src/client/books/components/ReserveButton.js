@@ -22,7 +22,7 @@ export default function ReserveButton(props) {
       <Button disableRipple onClick={() => dispatch(reserveBook(props.book))} variant="contained">
         I want this
       </Button>
-      <LoginDialog onSuccess={() => dispatch(reserveBook(props.book))}/>
+      <LoginDialog onSuccess="reserve" isbn={props.book.isbn}/>
     </React.Fragment>
   );
 }
