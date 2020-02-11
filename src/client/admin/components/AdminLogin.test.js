@@ -3,7 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import Button from '../../components/Button';
+import { Button } from '../../app';
 import AdminLogin from './AdminLogin';
 
 jest.mock('../../sessions', () => {

@@ -11,7 +11,7 @@ jest.mock('./Logo', () => {
   };
 });
 
-jest.mock('../admin', () => {
+jest.mock('../../admin', () => {
   return {
     __esModule: true,
     AdminNavigation: () => {
@@ -20,7 +20,7 @@ jest.mock('../admin', () => {
   };
 });
 
-jest.mock('../sessions', () => {
+jest.mock('../../sessions', () => {
   return {
     __esModule: true,
     SessionPopover: () => {

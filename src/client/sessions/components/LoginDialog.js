@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cancelLogin, clearErrors, login, setError } from '..';
-import Button from '../../components/Button';
+import { Button } from '../../app';
 
 const useStyles = makeStyles(theme => ({
   actions: {

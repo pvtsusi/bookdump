@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, login, setError } from '../../sessions';
-import Button from '../../components/Button';
+import { Button } from '../../app';
 
 const useStyles = makeStyles(() => ({
   textField: {

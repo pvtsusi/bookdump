@@ -7,7 +7,7 @@ import PersonIcon from '@material-ui/icons/PermIdentity';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { startLoggingOut } from '..';
-import Button from '../../components/Button';
+import { Button } from '../../app';
 import LogoutDialog from './LogoutDialog';
 
 

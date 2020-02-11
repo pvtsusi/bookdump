@@ -2,11 +2,11 @@ import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import themes from '../themes';
+import themes from '../../themes';
 
 
-const books_1x = require('../images/books_1x.svg').default;
-const books_2x = require('../images/books_2x.svg').default;
+const books_1x = require('../../images/books_1x.svg').default;
+const books_2x = require('../../images/books_2x.svg').default;
 
 const rootStyle = {
   display: 'flex',

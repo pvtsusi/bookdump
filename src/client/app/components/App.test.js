@@ -10,7 +10,7 @@ function MockModalProgress() {
   return (<div/>);
 }
 
-jest.mock('../progress', () => {
+jest.mock('../../progress', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
@@ -25,7 +25,7 @@ function MockSnackbar(props) {
   return (<div id={props.snackbarKey}/>);
 }
 
-jest.mock('../snackbar', () => {
+jest.mock('../../snackbar', () => {
   return {
     __esModule: true,
     SNACKBAR_LOGGED_OUT: 'mock-logged-out',
