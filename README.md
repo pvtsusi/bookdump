@@ -134,14 +134,18 @@ to look at if you want to learn how to use these tools The Right Way.
 
 Here's the things I used the first time in practise:
 
-* [React](https://reactjs.org) & [Redux](https://redux.js.org)
+* [React](https://reactjs.org) & [Redux](https://redux.js.org) (+ SSR)
 * [Material-UI](https://material-ui.com)
 * [Koa](https://koajs.com)
 * The [async-await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) functions
 
 ### TODO
 
-More tests I guess?
+* More unit tests
+* End-to-end tests
+* Code splitting?
+* Multiple collections of books & signing up to add them?
+* 
 
 License
 -------
