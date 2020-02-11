@@ -1,8 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { MessageSnackbar, SNACKBAR_TOO_SLOW } from '../../snackbar';
 import { CONFIRM_TOO_SLOW } from '../booksConstants';
-import { SNACKBAR_TOO_SLOW } from '../../reducers/snackbar';
-import MessageSnackbar from '../../components/MessageSnackbar';
 
 export default function TooSlowSnackbar() {
   const dispatch = useDispatch();

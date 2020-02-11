@@ -6,9 +6,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
-import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
+import { MessageSnackbar, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../snackbar';
 import themes from '../themes';
-import MessageSnackbar from './MessageSnackbar';
 import { endLoading, ModalProgress } from '../progress';
 import TopBar from './TopBar';
 

@@ -10,10 +10,10 @@ const mockStore = configureMockStore([thunk]);
 
 let store, wrapper;
 
-jest.mock('../../components/MessageSnackbar', () => {
+jest.mock('../../snackbar', () => {
   return {
     __esModule: true,
-    default: (props) => {
+    MessageSnackbar: (props) => {
       return <div onClose={props.onClose}>{props.open ? props.message : ''}</div>;
     }
   };

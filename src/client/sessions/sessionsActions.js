@@ -1,12 +1,14 @@
 import { sessionService } from 'redux-react-session';
 import agent from '../agent';
 import { declineBook, getBooks, reserveBook } from '../books';
-import { startLoading, endLoading } from '../progress';
-import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
+import { endLoading, startLoading } from '../progress';
+import { showSnackbar } from '../snackbar';
+import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../snackbar';
 import {
   CANCEL_LOGIN,
   CANCEL_LOGOUT,
-  CLEAR_LOGIN_ERROR, LOG_IN,
+  CLEAR_LOGIN_ERROR,
+  LOG_IN,
   LOG_OUT,
   LOGGED_IN,
   LOGGED_OUT,
@@ -49,10 +51,10 @@ export const logout = (admin) => async dispatch => {
     await deleteUser();
     await deleteSession();
     dispatch(getBooks());
-    dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_LOGGED_OUT, message: 'You have been logged out.' });
+    dispatch(showSnackbar(SNACKBAR_LOGGED_OUT, 'You have been logged out.'));
     dispatch(loggedOut());
   } catch (err) {
-    dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
+    dispatch(showSnackbar(SNACKBAR_ERROR, `Error: ${err.statusText}`));
   } finally {
     dispatch(endLoading());
   }

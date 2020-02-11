@@ -6,7 +6,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import MessageSnackbar from './MessageSnackbar';
 
-jest.mock('../reducers/snackbar', () => {
+jest.mock('..', () => {
   return {
     __esModule: true,
     clearSnackbar: (key) => ({ type: 'mockClearSnackbar', key })

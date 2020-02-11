@@ -3,7 +3,7 @@ import { sessionReducer as reduxReactSession } from 'redux-react-session';
 import books from '../books/booksReducer';
 import progress from '../progress/progressReducer';
 import socket from '../socket/socketReducer';
-import snackbar from './snackbar';
+import snackbar from '../snackbar/snackbarReducer';
 import sessions from '../sessions/sessionsReducer';
 
 export default () => combineReducers({

@@ -1,11 +1,13 @@
 import agent from '../agent';
-import { startLoading, endLoading } from '../progress';
-import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
+import { endLoading, startLoading } from '../progress';
 import { startLoggingIn } from '../sessions';
+import { showSnackbar } from '../snackbar';
+import { SNACKBAR_ERROR } from '../snackbar';
 import {
   BOOKS_VIEW_ERROR,
   BOOKS_VIEW_LOADED,
-  CANCEL_MARK_DELIVERED, CONFIRM_MARK_DELIVERED,
+  CANCEL_MARK_DELIVERED,
+  CONFIRM_MARK_DELIVERED,
   DECLINE_BOOK,
   DELETE_BOOK,
   DESELECT_BOOK,
@@ -48,7 +50,7 @@ export const reserveBook = (book) => {
       if (err.status === 401) {
         dispatch(startLoggingIn());
       } else {
-        dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
+        dispatch(showSnackbar(SNACKBAR_ERROR, `Error: ${err.statusText}`));
       }
     } finally {
       dispatch(endLoading());
@@ -65,7 +67,7 @@ export const declineBook = (book) => {
       if (err.status === 401) {
         dispatch(startLoggingIn());
       } else {
-        dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
+        dispatch(showSnackbar(SNACKBAR_ERROR, `Error: ${err.statusText}`));
       }
     } finally {
       dispatch(endLoading());

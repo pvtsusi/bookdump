@@ -18,7 +18,6 @@ import {
   RESERVE_BOOK, SELECT_BOOK,
   UPDATE_BOOK
 } from './booksConstants';
-import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
 
 const mockBook = { isbn: 'isbn1' };
 const mockBooks = ['mockBook1', 'mockBook2'];
@@ -28,6 +27,13 @@ let mockReserveFn = jest.fn();
 let mockDeclineFn = jest.fn();
 let mockUpdateFn = jest.fn();
 let mockDeleteFn = jest.fn();
+
+jest.mock('../snackbar', () => {
+  return {
+    __esModule: true,
+    SNACKBAR_ERROR: 'mock-error',
+    showSnackbar: (key, message) => ({ type: 'mockShowSnackbar', key, message })
+  }});
 
 jest.mock('../sessions', () => {
   return {
@@ -235,8 +241,8 @@ describe('books actions', () => {
       expect(store.getActions()).toEqual([{
         type: 'mockStartLoading'
       }, {
-        type: SHOW_SNACKBAR,
-        key: SNACKBAR_ERROR,
+        type: 'mockShowSnackbar',
+        key: 'mock-error',
         message: 'Error: error message'
       }, {
         type: 'mockEndLoading'
@@ -249,8 +255,8 @@ describe('books actions', () => {
       expect(store.getActions()).toEqual([{
         type: 'mockStartLoading'
       }, {
-        type: SHOW_SNACKBAR,
-        key: SNACKBAR_ERROR,
+        type: 'mockShowSnackbar',
+        key: 'mock-error',
         message: 'Error: error message'
       }, {
         type: 'mockEndLoading'

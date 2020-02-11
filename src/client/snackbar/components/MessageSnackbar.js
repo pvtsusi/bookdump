@@ -3,8 +3,8 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearSnackbar } from '../reducers/snackbar';
-import themes from '../themes';
+import { clearSnackbar } from '..';
+import themes from '../../themes';
 
 const useStyles = makeStyles(theme => ({
   message: {

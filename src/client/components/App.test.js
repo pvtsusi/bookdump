@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import App from './App';
 
 function MockModalProgress() {
@@ -26,10 +25,12 @@ function MockSnackbar(props) {
   return (<div id={props.snackbarKey}/>);
 }
 
-jest.mock('./MessageSnackbar', () => {
+jest.mock('../snackbar', () => {
   return {
     __esModule: true,
-    default: (props) => {
+    SNACKBAR_LOGGED_OUT: 'mock-logged-out',
+    SNACKBAR_ERROR: 'mock-error',
+    MessageSnackbar: (props) => {
       return (<MockSnackbar snackbarKey={props.snackbarKey}/>);
     }
   };
@@ -84,10 +85,10 @@ describe('when not loading', () => {
       expect(wrapper.find(MockModalProgress).prop('show')).toBeFalsy());
 
     it('includes logged-out snackbar', () =>
-      expect(wrapper.exists(`#${SNACKBAR_LOGGED_OUT}`)).toBeTruthy());
+      expect(wrapper.exists('#mock-logged-out')).toBeTruthy());
 
     it('includes error snackbar', () =>
-      expect(wrapper.exists(`#${SNACKBAR_ERROR}`)).toBeTruthy());
+      expect(wrapper.exists('#mock-error')).toBeTruthy());
 
     it('includes the top bar', () =>
       expect(wrapper.exists(MockTopBar)).toBeTruthy());
