@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { BrowserRouter } from 'react-router-dom';
 import { sessionService } from 'redux-react-session';
-import WebSocketManager from './components/WebSocketManager';
+import { WebSocketManager } from './socket';
 import configureStore from './configureStore';
 import routes from './routes';
 

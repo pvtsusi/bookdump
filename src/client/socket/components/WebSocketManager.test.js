@@ -15,7 +15,7 @@ jest.mock('socket.io-client', () => {
   };
 });
 
-jest.mock('../reducers/socket', () => {
+jest.mock('../socketActions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
@@ -24,7 +24,7 @@ jest.mock('../reducers/socket', () => {
   };
 });
 
-jest.mock('../sessions', () => {
+jest.mock('../../sessions', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,

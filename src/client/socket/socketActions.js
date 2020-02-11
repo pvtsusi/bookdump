@@ -1,31 +1,7 @@
 import { sessionService } from 'redux-react-session';
+import { SESSION_VALIDATED, VALIDATE_SESSION } from './socketConstants';
 
 const { loadUser, loadSession } = sessionService;
-
-const VALIDATE_SESSION = 'VALIDATE_SESSION';
-export const SESSION_VALIDATED = 'SESSION_VALIDATED';
-
-const initialState = {
-  isValidatingSession: false,
-  shouldLogin: true
-};
-
-export default (state = initialState, action) => {
-  switch (action.type) {
-    case VALIDATE_SESSION:
-      return {
-        ...state,
-        isValidatingSession: true
-      };
-    case SESSION_VALIDATED:
-      return {
-        ...state,
-        isValidatingSession: false
-      };
-    default:
-      return state;
-  }
-};
 
 export const isValidSession = (options) => {
   return async dispatch => {

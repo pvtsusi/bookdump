@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import openSocket from 'socket.io-client';
-import { isValidSession, sessionValidated } from '../reducers/socket';
-import { logout } from '../sessions';
+import { isValidSession, sessionValidated } from '../socketActions';
+import { logout } from '../../sessions';
 
 export default function WebSocketManager() {
   const dispatch = useDispatch();
