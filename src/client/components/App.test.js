@@ -7,14 +7,15 @@ import thunk from 'redux-thunk';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import App from './App';
 
-function MockModalProgress(props) {
+function MockModalProgress() {
   return (<div/>);
 }
 
-jest.mock('./ModalProgress', () => {
+jest.mock('../progress', () => {
+  // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
-    default: (props) => {
+    ModalProgress: (props) => {
       return (<MockModalProgress show={props.show}/>);
     }
   };

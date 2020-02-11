@@ -1,5 +1,5 @@
 import agent from '../agent';
-import { LOADED, LOADING } from '../reducers/progress';
+import { startLoading, endLoading } from '../progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
 import { startLoggingIn } from '../sessions';
 import {
@@ -40,7 +40,7 @@ export const updateBook = (book, field, value) => {
 };
 export const reserveBook = (book) => {
   return async dispatch => {
-    dispatch({ type: LOADING });
+    dispatch(startLoading());
     try {
       const { name } = await agent.Books.reserve(book.isbn);
       dispatch({ type: RESERVE_BOOK, book, name });
@@ -51,13 +51,13 @@ export const reserveBook = (book) => {
         dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }
     } finally {
-      dispatch({ type: LOADED });
+      dispatch(endLoading());
     }
   };
 };
 export const declineBook = (book) => {
   return async dispatch => {
-    dispatch({ type: LOADING });
+    dispatch(startLoading());
     try {
       await agent.Books.decline(book.isbn);
       dispatch({ type: DECLINE_BOOK, book });
@@ -68,7 +68,7 @@ export const declineBook = (book) => {
         dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
       }
     } finally {
-      dispatch({ type: LOADED });
+      dispatch(endLoading());
     }
   };
 };

@@ -1,5 +1,4 @@
-export const LOADING = 'LOADING';
-export const LOADED = 'LOADED';
+import { LOADED, LOADING } from './progressConstants';
 
 export default (state = { loading: false }, action) => {
   switch (action.type) {

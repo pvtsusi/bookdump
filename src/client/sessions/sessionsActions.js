@@ -1,7 +1,7 @@
 import { sessionService } from 'redux-react-session';
 import agent from '../agent';
 import { declineBook, getBooks, reserveBook } from '../books';
-import { LOADED, LOADING } from '../reducers/progress';
+import { startLoading, endLoading } from '../progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import {
   CANCEL_LOGIN,
@@ -16,7 +16,7 @@ import {
 const { saveSession, saveUser, deleteUser, deleteSession } = sessionService;
 export const startLoggingIn = (onSuccess, isbn) => dispatch => dispatch({ type: LOG_IN, onSuccess, isbn });
 export const login = (loginName, loginPass, onSuccess, isbn) => async dispatch => {
-  dispatch({ type: LOADING });
+  dispatch(startLoading());
   try {
     const response = await agent.Session.login(loginName, loginPass);
     const { token, name, sha, admin } = response;
@@ -35,13 +35,13 @@ export const login = (loginName, loginPass, onSuccess, isbn) => async dispatch =
       dispatch({ type: LOGIN_ERROR, field: 'pass', message: 'Failed to log in' });
     }
   } finally {
-    dispatch({ type: LOADED });
+    endLoading();
   }
 };
 export const cancelLogin = () => dispatch => dispatch({ type: CANCEL_LOGIN });
 export const startLoggingOut = () => dispatch => dispatch({ type: LOG_OUT });
 export const logout = (admin) => async dispatch => {
-  dispatch({ type: LOADING });
+  startLoading();
   try {
     if (!admin) {
       await agent.Session.forget();
@@ -53,7 +53,7 @@ export const logout = (admin) => async dispatch => {
   } catch (err) {
     dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
   } finally {
-    dispatch({ type: LOADED });
+    endLoading();
   }
 };
 export const cancelLogout = () => dispatch => dispatch({ type: CANCEL_LOGOUT });

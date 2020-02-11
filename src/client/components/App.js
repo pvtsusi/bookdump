@@ -9,7 +9,7 @@ import { renderRoutes } from 'react-router-config';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import themes from '../themes';
 import MessageSnackbar from './MessageSnackbar';
-import ModalProgress from './ModalProgress';
+import { ModalProgress } from '../progress';
 import TopBar from './TopBar';
 
 

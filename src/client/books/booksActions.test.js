@@ -18,7 +18,6 @@ import {
   RESERVE_BOOK, SELECT_BOOK,
   UPDATE_BOOK
 } from './booksConstants';
-import { LOADED, LOADING } from '../reducers/progress';
 import { SHOW_SNACKBAR, SNACKBAR_ERROR } from '../reducers/snackbar';
 
 const mockBook = { isbn: 'isbn1' };
@@ -36,6 +35,12 @@ jest.mock('../sessions', () => {
     startLoggingIn: () => ({ type: 'mockStartLoggingIn' })
   }});
 
+jest.mock('../progress', () => {
+  return {
+    __esModule: true,
+    startLoading: () => ({ type: 'mockStartLoading' }),
+    endLoading: () => ({ type: 'mockEndLoading' })
+  }});
 
 jest.mock('../agent', () => {
   return {
@@ -159,30 +164,30 @@ describe('books actions', () => {
       mockError = null;
     });
 
-    it('reserveBook() dispatches LOADING, RESERVE_BOOK and LOADED', async () => {
+    it('reserveBook() dispatches loading, RESERVE_BOOK and end loaded', async () => {
       await store.dispatch(reserveBook(mockBook));
       expect(mockReserveFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: RESERVE_BOOK,
         book: mockBook,
         name: mockReserver
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
 
-    it('declineBook() dispatches LOADING, DECLINE_BOOK and LOADED', async () => {
+    it('declineBook() dispatches loading, DECLINE_BOOK and end loading', async () => {
       await store.dispatch(declineBook(mockBook));
       expect(mockDeclineFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: DECLINE_BOOK,
         book: mockBook
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
   });
@@ -193,27 +198,27 @@ describe('books actions', () => {
       mockError = { status: 401 };
     });
 
-    it('reserveBook() dispatches LOADING, starting logging in and LOADED', async () => {
+    it('reserveBook() dispatches loading, starting logging in and end loading', async () => {
       await store.dispatch(reserveBook(mockBook));
       expect(mockReserveFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: 'mockStartLoggingIn'
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
 
-    it('declineBook() dispatches LOADING, starting logging in and LOADED', async () => {
+    it('declineBook() dispatches loading, starting logging in and end loading', async () => {
       await store.dispatch(declineBook(mockBook));
       expect(mockDeclineFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: 'mockStartLoggingIn'
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
   });
@@ -224,31 +229,31 @@ describe('books actions', () => {
       mockError = { status: 500, statusText: 'error message' };
     });
 
-    it('reserveBook() dispatches LOADING, SHOW_SNACKBAR with error and LOADED', async () => {
+    it('reserveBook() dispatches loading, SHOW_SNACKBAR with error and end loading', async () => {
       await store.dispatch(reserveBook(mockBook));
       expect(mockReserveFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: SHOW_SNACKBAR,
         key: SNACKBAR_ERROR,
         message: 'Error: error message'
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
 
-    it('declineBook() dispatches LOADING, SHOW_SNACKBAR with error and LOADED', async () => {
+    it('declineBook() dispatches loading, SHOW_SNACKBAR with error and end loading', async () => {
       await store.dispatch(declineBook(mockBook));
       expect(mockDeclineFn).toHaveBeenCalledWith(mockBook.isbn);
       expect(store.getActions()).toEqual([{
-        type: LOADING
+        type: 'mockStartLoading'
       }, {
         type: SHOW_SNACKBAR,
         key: SNACKBAR_ERROR,
         message: 'Error: error message'
       }, {
-        type: LOADED
+        type: 'mockEndLoading'
       }]);
     });
   });

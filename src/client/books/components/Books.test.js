@@ -1,6 +1,6 @@
 import React from 'react';
 import Books from './Books';
-import Progress from '../../components/Progress';
+import { Progress } from '../../progress';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';

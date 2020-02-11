@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBooks, selectBook } from '../booksActions';
-import Progress from '../../components/Progress';
+import { Progress } from '../../progress';
 import Book from './Book';
 import BookDialog from './BookDialog';
 import TooSlowSnackbar from './TooSlowSnackbar';
