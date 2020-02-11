@@ -1,4 +1,4 @@
-import AdminView from './components/admin/AdminView';
+import { AdminView } from './admin';
 import App from './components/App';
 import { Books } from './books';
 

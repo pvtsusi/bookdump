@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cancelMarkDelivered, markDelivered } from '../../books';
-import Button from '../Button';
+import Button from '../../components/Button';
 
 const useStyles = makeStyles(theme => ({
   actions: {

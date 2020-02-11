@@ -2,7 +2,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import React from 'react';
-import AdminNavigation from './admin/AdminNavigation';
+import { AdminNavigation } from '../admin';
 import Logo from './Logo';
 import SessionPopover from './sessions/SessionPopover';
 
