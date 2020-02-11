@@ -15,6 +15,7 @@ jest.mock('../progress', () => {
   // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
+    endLoading: () => ({ type: 'mockEndLoading' }),
     ModalProgress: (props) => {
       return (<MockModalProgress show={props.show}/>);
     }

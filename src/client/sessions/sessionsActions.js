@@ -35,13 +35,13 @@ export const login = (loginName, loginPass, onSuccess, isbn) => async dispatch =
       dispatch({ type: LOGIN_ERROR, field: 'pass', message: 'Failed to log in' });
     }
   } finally {
-    endLoading();
+    dispatch(endLoading());
   }
 };
 export const cancelLogin = () => dispatch => dispatch({ type: CANCEL_LOGIN });
 export const startLoggingOut = () => dispatch => dispatch({ type: LOG_OUT });
 export const logout = (admin) => async dispatch => {
-  startLoading();
+  dispatch(startLoading());
   try {
     if (!admin) {
       await agent.Session.forget();
@@ -53,7 +53,7 @@ export const logout = (admin) => async dispatch => {
   } catch (err) {
     dispatch({ type: SHOW_SNACKBAR, key: SNACKBAR_ERROR, message: `Error: ${err.statusText}` });
   } finally {
-    endLoading();
+    dispatch(endLoading());
   }
 };
 export const cancelLogout = () => dispatch => dispatch({ type: CANCEL_LOGOUT });

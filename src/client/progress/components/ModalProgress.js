@@ -20,21 +20,35 @@ export default function ModalProgress(props) {
   const classes = useStyles();
 
   if (props.show) {
-    return (
-      <React.Fragment>
-        <Fade in style={{ transitionDelay: props.show ? '600ms' : '0ms' }} unmountOnExit>
+    if (props.noFade) {
+      return (
+        <React.Fragment>
           <Backdrop open={props.show} classes={{ root: classes.backdrop }}/>
-        </Fade>
-        <Fade in style={{ transitionDelay: props.show ? '500ms' : '0ms' }} unmountOnExit>
           <Grid container spacing={0} alignItems="center" justify="center"
                 classes={{ root: classes.container }}>
             <Grid item xs={3}>
               <Progress/>
             </Grid>
           </Grid>
-        </Fade>
-      </React.Fragment>
-    );
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Fade in style={{ transitionDelay: props.show ? '600ms' : '0ms' }} unmountOnExit>
+            <Backdrop open={props.show} classes={{ root: classes.backdrop }}/>
+          </Fade>
+          <Fade in style={{ transitionDelay: props.show ? '500ms' : '0ms' }} unmountOnExit>
+            <Grid container spacing={0} alignItems="center" justify="center"
+                  classes={{ root: classes.container }}>
+              <Grid item xs={3}>
+                <Progress/>
+              </Grid>
+            </Grid>
+          </Fade>
+        </React.Fragment>
+      );
+    }
   }
   return null;
 }

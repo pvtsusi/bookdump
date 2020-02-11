@@ -3,13 +3,13 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { renderRoutes } from 'react-router-config';
 import { SNACKBAR_ERROR, SNACKBAR_LOGGED_OUT } from '../reducers/snackbar';
 import themes from '../themes';
 import MessageSnackbar from './MessageSnackbar';
-import { ModalProgress } from '../progress';
+import { endLoading, ModalProgress } from '../progress';
 import TopBar from './TopBar';
 
 
@@ -36,7 +36,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function App(props) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const loading = useSelector(state => state.progress.loading);
+
+  useEffect(() => {
+    if (!props.ssr) {
+      dispatch(endLoading());
+    }
+  }, [props.ssr, dispatch]);
 
   const mediaQueryPrefersDark = useMediaQuery('(prefers-color-scheme: dark)');
   const prefersDarkMode = props.mode === 'dark' || mediaQueryPrefersDark;
@@ -44,7 +51,7 @@ export default function App(props) {
   return (
     <MuiThemeProvider theme={prefersDarkMode ? themes.dark : themes.normal}>
       <CssBaseline/>
-      <ModalProgress show={loading}/>
+      <ModalProgress show={loading} noFade={!!props.ssr}/>
       <MessageSnackbar snackbarKey={SNACKBAR_LOGGED_OUT}/>
       <MessageSnackbar snackbarKey={SNACKBAR_ERROR}/>
       <div className={classes.root}>

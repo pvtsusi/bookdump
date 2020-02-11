@@ -6,6 +6,7 @@ import { renderRoutes } from 'react-router-config';
 import { ServerStyleSheets } from '@material-ui/core/styles';
 
 import serialize from 'serialize-javascript';
+import { startLoading } from './client/progress';
 import routes from './client/routes';
 
 export default (request, store, jsBundle, renderContext) => {
@@ -13,12 +14,14 @@ export default (request, store, jsBundle, renderContext) => {
   const css = {};
   const content = {};
 
+  store.dispatch(startLoading());
+
   ['light', 'dark'].forEach((mode) => {
     content[mode] = ReactDomServer.renderToString(
       sheets.collect(
         <Provider store={store}>
           <StaticRouter location={request.path} context={renderContext}>
-            {renderRoutes(routes, { mode })}
+            {renderRoutes(routes, { mode, ssr: true })}
           </StaticRouter>
         </Provider>
       )
