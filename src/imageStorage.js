@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import sharp from 'sharp';
-import stream from "stream";
+import stream from 'stream';
 import resizedName from './client/cover';
 
 const DIMENSIONS = [810, 540, 270, 120, 80, 40];
@@ -31,10 +31,14 @@ export default class ImageStorage {
       if (err) {
         return reject(err);
       }
-      resolve(result);
+      const { Bucket, Key } = result;
+      s3.waitFor('objectExists', { Bucket, Key }, (waitErr, waitResult) => {
+        if (waitErr) {
+          return reject(waitErr);
+        }
+        resolve(waitResult);
+      });
     });
     return pass;
   }
-
-
 }
