@@ -12,6 +12,7 @@ jest.mock('./Logo', () => {
 });
 
 jest.mock('../../admin', () => {
+  // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
     AdminNavigation: () => {
@@ -21,6 +22,7 @@ jest.mock('../../admin', () => {
 });
 
 jest.mock('../../sessions', () => {
+  // noinspection JSUnusedGlobalSymbols
   return {
     __esModule: true,
     SessionPopover: () => {

@@ -8,7 +8,7 @@ function normalizeAuthor(book) {
   return book;
 }
 
-export default async function searchFromAll(isbn) {
+export async function searchFromAll(isbn) {
   return await Promise.all([findFinna(isbn), findOpenLibrary(isbn)]).then((allFound) => {
     return allFound.flat().filter(book => book.title && book.author).map(normalizeAuthor);
   });
