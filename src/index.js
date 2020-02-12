@@ -43,7 +43,7 @@ const imageStorage = new ImageStorage(BUCKET, BUCKET_REGION);
 const auth = new Auth(APP_SECRET, NAME_SECRET, ADMIN_NAME, ADMIN_PASS);
 let io = null;
 const getIo = () => io;
-const server = createServer(auth, db, getIo, imageStorage, library, ADMIN_NAME, ADMIN_PASS);
+const server = createServer(auth, db, getIo, imageStorage, library);
 io = socketIo(server);
 
 function socketService(socket) {

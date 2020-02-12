@@ -13,6 +13,19 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.modal + 20,
     minHeight: '100vh',
     position: 'fixed'
+  },
+  '@keyframes cssFadeInAnim': {
+    from: {
+      opacity: 0
+    },
+    to: {
+      opacity: 1
+    }
+  },
+  cssFadeIn: {
+    animationName: '$cssFadeInAnim',
+    animationDuration: '3s',
+    animationTimingFunction: 'ease-in'
   }
 }));
 
@@ -26,7 +39,7 @@ export default function ModalProgress(props) {
           <Backdrop open={props.show} classes={{ root: classes.backdrop }}/>
           <Grid container spacing={0} alignItems="center" justify="center"
                 classes={{ root: classes.container }}>
-            <Grid item xs={3}>
+            <Grid item xs={3} classes={{ root: classes.cssFadeIn }}>
               <Progress/>
             </Grid>
           </Grid>
@@ -41,7 +54,7 @@ export default function ModalProgress(props) {
           <Fade in style={{ transitionDelay: props.show ? '500ms' : '0ms' }} unmountOnExit>
             <Grid container spacing={0} alignItems="center" justify="center"
                   classes={{ root: classes.container }}>
-              <Grid item xs={3}>
+              <Grid item xs={3} classes={{ root: classes.cssFadeIn }}>
                 <Progress/>
               </Grid>
             </Grid>
