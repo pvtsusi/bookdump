@@ -21,12 +21,7 @@ export function patchBook(books, isbn, patch) {
 export function deleteReserver(books, isbn) {
   return (books || []).map((book) => {
     if (book.isbn === isbn) {
-      const clearedBook = {};
-      for (const key of Object.keys(book)) {
-        if (key !== 'reserver' && key !== 'reserverName') {
-          clearedBook[key] = book[key];
-        }
-      }
+      const { reserver, reserverName, ...clearedBook } = book;
       return clearedBook;
     } else {
       return book;

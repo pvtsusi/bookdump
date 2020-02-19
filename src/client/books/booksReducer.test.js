@@ -8,7 +8,6 @@ import {
   UPDATE_BOOK
 } from './booksConstants';
 import reducer from './booksReducer';
-import * as types from './booksConstants';
 
 describe('booksReducer', () => {
   it('returns the initial state', () => {
