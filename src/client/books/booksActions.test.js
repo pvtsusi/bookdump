@@ -1,21 +1,27 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
-  cancelMarkDelivered, confirmMarkDelivered,
+  cancelMarkDelivered,
+  confirmMarkDelivered,
   declineBook,
   deselectBook,
   editBook, getBooks,
   markDelivered,
-  reserveBook, selectBook,
+  reserveBook,
+  selectBook,
   updateBook
 } from './booksActions';
 import {
-  BOOKS_VIEW_ERROR, BOOKS_VIEW_LOADED,
-  CANCEL_MARK_DELIVERED, CONFIRM_MARK_DELIVERED,
+  BOOKS_VIEW_ERROR,
+  BOOKS_VIEW_LOADED,
+  CANCEL_MARK_DELIVERED,
+  CONFIRM_MARK_DELIVERED,
   DECLINE_BOOK,
-  DELETE_BOOK, DESELECT_BOOK,
+  DELETE_BOOK,
+  DESELECT_BOOK,
   EDIT_BOOK,
-  RESERVE_BOOK, SELECT_BOOK,
+  RESERVE_BOOK,
+  SELECT_BOOK,
   UPDATE_BOOK
 } from './booksConstants';
 
